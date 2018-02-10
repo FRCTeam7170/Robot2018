@@ -1,5 +1,11 @@
 package frc.team7170.robot;
 
+
+/**
+ * The default values for all important constants used throughout the robot code.
+ * Some values are marked as final (various IDs mainly) as they are assumed to never need be
+ * changed while the bot is running; others--the ones controllable on the dashboard--are not.
+ */
 public class RobotMap {
 
     public static class Main {
@@ -11,19 +17,19 @@ public class RobotMap {
     }
 
     public static class DriveCurrentSmoothing {
-        public static final double logic_threshold_X = 0.5;
-        public static final double logic_threshold_Y = 0.5;
-        public static final double tolerance_X = 0.1;
-        public static final double tolerance_Y = 0.1;
-        public static final double jump_X = 0.07;
-        public static final double jump_Y = 0.07;
+        public static double logic_threshold_X = 0.5;
+        public static double logic_threshold_Y = 0.5;
+        public static double tolerance_X = 0.1;
+        public static double tolerance_Y = 0.1;
+        public static double jump_X = 0.07;
+        public static double jump_Y = 0.07;
     }
 
     public static class Camera {
-        public static final double speed_X = 0.02;
-        public static final double speed_Y = 0.02;
-        public static final double speed_X_45 = 0.02;
-        public static final double speed_Y_45 = 0.02;
+        public static double speed_X = 0.02;
+        public static double speed_Y = 0.02;
+        public static double speed_X_45 = 0.02;
+        public static double speed_Y_45 = 0.02;
     }
 
     public static class CAN {
