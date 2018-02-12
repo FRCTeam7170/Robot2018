@@ -16,6 +16,7 @@ public class NTVar<T> {
 
     private final NetworkTableEntry entry;
     private int listener_handle;
+    private final boolean settable;
 
     /**
      * @param val Value to store in entry; must be one of valid types specified in NetworkTableType
@@ -23,8 +24,13 @@ public class NTVar<T> {
      * @param table (Sub)table to store key-value pair in.
      */
     public NTVar(T val, String key, String table) {
+        this(val, key, table, true);
+    }
+
+    public NTVar(T val, String key, String table, boolean settable) {
         entry = Communication.register_entry(key, table);
         entry.setValue(val);
+        this.settable = settable;
     }
 
     @SuppressWarnings("unchecked")
@@ -41,7 +47,9 @@ public class NTVar<T> {
     }
 
     public void set(T val) {
-        entry.setValue(val);
+        if (settable) {
+            entry.setValue(val);
+        }
     }
 
     /**

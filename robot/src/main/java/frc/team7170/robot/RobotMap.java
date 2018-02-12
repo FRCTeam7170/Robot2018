@@ -48,4 +48,11 @@ public class RobotMap {
     public static class Controllers {
         public static final int joystick_port = 0;
     }
+
+    public static class DIO {
+        public static final int encoder_left_A = 0;
+        public static final int encoder_left_B = 1;
+        public static final int encoder_right_A = 2;
+        public static final int encoder_right_B = 3;
+    }
 }
