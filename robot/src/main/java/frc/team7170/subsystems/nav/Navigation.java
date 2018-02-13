@@ -1,6 +1,7 @@
 package frc.team7170.subsystems.nav;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.Encoder;
 import frc.team7170.robot.RobotMap;
@@ -13,6 +14,8 @@ public class Navigation {
 
     static Encoder left_enc = new Encoder(RobotMap.DIO.encoder_left_A, RobotMap.DIO.encoder_left_B);
     static Encoder right_enc = new Encoder(RobotMap.DIO.encoder_right_A, RobotMap.DIO.encoder_right_B);
+
+    private static ArrayDeque<Maneuver> queue = new ArrayDeque<>();
 
     static {
         /*
@@ -39,31 +42,26 @@ public class Navigation {
      * Updates current maneuver. Must be called regularly from main robot loop.
      */
     public static void update() {
-
+        Maneuver man = queue.peek();
+        if (man != null) {
+            if (!man.running) {
+                man.run();
+            }
+            man.update();
+        }
     }
 
-    /**
-     * Turn on the spot at a given speed.
-     * @param speed Speed to execute turn at in range [-1, 1]. Positive is clockwise.
-     */
-    public static void turn(double speed) {
-        Drive.set_arcade(speed, 0, false);
+    public static void add_maneuver(Maneuver man) {
+        queue.add(man);
     }
 
-    /**
-     * Turn on the spot at a given speed to a given angle
-     * @param degrees Angle in degrees to turn to in [0, 360].
-     * @param speed Speed to execute turn at in range [-1, 1]. Positive is clockwise.
-     */
-    public static void turn_degrees(double degrees, double speed) {
-
+    public static void add_maneuvers(Maneuver[] mans) {
+        queue.addAll(Arrays.asList(mans));
     }
 
-    public static void drive(double speed) {
-        // TODO
-    }
-
-    public static void arc() {
-
+    static void man_complete() {
+        Drive.brake();
+        queue.pop();
+        queue.peek().run();
     }
 }

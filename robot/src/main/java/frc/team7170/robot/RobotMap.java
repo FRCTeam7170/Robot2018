@@ -65,6 +65,6 @@ public class RobotMap {
     }
 
     public static class Maneuvers {
-        public static double turn_angle_tolerance = 3.0;
+        public static double turn_angle_tolerance = 3.0;  // Degrees
     }
 }

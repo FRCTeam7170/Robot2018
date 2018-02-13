@@ -81,4 +81,8 @@ public class Drive {
     public static void set_tank(double left, double right) {
         drive.tankDrive(left, right);
     }
+
+    public static void brake() {
+        drive.stopMotor();
+    }
 }
