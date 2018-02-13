@@ -55,4 +55,16 @@ public class RobotMap {
         public static final int encoder_right_A = 2;
         public static final int encoder_right_B = 3;
     }
+
+    public static class RobotDims {
+        // All measurements in centimetres (cm)!
+        public static final double wheel_diameter = 0;  // TODO
+        public static final double wheel_radius = wheel_diameter / 2.0;
+        public static final double wheel_to_wheel = 0; // TODO
+        public static final double wheel_to_centre = wheel_to_wheel / 2.0;
+    }
+
+    public static class Maneuvers {
+        public static double turn_angle_tolerance = 3.0;
+    }
 }
