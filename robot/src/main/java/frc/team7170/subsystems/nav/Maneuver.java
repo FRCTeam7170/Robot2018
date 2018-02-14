@@ -7,7 +7,12 @@ abstract class Maneuver {
 
     abstract void run();
 
-    abstract void update();
+    void update() {
+        correct();
+        if (finished()) {
+            Navigation.man_complete();
+        }
+    }
 
     abstract void correct();
 

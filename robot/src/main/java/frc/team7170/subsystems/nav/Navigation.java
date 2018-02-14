@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.subsystems.Drive;
 
@@ -17,6 +18,7 @@ public class Navigation {
     static Encoder right_enc = new Encoder(RobotMap.DIO.encoder_right_A, RobotMap.DIO.encoder_right_B);
 
     private static BuiltInAccelerometer accelerometer = new BuiltInAccelerometer();
+    private static AnalogGyro gyro = new AnalogGyro(RobotMap.AIO.gyro);
 
     private static ArrayDeque<Maneuver> queue = new ArrayDeque<>();
 
@@ -36,7 +38,7 @@ public class Navigation {
     /**
      * Reset the encoder values to zero.
      */
-    public static void reset() {
+    public static void reset_encoders() {
         left_enc.reset();
         right_enc.reset();
     }

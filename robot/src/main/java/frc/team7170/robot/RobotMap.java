@@ -56,6 +56,10 @@ public class RobotMap {
         public static final int encoder_right_B = 3;
     }
 
+    public static class AIO {
+        public static final int gyro = 0;
+    }
+
     public static class RobotDims {
         // All measurements in metres (m)!
         public static final double wheel_width = 0.254; // 1 in.
@@ -71,6 +75,9 @@ public class RobotMap {
     }
 
     public static class Maneuvers {
-        public static double turn_angle_tolerance = 3.0;  // Degrees
+        public static double encoder_desync_tolerance = 10.0;  // How much deviation from the expectation of lenc.get() - renc.get() is acceptable
+        public static double encoder_desync_tolerance_dist = 0.05;  // metres
+        public static double turn_angle_tolerance = 3.0;  // degrees
+        public static double straight_distance_tolerance = 0.05;  // metres
     }
 }
