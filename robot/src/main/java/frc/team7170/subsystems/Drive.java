@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.team7170.robot.RobotMap;
+import frc.team7170.util.CalcUtil;
 
 
 public class Drive {
@@ -26,7 +27,7 @@ public class Drive {
     private static DifferentialDrive drive = new DifferentialDrive(left_motors, right_motors);
 
     // These hold the X and Y speeds actually sent to the speed controllers
-    private static double rob_X = 0, rob_Y = 0;
+    public static double rob_L = 0, rob_R = 0;
 
     /**
      * Logic to control current flow to drive motors (ie prevent spikes)
@@ -35,51 +36,88 @@ public class Drive {
      * @param XP Old/previous X value
      * @param YP Old/previous Y value
      */
-    private static double[] smooth_current(double XC, double YC, double XP, double YP) {
+    private static double[] smooth_current(double XC, double YC, double XP, double YP, boolean maintain_ratio) {
         double dx = Math.abs(XC) - Math.abs(XP);
         double dy = Math.abs(YC) - Math.abs(YP);
+        // Only activate smoothing logic if speed is below a threshold (ie prone to spikes)
+        boolean activate_X = Math.abs(XP) < RobotMap.DriveCurrentSmoothing.logic_threshold_X;
+        boolean activate_Y = Math.abs(YP) < RobotMap.DriveCurrentSmoothing.logic_threshold_Y;
+        double violation_X = Math.abs(dx) - RobotMap.DriveCurrentSmoothing.tolerance_X;
+        double violation_Y = Math.abs(dy) - RobotMap.DriveCurrentSmoothing.tolerance_Y;
         double[] out = new double[2];
-        // X -- Only activate smoothing logic if speed is below a threshold (ie prone to spikes)
-        if (Math.abs(XP) < RobotMap.DriveCurrentSmoothing.logic_threshold_X & Math.abs(dx) > RobotMap.DriveCurrentSmoothing.tolerance_X) {
-            out[0] = Math.signum(dx)*RobotMap.DriveCurrentSmoothing.jump_X;  // Smooth X acceleration
-        } else {
-            out[0] = dx;
+
+        if (activate_X & violation_X > 0) {
+            out[0] = XP + Math.signum(dx) * RobotMap.DriveCurrentSmoothing.jump_X;  // Smooth X acceleration
+            if (maintain_ratio & violation_X > violation_Y & violation_Y > 0) {  // Change the ratio according to the greatest violation
+                out[1] = YP * out[0] / XP;  // Change Y by same ratio
+                return out;
+            }
         }
-        // Y
-        if (Math.abs(YP) < RobotMap.DriveCurrentSmoothing.logic_threshold_Y & Math.abs(dy) > RobotMap.DriveCurrentSmoothing.tolerance_Y) {
-            out[1] = Math.signum(dy)*RobotMap.DriveCurrentSmoothing.jump_Y;  // Smooth Y acceleration
+        else {  // If there are no violations, set out-speed to in-speed
+            out[0] = XC;
+        }
+        if (activate_Y & violation_Y > 0) {
+            out[1] = YP + Math.signum(dy) * RobotMap.DriveCurrentSmoothing.jump_Y;  // Smooth Y acceleration
+            if (maintain_ratio) {
+                out[0] = XP * out[0] / YP;  // Change X by same ratio
+            }
         } else {
-            out[1] = dy;
+            out[1] = YC;
         }
         return out;
     }
 
-    /**
-     * Set robot speed using arcade drive
-     * @param joy_X Joystick X value
-     * @param joy_Y Joystick Y value
-     * @param smooth Whether to use current smoothing algorithm or not
-     */
     public static void set_arcade(double joy_X, double joy_Y, boolean smooth) {
-        if (smooth) {
-            double[] out = smooth_current(joy_X, joy_Y, rob_X, rob_Y);
-            rob_X = out[0];
-            rob_Y = out[1];
-        } else {
-            rob_X = joy_X;
-            rob_Y = joy_Y;
-        }
-        drive.arcadeDrive(rob_X, rob_Y);
+        set_arcade(joy_X, joy_Y, smooth, false);
     }
 
-    // TODO: Do we need this?
-    /**
-     * Set robot speed using tank drive
-     * @param left Left side wheel speed
-     * @param right Right side wheel speed
-     */
-    public static void set_tank(double left, double right) {
-        drive.tankDrive(left, right);
+    public static void set_arcade(double joy_X, double joy_Y, boolean smooth, boolean maintain_ratio) {
+        joy_X = CalcUtil.apply_bounds(joy_X, -1.0, 1.0);
+        joy_Y = CalcUtil.apply_bounds(joy_Y, -1.0, 1.0);
+
+        // This is copied from the setArcade function in DifferentialDrive
+        double left;
+        double right;
+
+        double maxInput = Math.copySign(Math.max(Math.abs(joy_X), Math.abs(joy_Y)), joy_X);
+
+        if (joy_X >= 0.0) {
+            // First quadrant, else second quadrant
+            if (joy_Y >= 0.0) {
+                left = maxInput;
+                right = joy_X - joy_Y;
+            } else {
+                left = joy_X + joy_Y;
+                right = maxInput;
+            }
+        } else {
+            // Third quadrant, else fourth quadrant
+            if (joy_Y >= 0.0) {
+                left = joy_X + joy_Y;
+                right = maxInput;
+            } else {
+                left = maxInput;
+                right = joy_X - joy_Y;
+            }
+        }
+
+        set(left, right, smooth, maintain_ratio);
+    }
+
+    public static void set_tank(double left, double right, boolean smooth) {
+        set(left, right, smooth, true);
+    }
+
+    private static void set(double left, double right, boolean smooth, boolean maintain_ratio) {
+        if (smooth) {
+            double[] out = smooth_current(left, right, rob_L, rob_R, maintain_ratio);
+            rob_L = out[0];
+            rob_R = out[1];
+        } else {
+            rob_L = left;
+            rob_R = right;
+        }
+        drive.tankDrive(rob_L, rob_R);
     }
 
     public static void brake() {

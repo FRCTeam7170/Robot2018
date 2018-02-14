@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.subsystems.Drive;
 
@@ -14,6 +15,8 @@ public class Navigation {
 
     static Encoder left_enc = new Encoder(RobotMap.DIO.encoder_left_A, RobotMap.DIO.encoder_left_B);
     static Encoder right_enc = new Encoder(RobotMap.DIO.encoder_right_A, RobotMap.DIO.encoder_right_B);
+
+    private static BuiltInAccelerometer accelerometer = new BuiltInAccelerometer();
 
     private static ArrayDeque<Maneuver> queue = new ArrayDeque<>();
 
@@ -60,8 +63,19 @@ public class Navigation {
     }
 
     static void man_complete() {
-        Drive.brake();
         queue.pop();
         queue.peek().run();
+    }
+
+    public static double get_accel_X() {
+        return 9.80*accelerometer.getX();  // Convert to m/s
+    }
+
+    public static double get_accel_Y() {
+        return 9.80*accelerometer.getY();  // Convert to m/s
+    }
+
+    public static double get_accel_Z() {
+        return 9.80*accelerometer.getZ();  // Convert to m/s
     }
 }

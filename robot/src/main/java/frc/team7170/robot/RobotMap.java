@@ -57,11 +57,17 @@ public class RobotMap {
     }
 
     public static class RobotDims {
-        // All measurements in centimetres (cm)!
-        public static final double wheel_diameter = 0;  // TODO
+        // All measurements in metres (m)!
+        public static final double wheel_width = 0.254; // 1 in.
+        public static final double wheel_diameter = 0.1524; // 6 in.
         public static final double wheel_radius = wheel_diameter / 2.0;
-        public static final double wheel_to_wheel = 0; // TODO
+        public static final double wheel_to_wheel = 0.5921; // centre to centre; 23 5/16 in.
         public static final double wheel_to_centre = wheel_to_wheel / 2.0;
+        public static final double wheel_spacing = 0.2985;
+        public static final double robot_width = 0.6858;
+        public static final double robot_length = 0.8192;
+        public static final double robot_height = 1.0986;
+
     }
 
     public static class Maneuvers {
