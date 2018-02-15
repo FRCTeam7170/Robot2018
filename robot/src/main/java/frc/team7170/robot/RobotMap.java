@@ -75,6 +75,9 @@ public class RobotMap {
     }
 
     public static class Maneuvers {
+        public static double default_acceleration_deceleration_frac = 0.5;
+        public static double default_acceleration_step = 0.001;
+        public static double default_acceleration_transition_out = 0.0;
         public static double encoder_desync_tolerance = 10.0;  // How much deviation from the expectation of lenc.get() - renc.get() is acceptable
         public static double encoder_desync_tolerance_dist = 0.05;  // metres
         public static double turn_angle_tolerance = 3.0;  // degrees
