@@ -16,13 +16,13 @@ public class RobotMap {
         public static final boolean print_current = false;
     }
 
-    public static class DriveCurrentSmoothing {
-        public static double logic_threshold_X = 0.5;
-        public static double logic_threshold_Y = 0.5;
-        public static double tolerance_X = 0.1;
-        public static double tolerance_Y = 0.1;
-        public static double jump_X = 0.07;
-        public static double jump_Y = 0.07;
+    public static class DriveSmooth {
+        public static double logic_threshold_L = 0.5;
+        public static double logic_threshold_R = 0.5;
+        public static double tolerance_L = 0.1;
+        public static double tolerance_R = 0.1;
+        public static double jump_L = 0.07;
+        public static double jump_R = 0.07;
     }
 
     public static class Camera {

@@ -53,6 +53,10 @@ public class Navigation {
                 man.run();
             }
             man.update();
+            if (man.finished()) {
+                // Log man complete
+                queue.pop();
+            }
         }
     }
 
@@ -62,11 +66,6 @@ public class Navigation {
 
     public static void add_maneuvers(Maneuver[] mans) {
         queue.addAll(Arrays.asList(mans));
-    }
-
-    static void man_complete() {
-        queue.pop();
-        queue.peek().run();
     }
 
     public static double get_accel_X() {

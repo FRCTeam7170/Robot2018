@@ -23,7 +23,7 @@ public class Turn extends Maneuver {
     }
 
     @Override
-    void correct() {
+    void update() {
         /* If A and B are set motor speeds, and a and b are the encoder inputs (the true motor speeds),
          * then we can correct A, B to approach perfect rotation as follows:
          *     A_new = A_old * b/a
