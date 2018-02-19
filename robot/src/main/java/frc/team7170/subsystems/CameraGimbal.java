@@ -8,8 +8,14 @@ public class CameraGimbal {
 
     private final static Logger LOGGER = Logger.getLogger(CameraGimbal.class.getName());
 
-    private static Servo cam_X = new Servo(RobotMap.PWM.camera_servo_X);
-    private static Servo cam_Y = new Servo(RobotMap.PWM.camera_servo_Y);
+    private static Servo cam_X;
+    private static Servo cam_Y;
+
+    public static void init() {
+        LOGGER.info("Initializing camera gimbal.");
+        cam_X = new Servo(RobotMap.PWM.camera_servo_X);
+        cam_Y = new Servo(RobotMap.PWM.camera_servo_Y);
+    }
 
     /**
      * Must be called regularly in robot main loop as the servos are only incremented by a certain step/speed.

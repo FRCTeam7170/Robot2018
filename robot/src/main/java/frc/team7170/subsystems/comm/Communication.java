@@ -13,6 +13,8 @@ public class Communication {
 
     private final static Logger LOGGER = Logger.getLogger(Communication.class.getName());
 
+    private static NetworkTableInstance nt_inst;
+
     /**
      * Enum of all (sub)table paths for convenience.
      */
@@ -31,10 +33,13 @@ public class Communication {
         }
     }
 
-    private static final NetworkTableInstance nt_inst = NetworkTableInstance.getDefault();
+    public static void init() {
+        LOGGER.info("Initializing communication system.");
+        nt_inst = NetworkTableInstance.getDefault();
+    }
 
     static NetworkTableEntry register_entry(String key, String table) {
-        LOGGER.info("Entry with key "+key+" created in table "+table+".");
+        LOGGER.fine("Entry with key "+key+" created in table "+table+".");
         return nt_inst.getTable(table).getEntry(key);
     }
 }

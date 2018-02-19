@@ -1,7 +1,7 @@
 package frc.team7170.subsystems.nav;
 
 
-abstract class Maneuver {
+public abstract class Maneuver {
 
     boolean running = false;
 

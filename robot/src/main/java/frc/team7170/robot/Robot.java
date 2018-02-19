@@ -2,30 +2,30 @@ package frc.team7170.robot;
 
 import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Solenoid;
+import frc.team7170.subsystems.CameraGimbal;
+import frc.team7170.subsystems.Pneumatics;
+import frc.team7170.subsystems.comm.Communication;
+import frc.team7170.subsystems.nav.Navigation;
 import frc.team7170.util.TimedTask;
 import frc.team7170.subsystems.Drive;
+import frc.team7170.subsystems.Arm;
 
 
 public class Robot extends IterativeRobot {
 
     private final static Logger LOGGER = Logger.getLogger(Robot.class.getName());
 
-    private Joystick joy = new Joystick(RobotMap.Controllers.joystick_port);
-
-    // TODO: TEMP
-    private Solenoid solenoid5 = new Solenoid(15,0);
-    private Solenoid solenoid4 = new Solenoid(15,1);
-
-    // These store the X and Y values from the joystick
-    private double joy_X, joy_Y;
-
 
     //----------Inherited initialization functions----------//
 
     public void robotInit() {
-        System.out.println("ROBOT INIT");
+        Control.init();
+        Communication.init();
+        Drive.init();
+        // CameraGimbal.init();
+        Navigation.init();
+        Pneumatics.init();
+        Arm.init();
     }
 
 
@@ -70,16 +70,7 @@ public class Robot extends IterativeRobot {
 
 
     public void teleopPeriodic() {
-        joy_X = joy.getX();
-        joy_Y = joy.getY();
-
-        // TODO: TEMP
-        if(joy.getRawButtonPressed(4)) {
-            solenoid4.set(!solenoid4.get());
-            solenoid5.set(!solenoid5.get());
-        }
-
-        Drive.set_arcade(joy_X, joy_Y, true);
+        Drive.set_arcade(Control.X(), Control.Y(), true, true);
     }
 
 

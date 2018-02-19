@@ -8,37 +8,41 @@ import frc.team7170.util.CalcUtil;
 public class Turn extends Maneuver {
 
     private final double degrees;
-    private final double speed;
+    private final double predicted_final_enc;
+    private final Acceleration accel_L;
+    private final Acceleration accel_R;
 
-    public Turn(double degrees, double speed) {
+    public Turn(double degrees, double max_out, double transition_in, double transition_out, double stop_accel,
+                double start_decel, boolean lin_accel, boolean lin_decel) {
         this.degrees = degrees;
-        this.speed = speed;
+        this.predicted_final_enc = Math.abs(degrees) * RobotMap.RobotDims.wheel_to_centre / RobotMap.RobotDims.wheel_radius;
+        accel_L = new Acceleration(max_out, transition_in, transition_out, stop_accel, start_decel, lin_accel, lin_decel, degrees<0);
+        accel_R = new Acceleration(max_out, transition_in, transition_out, stop_accel, start_decel, lin_accel, lin_decel, degrees>0);
     }
 
     @Override
     void run() {
         running = true;
         Navigation.reset_encoders();
-        Drive.set_arcade(0, speed, false);
+        Drive.set_tank(accel_L.get(0), accel_R.get(0), false, false);
     }
 
     @Override
     void update() {
-        /* If A and B are set motor speeds, and a and b are the encoder inputs (the true motor speeds),
-         * then we can correct A, B to approach perfect rotation as follows:
-         *     A_new = A_old * b/a
-         *     B_new = B_old * a/b
-         */
-        int left_enc = Math.abs(Navigation.left_enc.get());
-        int right_enc = Math.abs(Navigation.right_enc.get());
-        if (!CalcUtil.in_threshold(left_enc - right_enc, 0, RobotMap.Maneuvers.encoder_desync_tolerance)) {
-            Drive.set_tank(Drive.rob_L * right_enc / left_enc, Drive.rob_R * left_enc / right_enc, false);
-        }
+        int left_enc = Math.abs(Navigation.get_Lenc());
+        int right_enc = Math.abs(Navigation.get_Renc());
+        Drive.set_tank(accel_L.get(left_enc/predicted_final_enc), accel_R.get(right_enc/predicted_final_enc),
+                false, false);
     }
 
     @Override
     boolean finished() {
-        return CalcUtil.in_threshold((Math.abs(Navigation.left_enc.get())+Math.abs(Navigation.right_enc.get()))/2,  // Get average between both encoders
-                degrees * RobotMap.RobotDims.wheel_to_centre / RobotMap.RobotDims.wheel_radius, RobotMap.Maneuvers.turn_angle_tolerance);
+        return CalcUtil.in_threshold(Math.abs(Navigation.get_Lenc()), predicted_final_enc, RobotMap.Maneuvers.turn_angle_tolerance) &
+                CalcUtil.in_threshold(Math.abs(Navigation.get_Renc()), predicted_final_enc, RobotMap.Maneuvers.turn_angle_tolerance);
+    }
+
+    @Override
+    public String toString() {
+        return "Turn("+degrees+")";
     }
 }

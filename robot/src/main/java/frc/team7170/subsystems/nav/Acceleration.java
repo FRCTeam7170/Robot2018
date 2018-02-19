@@ -1,11 +1,12 @@
 package frc.team7170.subsystems.nav;
 
 
-public class Accelerate {
+public class Acceleration {
 
     private boolean lin_accel;
     private boolean lin_decel;
     private boolean max_reached = false;
+    private boolean reverse_out;
     private double max_out;
     private double transition_out;
     private double transition_in;
@@ -15,8 +16,8 @@ public class Accelerate {
     private double prev_in = 0;
     private double max_reached_at_lin;
 
-    public Accelerate(double max_out, double transition_in, double transition_out, double stop_accel,
-                      double start_decel, boolean lin_accel, boolean lin_decel) {
+    public Acceleration(double max_out, double transition_in, double transition_out, double stop_accel,
+                        double start_decel, boolean lin_accel, boolean lin_decel, boolean reverse_out) {
         this.max_out = max_out;
         this.transition_in = transition_in;
         this.transition_out = transition_out;
@@ -25,6 +26,7 @@ public class Accelerate {
         this.lin_accel = lin_accel;
         this.lin_decel = lin_decel;
         this.prev_out = transition_in;
+        this.reverse_out = reverse_out;
     }
 
     double get(double prog) {
@@ -39,7 +41,7 @@ public class Accelerate {
             prev_out = lin_decel ? decel_lin(prog) : decel_const(prog);
         }
         prev_in = prog;
-        return prev_out;
+        return reverse_out ? -prev_out : prev_out;
     }
 
     private double accel_const(double prog) {

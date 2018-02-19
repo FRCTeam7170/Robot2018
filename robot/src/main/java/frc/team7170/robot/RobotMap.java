@@ -8,10 +8,6 @@ package frc.team7170.robot;
  */
 public class RobotMap {
 
-    public static class Main {
-        public static final double teleop_delay = 0.05;
-    }
-
     public static class Debug {
         public static final boolean print_current = false;
     }
@@ -41,12 +37,22 @@ public class RobotMap {
     }
 
     public static class PWM {
-        public static final int camera_servo_X = 0;
-        public static final int camera_servo_Y = 1;
+        public static final int arm_left_motor = 0;
+        public static final int arm_right_motor = 1;
+        public static final int endE_left_motor = 2;
+        public static final int endE_right_motor = 3;
+        public static final int camera_servo_X = 4;
+        public static final int camera_servo_Y = 5;
+    }
+
+    public static class PCM {
+        public static final int left_solenoid = 0;
+        public static final int right_solenoid = 1;
     }
 
     public static class Controllers {
-        public static final int joystick_port = 0;
+        public static final int joystick = 0;
+        public static final int gamepad = 1;
     }
 
     public static class DIO {
@@ -57,7 +63,7 @@ public class RobotMap {
     }
 
     public static class AIO {
-        public static final int gyro = 0;
+        public static final int arm_pot = 0;
     }
 
     public static class RobotDims {
@@ -71,16 +77,19 @@ public class RobotMap {
         public static final double robot_width = 0.6858;
         public static final double robot_length = 0.8192;
         public static final double robot_height = 1.0986;
-
     }
 
     public static class Maneuvers {
-        public static double default_acceleration_deceleration_frac = 0.5;
-        public static double default_acceleration_step = 0.001;
-        public static double default_acceleration_transition_out = 0.0;
-        public static double encoder_desync_tolerance = 10.0;  // How much deviation from the expectation of lenc.get() - renc.get() is acceptable
-        public static double encoder_desync_tolerance_dist = 0.05;  // metres
-        public static double turn_angle_tolerance = 3.0;  // degrees
+        public static double turn_angle_tolerance = 1.0;  // degrees
         public static double straight_distance_tolerance = 0.05;  // metres
+    }
+
+    public static class Arm {
+        public static double pot_scale = 1;
+        public static double pot_offset = 0;
+        public static double pot_kill_value = 0;
+        public static double endE_speed = 1;
+        public static boolean reverse_endE_left = false;
+        public static boolean reverse_endE_right = false;
     }
 }

@@ -2,7 +2,7 @@ package frc.team7170.util;
 
 
 /**
- * Class to call a function every after n milliseconds. Calls to run() must be often (i.e. put in loop)
+ * Class to call a function after n milliseconds. Calls to run() must be often (i.e. put in loop)
  * to ensure that the timing is close to exact--although, be warned, it never will be.
  * Consider other timing methods in the java libraries for more exactly timing.
  */
@@ -34,7 +34,7 @@ public class TimedTask {
     }
 
     /**
-     * Starts the timer. Not that the function is run once as soon as you start.
+     * Starts the timer. Note that the function is run once as soon as you start if start param is true.
      */
     public void start() {
         func.run();
@@ -55,7 +55,7 @@ public class TimedTask {
      * Call this regularly in a loop.
      */
     public void run() {
-        if (this.running & System.currentTimeMillis() > time + delay) {
+        if (this.running & System.currentTimeMillis() >= time + delay) {
             func.run();
             time = System.currentTimeMillis();
         }
