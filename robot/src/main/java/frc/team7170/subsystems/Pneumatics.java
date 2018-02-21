@@ -21,33 +21,17 @@ public class Pneumatics {
         arm_right = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.right_solenoid);
     }
 
-
-    // Left solenoid accessors
-
-    public static boolean get_left_solenoid() {
-        return arm_left.get();
+    public static boolean get_solenoids() {
+        return arm_left.get();  // Doesn't matter which
     }
 
-    public static void set_left_solenoid(boolean on) {
+    public static void set_solenoids(boolean on) {
         arm_left.set(on);
-    }
-
-    public static void toggle_left_solenoid() {
-        arm_left.set(!arm_left.get());
-    }
-
-
-    // Right solenoid accessors
-
-    public static boolean get_right_solenoid() {
-        return arm_right.get();
-    }
-
-    public static void set_right_solenoid(boolean on) {
         arm_right.set(on);
     }
 
-    public static void toggle_right_solenoid() {
+    public static void toggle_solenoids() {
+        arm_left.set(!arm_left.get());
         arm_right.set(!arm_right.get());
     }
 

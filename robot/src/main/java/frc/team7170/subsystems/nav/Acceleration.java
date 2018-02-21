@@ -1,6 +1,8 @@
 package frc.team7170.subsystems.nav;
 
 
+import frc.team7170.util.CalcUtil;
+
 public class Acceleration {
 
     private boolean lin_accel;
@@ -29,7 +31,8 @@ public class Acceleration {
         this.reverse_out = reverse_out;
     }
 
-    double get(double prog) {
+    public double get(double prog) {
+        prog = CalcUtil.apply_bounds(prog, 0, 1);
         if (!max_reached & prog < start_decel) {  // Accelerate
             prev_out = lin_accel ? accel_lin(prog) : accel_const(prog);
             if (prev_out >= max_out) {

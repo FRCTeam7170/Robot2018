@@ -2,7 +2,8 @@ package frc.team7170.robot;
 
 import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import frc.team7170.subsystems.CameraGimbal;
+import frc.team7170.robot.control.Control;
+import frc.team7170.robot.control.KeyBindings;
 import frc.team7170.subsystems.Pneumatics;
 import frc.team7170.subsystems.comm.Communication;
 import frc.team7170.subsystems.nav.Navigation;
@@ -19,6 +20,7 @@ public class Robot extends IterativeRobot {
     //----------Inherited initialization functions----------//
 
     public void robotInit() {
+        LOGGER.info("Initializing robot...");
         Control.init();
         Communication.init();
         Drive.init();
@@ -26,6 +28,7 @@ public class Robot extends IterativeRobot {
         Navigation.init();
         Pneumatics.init();
         Arm.init();
+        LOGGER.info("Initialization done.");
     }
 
 
@@ -51,31 +54,29 @@ public class Robot extends IterativeRobot {
 
     //----------Inherited periodic functions----------//
 
-    private TimedTask robotp = new TimedTask(() -> System.out.println("ROBOT PERIODIC"), 3000);
     public void robotPeriodic() {
-        robotp.run();
+        Arm.update();
+        Navigation.update();
     }
 
 
-    private TimedTask disabledp = new TimedTask(() -> System.out.println("DISABLED PERIODIC"), 3000);
     public void disabledPeriodic() {
-        disabledp.run();
+
     }
 
 
-    private TimedTask autop = new TimedTask(() -> System.out.println("AUTO PERIODIC"), 3000);
     public void autonomousPeriodic() {
-        autop.run();
+
     }
 
 
     public void teleopPeriodic() {
-        Drive.set_arcade(Control.X(), Control.Y(), true, true);
+        Drive.set_arcade(KeyBindings.action2axis(KeyBindings.Action.DRIVE_Y).get(),
+                KeyBindings.action2axis(KeyBindings.Action.DRIVE_X).get(), true, true);
     }
 
 
-    private TimedTask testp = new TimedTask(() -> System.out.println("TEST PERIODIC"), 3000);
     public void testPeriodic() {
-        testp.run();
+
     }
 }

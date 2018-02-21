@@ -56,33 +56,33 @@ public class Drive {
         }
     }
 
-    public static void set_arcade(double joy_X, double joy_Y, boolean smooth, boolean square) {
-        joy_X = CalcUtil.apply_bounds(joy_X, -1.0, 1.0);
+    public static void set_arcade(double joy_Y, double joy_Z, boolean smooth, boolean square) {
         joy_Y = CalcUtil.apply_bounds(joy_Y, -1.0, 1.0);
+        joy_Z = CalcUtil.apply_bounds(joy_Z, -1.0, 1.0);
 
         // This is copied from the setArcade function in DifferentialDrive
         double left;
         double right;
 
-        double maxInput = Math.copySign(Math.max(Math.abs(joy_X), Math.abs(joy_Y)), joy_X);
+        double maxInput = Math.copySign(Math.max(Math.abs(joy_Y), Math.abs(joy_Z)), joy_Y);
 
-        if (joy_X >= 0.0) {
+        if (joy_Y >= 0.0) {
             // First quadrant, else second quadrant
-            if (joy_Y >= 0.0) {
+            if (joy_Z >= 0.0) {
                 left = maxInput;
-                right = joy_X - joy_Y;
+                right = joy_Y - joy_Z;
             } else {
-                left = joy_X + joy_Y;
+                left = joy_Y + joy_Z;
                 right = maxInput;
             }
         } else {
             // Third quadrant, else fourth quadrant
-            if (joy_Y >= 0.0) {
-                left = joy_X + joy_Y;
+            if (joy_Z >= 0.0) {
+                left = joy_Y + joy_Z;
                 right = maxInput;
             } else {
                 left = maxInput;
-                right = joy_X - joy_Y;
+                right = joy_Y - joy_Z;
             }
         }
 
@@ -109,6 +109,14 @@ public class Drive {
 
     public static double get_R() {
         return rob_R;
+    }
+
+    public static double get_Y() {
+        return rob_R + (rob_L - rob_R)/2;
+    }
+
+    public static double get_Z() {
+        return (rob_L - rob_R)/2;
     }
 
     // TODO: Accessors for CAN data on motors, ex: current output

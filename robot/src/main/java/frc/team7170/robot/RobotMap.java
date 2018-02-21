@@ -87,9 +87,18 @@ public class RobotMap {
     public static class Arm {
         public static double pot_scale = 1;
         public static double pot_offset = 0;
-        public static double pot_kill_value = 0;
-        public static double endE_speed = 1;
+        public static double endE_speed = 1;  // [0, 1]
+        public static double arm_speed = 1;
         public static boolean reverse_endE_left = false;
         public static boolean reverse_endE_right = false;
+        public static double pot_value_kill_lower_inner = 0;
+        public static double pot_value_kill_upper_inner = 0;
+        public static double pot_value_kill_lower_outer = 0;
+        public static double pot_value_kill_upper_outer = 0;
+        public static double pot_value_home = 0;
+        public static double pot_value_base = 0;
+        public static double pot_value_switch = 0;
+        public static double pot_value_scale = 0;
+        public static double pot_value_reverse = 0;
     }
 }
