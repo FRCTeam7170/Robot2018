@@ -43,6 +43,8 @@ public class Arm {
         } else if (KeyBindings.action2button(KeyBindings.Action.ENDE_OFF).get_pressed()) {
             kill_endE();
         }
+        arm_analog(KeyBindings.action2axis(KeyBindings.Action.ARM_ANALOG).get());
+        /*
         if (KeyBindings.action2pov(KeyBindings.Action.ARM_UP).get()) {
             arm_up();
         } else if (KeyBindings.action2pov(KeyBindings.Action.ARM_DOWN).get()) {
@@ -50,6 +52,7 @@ public class Arm {
         } else {
             arm_kill();
         }
+        */
         if (KeyBindings.action2button(KeyBindings.Action.TRY_ARM_TOGGLE).get_pressed()) {
             Pneumatics.set_solenoids(!Pneumatics.get_solenoids());
         }
@@ -104,5 +107,10 @@ public class Arm {
     public static void arm_kill() {
         spark_left_arm.set(0);
         spark_right_arm.set(0);
+    }
+
+    public static void arm_analog(double speed) {
+        spark_left_arm.set(speed);
+        spark_right_arm.set(speed);
     }
 }

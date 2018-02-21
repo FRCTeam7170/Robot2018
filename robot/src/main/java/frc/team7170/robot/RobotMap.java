@@ -87,9 +87,9 @@ public class RobotMap {
     public static class Arm {
         public static double pot_scale = 1;
         public static double pot_offset = 0;
-        public static double endE_speed = 1;  // [0, 1]
+        public static double endE_speed = 0.75;  // [0, 1]
         public static double arm_speed = 1;
-        public static boolean reverse_endE_left = false;
+        public static boolean reverse_endE_left = true;
         public static boolean reverse_endE_right = false;
         public static double pot_value_kill_lower_inner = 0;
         public static double pot_value_kill_upper_inner = 0;

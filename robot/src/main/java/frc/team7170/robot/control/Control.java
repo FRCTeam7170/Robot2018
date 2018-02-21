@@ -12,8 +12,8 @@ public class Control {
     private final static Logger LOGGER = Logger.getLogger(Control.class.getName());
 
     // Technically I don't think these have to be a Joystick because we're simply accessing raw values anyway: could prob just be GenericHID
-    private static Joystick _joystick;
-    private static Joystick _gamepad;
+    private static Joystick _joystick = new Joystick(RobotMap.Controllers.joystick);
+    private static Joystick _gamepad = new Joystick(RobotMap.Controllers.gamepad);
 
 
     /* ----- General Button, Axis, and POV Classes/Interfaces ----- */
@@ -189,8 +189,10 @@ public class Control {
 
     public static void init() {
         LOGGER.info("Initializing control system.");
+        /*
         _joystick = new Joystick(RobotMap.Controllers.joystick);
         _gamepad = new Joystick(RobotMap.Controllers.gamepad);
+        */
     }
 
     public static void set_gamepad_rumble(GenericHID.RumbleType side, double value) {

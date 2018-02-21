@@ -7,7 +7,7 @@ public class KeyBindings {
 
     private final static Logger LOGGER = Logger.getLogger(KeyBindings.class.getName());
 
-    private static KeyMap keymap = new DefaultBindings();
+    private static KeyMap keymap = new GamepadDefaultBindings();
 
     public enum Action {
         DRIVE_Y,
@@ -15,6 +15,7 @@ public class KeyBindings {
         THROTTLE_CONTROL,
         ARM_UP,
         ARM_DOWN,
+        ARM_ANALOG,
         ENDE_SUCK,
         ENDE_PUSH,
         ENDE_OFF,

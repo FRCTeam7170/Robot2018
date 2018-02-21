@@ -3,6 +3,7 @@ package frc.team7170.robot;
 import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import frc.team7170.robot.control.Control;
+import frc.team7170.robot.control.GamepadDefaultBindings;
 import frc.team7170.robot.control.KeyBindings;
 import frc.team7170.subsystems.Pneumatics;
 import frc.team7170.subsystems.comm.Communication;

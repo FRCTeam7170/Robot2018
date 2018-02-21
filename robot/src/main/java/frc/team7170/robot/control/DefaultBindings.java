@@ -1,7 +1,7 @@
 package frc.team7170.robot.control;
 
 
-class DefaultBindings extends KeyMap {
+public class DefaultBindings extends KeyMap {
     DefaultBindings() {
         axes.put(KeyBindings.Action.DRIVE_Y, Control.joystick.Axes.Y);
         axes.put(KeyBindings.Action.DRIVE_X, Control.joystick.Axes.X);
