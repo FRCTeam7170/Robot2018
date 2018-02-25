@@ -16,76 +16,6 @@ public class Control {
     private static Joystick _gamepad = new Joystick(RobotMap.Controllers.gamepad);
 
 
-    /* ----- General Button, Axis, and POV Classes/Interfaces ----- */
-
-    public static class HIDButtonAccessor {
-
-        private final int port;
-        private final GenericHID joy;
-
-        HIDButtonAccessor(int port, GenericHID joy) {
-            this.port = port;
-            this.joy = joy;
-        }
-
-        public boolean get() {
-            return joy.getRawButton(port);
-        }
-
-        public boolean get_pressed() {
-            return joy.getRawButtonPressed(port);
-        }
-
-        public boolean get_released() {
-            return joy.getRawButtonReleased(port);
-        }
-    }
-
-    public static class HIDAxisAccessor {
-
-        private final int port;
-        private final GenericHID joy;
-
-        HIDAxisAccessor(int port, GenericHID joy) {
-            this.port = port;
-            this.joy = joy;
-        }
-
-        public double get() {
-            return joy.getRawAxis(port);
-        }
-    }
-
-    public static class HIDPOVAccessor {
-
-        private final int degrees;
-        private final GenericHID joy;
-        private boolean pressed;
-
-        HIDPOVAccessor(int degrees, GenericHID joy) {
-            this.degrees = degrees;
-            this.joy = joy;
-        }
-
-        public boolean get() {
-            if (joy.getPOV() == degrees) {
-                pressed = true;
-            } else {
-                pressed = false;
-            }
-            return pressed;
-        }
-
-        public boolean get_pressed() {
-            return !pressed & get();
-        }
-
-        public boolean get_released() {
-            return pressed & !get();
-        }
-    }
-
-
     /* ----- Joystick Convenience Bindings ----- */
 
     public static class _JoystickButtons {
@@ -130,9 +60,9 @@ public class Control {
     }
 
     public static class BigJoystick {
-        public _JoystickButtons Buttons = new _JoystickButtons();  // Singleton
-        public _JoystickAxes Axes = new _JoystickAxes();  // Singleton
-        public _JoystickPOV POV = new _JoystickPOV();  // Singleton
+        public final _JoystickButtons Buttons = new _JoystickButtons();  // Singleton
+        public final _JoystickAxes Axes = new _JoystickAxes();  // Singleton
+        public final _JoystickPOV POV = new _JoystickPOV();  // Singleton
     }
     public static final BigJoystick joystick = new BigJoystick();  // Singleton
 
@@ -178,9 +108,9 @@ public class Control {
     }
 
     public static class Gamepad {
-        public _GamepadButtons Buttons = new _GamepadButtons();  // Singleton
-        public _GamepadAxes Axes = new _GamepadAxes();  // Singleton
-        public _GamepadPOV POV = new _GamepadPOV();  // Singleton
+        public final _GamepadButtons Buttons = new _GamepadButtons();  // Singleton
+        public final _GamepadAxes Axes = new _GamepadAxes();  // Singleton
+        public final _GamepadPOV POV = new _GamepadPOV();  // Singleton
     }
     public static final Gamepad gamepad = new Gamepad();  // Singleton
 

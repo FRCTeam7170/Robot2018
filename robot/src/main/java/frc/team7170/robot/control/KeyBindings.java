@@ -24,24 +24,24 @@ public class KeyBindings {
         TRY_ARM_TOGGLE;
     }
 
-    public static Control.HIDButtonAccessor action2button(Action act) {
-        Control.HIDButtonAccessor btn = keymap.buttons.get(act);
+    public static HIDButtonAccessor action2button(Action act) {
+        HIDButtonAccessor btn = keymap.buttons.get(act);
         if (btn == null) {
             LOGGER.warning("Unregistered action requested: " + act + " not in KeyMap " + keymap.getClass().getName() + ".");
         }
         return btn;
     }
 
-    public static Control.HIDAxisAccessor action2axis(Action act) {
-        Control.HIDAxisAccessor axis = keymap.axes.get(act);
+    public static HIDAxisAccessor action2axis(Action act) {
+        HIDAxisAccessor axis = keymap.axes.get(act);
         if (axis == null) {
             LOGGER.warning("Unregistered action requested: " + act + " not in KeyMap " + keymap.getClass().getName() + ".");
         }
         return axis;
     }
 
-    public static Control.HIDPOVAccessor action2pov(Action act) {
-        Control.HIDPOVAccessor pov = keymap.POV.get(act);
+    public static HIDPOVAccessor action2pov(Action act) {
+        HIDPOVAccessor pov = keymap.POV.get(act);
         if (pov == null) {
             LOGGER.warning("Unregistered action requested: " + act + " not in KeyMap " + keymap.getClass().getName() + ".");
         }
