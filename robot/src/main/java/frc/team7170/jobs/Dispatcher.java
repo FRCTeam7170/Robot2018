@@ -35,11 +35,12 @@ public class Dispatcher {
 
     public void run() {
         // Update each module
-        modules.forEach((Module key, Boolean value) -> key.update());
+        modules.forEach((Module key, Boolean value) -> key.update());  // TODO: Check if module is enable
 
+        // Update each job and remove it if it's finished
         boolean job_removed = false;
         for (Job job: running_jobs) {
-            if (job._update()) {
+            if (job._update()) {  // TODO: Check if module is enable
                 job._end();  // TODO: Interrupting jobs, this doesnt work
                 running_jobs.remove(job);
                 job_removed = true;
@@ -50,6 +51,7 @@ public class Dispatcher {
             }
         }
 
+        // Run new jobs if required module locks are free
         if (job_removed) {
             for (Job job: queued_jobs) {
                 if (can_run_job(job)) {
@@ -58,6 +60,8 @@ public class Dispatcher {
                 }
             }
         }
+
+        // TODO: Run default jobs
     }
 
     private void start_job(Job job) {
@@ -78,5 +82,21 @@ public class Dispatcher {
 
     public void initialize_modules() {
         modules.forEach((Module key, Boolean value) -> key.init());
+    }
+
+    public boolean cancel_job(Job job) {
+
+    }
+
+    public void cancel_all() {
+
+    }
+
+    public void free_module(Module mod) {
+
+    }
+
+    public void priority_execute(Job job) {
+        
     }
 }

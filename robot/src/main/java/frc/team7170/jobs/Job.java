@@ -12,8 +12,11 @@ public abstract class Job {
     private boolean running = false;
     private boolean interruptable = false;
 
-    protected final void requires(Module...mods) {
-        requirements.addAll(Arrays.asList(mods));
+    protected final boolean requires(Module...mods) {
+        if (!running) {
+            requirements.addAll(Arrays.asList(mods));
+        }
+        return !running;
     }
 
     void start() {
@@ -49,8 +52,11 @@ public abstract class Job {
         return interruptable;
     }
 
-    protected final void set_interruptable(boolean interruptable) {
-        this.interruptable = interruptable;
+    protected final boolean set_interruptable(boolean interruptable) {
+        if (!running) {
+            this.interruptable = interruptable;
+        }
+        return !running;
     }
 
     protected abstract void init();
