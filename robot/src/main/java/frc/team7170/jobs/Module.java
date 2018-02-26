@@ -1,5 +1,6 @@
 package frc.team7170.jobs;
 
+
 public abstract class Module {
 
     private boolean locked = false;
@@ -14,6 +15,9 @@ public abstract class Module {
         }
         locked = true;
         curr_job = job;
+        if (curr_job != null) {
+            curr_job.signal_parent_state_change(this, !enabled);
+        }
         return true;
     }
 
@@ -45,10 +49,19 @@ public abstract class Module {
         } else {
             disabled();
         }
+        if (curr_job != null) {
+            curr_job.signal_parent_state_change(this, !enabled);
+        }
     }
 
     public final boolean get_enabled() {
         return enabled;
+    }
+
+    void _update() {
+        if (enabled) {
+            update();
+        }
     }
 
     protected void init() {}

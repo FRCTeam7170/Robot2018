@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+
 public class Dispatcher {
 
     private final static Logger LOGGER = Logger.getLogger(Dispatcher.class.getName());
@@ -21,6 +22,8 @@ public class Dispatcher {
     private HashSet<Job> running_jobs = new HashSet<>();
     private HashMap<Module, Boolean> modules = new HashMap<>();
 
+    private boolean jobs_updated = false;
+
     public void register_module(Module mod) {
         modules.putIfAbsent(mod, false);
     }
@@ -34,25 +37,15 @@ public class Dispatcher {
     }
 
     public void run() {
-        // Update each module
-        modules.forEach((Module key, Boolean value) -> key.update());  // TODO: Check if module is enable
-
         // Update each job and remove it if it's finished
-        boolean job_removed = false;
         for (Job job: running_jobs) {
-            if (job._update()) {  // TODO: Check if module is enable
-                job._end();  // TODO: Interrupting jobs, this doesnt work
-                running_jobs.remove(job);
-                job_removed = true;
-                for (Module mod: job.requirements) {
-                    mod.free_lock();
-                    modules.replace(mod, false);
-                }
+            if (job._update()) {
+                stop_job(job, true);
             }
         }
 
         // Run new jobs if required module locks are free
-        if (job_removed) {
+        if (jobs_updated) {
             for (Job job: queued_jobs) {
                 if (can_run_job(job)) {
                     queued_jobs.remove(job);
@@ -61,7 +54,15 @@ public class Dispatcher {
             }
         }
 
-        // TODO: Run default jobs
+        // Update each module and run defaults if free
+        modules.forEach((Module mod, Boolean locked) -> {
+            mod._update();
+            if (!locked) {
+                mod.get_current_job()._update();  // TODO: Incorporate into main running_jobs set and remove it if a non-default job wants to run
+            }
+        });
+
+        jobs_updated = false;
     }
 
     private void start_job(Job job) {
@@ -76,6 +77,16 @@ public class Dispatcher {
         job.start();
     }
 
+    private void stop_job(Job job, boolean peaceful) {
+        jobs_updated = true;
+        job.stop(peaceful);
+        running_jobs.remove(job);
+        for (Module mod: job.requirements) {
+            mod.free_lock();
+            modules.replace(mod, false);
+        }
+    }
+
     public boolean can_run_job(Job job) {
         return !Job.conflicts(job, modules);
     }
@@ -84,19 +95,18 @@ public class Dispatcher {
         modules.forEach((Module key, Boolean value) -> key.init());
     }
 
-    public boolean cancel_job(Job job) {
-
+    public boolean cancel_job(Job job, boolean override) {
+        if (job.is_interruptable() | override) {
+            stop_job(job, false);
+            return true;
+        }
+        return false;
     }
 
     public void cancel_all() {
-
-    }
-
-    public void free_module(Module mod) {
-
-    }
-
-    public void priority_execute(Job job) {
-        
+        queued_jobs.clear();
+        for (Job job: running_jobs) {
+            stop_job(job, false);
+        }
     }
 }

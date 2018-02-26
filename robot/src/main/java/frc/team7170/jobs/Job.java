@@ -1,6 +1,5 @@
 package frc.team7170.jobs;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.HashSet;
 
@@ -11,41 +10,48 @@ public abstract class Job {
 
     private boolean running = false;
     private boolean interruptable = false;
+    private HashSet<Module> disabled_parents = new HashSet<>();
 
     protected final boolean requires(Module...mods) {
         if (!running) {
-            requirements.addAll(Arrays.asList(mods));
+            for (Module mod: mods) {
+                requirements.add(mod);
+                if (!mod.get_enabled()) {
+                    disabled_parents.add(mod);
+                }
+            }
         }
         return !running;
     }
 
     void start() {
-        running = true;
-        init();
+        if (!running) {
+            running = true;
+            init();
+        }
     }
 
-    void cancel() {
-        if (interruptable) {
-            running = false;
-            interrupted();
+    void stop(boolean peaceful) {
+        if (running) {
+            if (peaceful) {
+                running = false;
+                end();
+            } else {
+                running = false;
+                interrupted();
+            }
         }
     }
 
     boolean _update() {
-        if (running) {
+        if (is_running()) {
             update();
-            return is_finished();
         }
-        return true;
-    }
-
-    void _end() {
-        running = false;
-        end();
+        return is_finished();
     }
 
     public final boolean is_running() {
-        return running;
+        return running & disabled_parents.isEmpty();
     }
 
     public final boolean is_interruptable() {
@@ -57,6 +63,18 @@ public abstract class Job {
             this.interruptable = interruptable;
         }
         return !running;
+    }
+
+    public boolean does_require(Module mod) {
+        return requirements.contains(mod);
+    }
+
+    void signal_parent_state_change(Module mod, boolean disabled) {
+        if (disabled) {
+            disabled_parents.add(mod);
+        } else {
+            disabled_parents.remove(mod);
+        }
     }
 
     protected abstract void init();
