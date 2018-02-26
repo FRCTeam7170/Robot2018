@@ -47,14 +47,13 @@
       <file leaf-file-name="Module.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Module.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+            <state relative-caret-position="540">
+              <caret line="36" column="51" lean-forward="false" selection-start-line="36" selection-start-column="51" selection-end-line="36" selection-end-column="51" />
               <folding>
                 <element signature="e#593#594#0" expanded="true" />
                 <element signature="e#622#623#0" expanded="true" />
                 <element signature="e#667#668#0" expanded="true" />
                 <element signature="e#698#699#0" expanded="true" />
-                <element signature="e#751#752#0" expanded="true" />
                 <element signature="e#784#785#0" expanded="true" />
                 <element signature="e#829#830#0" expanded="true" />
                 <element signature="e#863#864#0" expanded="true" />
@@ -65,7 +64,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Dispatcher.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Dispatcher.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Dispatcher.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="75">
@@ -76,10 +75,43 @@
                 <element signature="e#393#394#0" expanded="true" />
                 <element signature="e#694#695#0" expanded="true" />
                 <element signature="e#741#742#0" expanded="true" />
-                <element signature="e#2603#2604#0" expanded="true" />
-                <element signature="e#2654#2655#0" expanded="true" />
-                <element signature="e#2694#2695#0" expanded="true" />
-                <element signature="e#2768#2769#0" expanded="true" />
+                <element signature="e#2695#2696#0" expanded="true" />
+                <element signature="e#2746#2747#0" expanded="true" />
+                <element signature="e#2786#2787#0" expanded="true" />
+                <element signature="e#2860#2861#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Communication.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/Communication.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="585">
+              <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NTVar.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/NTVar.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="660">
+              <caret line="71" column="22" lean-forward="true" selection-start-line="71" selection-start-column="22" selection-end-line="71" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Transmitter.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/Transmitter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="4" lean-forward="true" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
+              <folding>
+                <element signature="e#100#101#0" expanded="true" />
+                <element signature="e#156#157#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -93,9 +125,9 @@
         <option value="AnnotationType" />
         <option value="Singleton" />
         <option value="JavaFXApplication" />
-        <option value="Interface" />
         <option value="FRCCommand" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -155,9 +187,7 @@
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/Navigation.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/nav/Accelerate.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/util/TimedTask.java" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/NTVar.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/CameraGimbal.java" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/Communication.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/Drive.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/nav/Straight.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/nav/Turn.java" />
@@ -188,6 +218,9 @@
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Job.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Module.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Dispatcher.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/NTVar.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/Communication.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/Transmitter.java" />
       </list>
     </option>
   </component>
@@ -303,6 +336,16 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="team7170" type="462c0819:PsiDirectoryNode" />
               <item name="subsystems" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="robot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="robot" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="team7170" type="462c0819:PsiDirectoryNode" />
+              <item name="subsystems" type="462c0819:PsiDirectoryNode" />
+              <item name="comm" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="robot" type="b2602c69:ProjectViewProjectNode" />
@@ -465,12 +508,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1518226944156</updated>
-      <workItem from="1518658519739" duration="96071000" />
+      <workItem from="1518658519739" duration="97960000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="96071000" />
+    <option name="totallyTimeSpent" value="97960000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -560,76 +603,10 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/nav/Acceleration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="33" column="11" lean-forward="false" selection-start-line="33" selection-start-column="11" selection-end-line="33" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/GenericHID.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="128" column="50" lean-forward="true" selection-start-line="128" selection-start-column="50" selection-end-line="128" selection-end-column="50" />
-          <folding>
-            <element signature="e#3200#3201#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/robot/RobotMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="89" column="47" lean-forward="false" selection-start-line="89" selection-start-column="47" selection-end-line="89" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/command/PIDSubsystem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-61">
-          <caret line="24" column="22" lean-forward="false" selection-start-line="24" selection-start-column="22" selection-end-line="24" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/PIDSource.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="14" column="58" lean-forward="true" selection-start-line="14" selection-start-column="58" selection-end-line="14" selection-end-column="58" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/PIDController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2535">
-          <caret line="193" column="61" lean-forward="true" selection-start-line="193" selection-start-column="61" selection-end-line="193" selection-end-column="61" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/PIDSourceType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="12" column="12" lean-forward="false" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/smartdashboard/SmartDashboard.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="27" column="13" lean-forward="false" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/Sendable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="9" column="50" lean-forward="true" selection-start-line="9" selection-start-column="50" selection-end-line="9" selection-end-column="50" />
           <folding />
         </state>
       </provider>
@@ -640,18 +617,6 @@
           <caret line="17" column="17" lean-forward="false" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/robot/control/Control.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1125">
-          <caret line="6" column="35" lean-forward="false" selection-start-line="6" selection-start-column="35" selection-end-line="6" selection-end-column="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#6593#6594#0" expanded="true" />
-            <element signature="e#6640#6641#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -930,17 +895,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/SendableBase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="50" column="33" lean-forward="false" selection-start-line="50" selection-start-column="33" selection-end-line="50" selection-end-column="33" />
-          <folding>
-            <element signature="e#1475#1476#0" expanded="false" />
-            <element signature="e#1498#1499#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_161.jdk/Contents/Home/src.zip!/java/util/HashSet.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="267">
@@ -950,17 +904,6 @@
             <element signature="e#6964#6965#0" expanded="false" />
             <element signature="e#8762#8763#0" expanded="false" />
             <element signature="e#8807#8808#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/command/Command.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="349" column="20" lean-forward="false" selection-start-line="349" selection-start-column="20" selection-end-line="349" selection-end-column="20" />
-          <folding>
-            <element signature="e#11149#11150#0" expanded="false" />
-            <element signature="e#11174#11175#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -984,21 +927,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Module.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/robot/control/Control.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+        <state relative-caret-position="135">
+          <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
           <folding>
-            <element signature="e#593#594#0" expanded="true" />
-            <element signature="e#622#623#0" expanded="true" />
-            <element signature="e#667#668#0" expanded="true" />
-            <element signature="e#698#699#0" expanded="true" />
-            <element signature="e#751#752#0" expanded="true" />
-            <element signature="e#784#785#0" expanded="true" />
-            <element signature="e#829#830#0" expanded="true" />
-            <element signature="e#863#864#0" expanded="true" />
-            <element signature="e#1201#1202#0" expanded="true" />
-            <element signature="e#1231#1232#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#6593#6594#0" expanded="true" />
+            <element signature="e#6640#6641#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1023,6 +959,56 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Module.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="36" column="51" lean-forward="false" selection-start-line="36" selection-start-column="51" selection-end-line="36" selection-end-column="51" />
+          <folding>
+            <element signature="e#593#594#0" expanded="true" />
+            <element signature="e#622#623#0" expanded="true" />
+            <element signature="e#667#668#0" expanded="true" />
+            <element signature="e#698#699#0" expanded="true" />
+            <element signature="e#784#785#0" expanded="true" />
+            <element signature="e#829#830#0" expanded="true" />
+            <element signature="e#863#864#0" expanded="true" />
+            <element signature="e#1201#1202#0" expanded="true" />
+            <element signature="e#1231#1232#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/Sendable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="15" column="17" lean-forward="false" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/SendableBase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="9" column="45" lean-forward="false" selection-start-line="9" selection-start-column="45" selection-end-line="9" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/livewindow/LiveWindow.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="24" column="13" lean-forward="false" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/WPILib-sources.jar!/edu/wpi/first/wpilibj/command/Command.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="394">
+          <caret line="42" column="68" lean-forward="false" selection-start-line="42" selection-start-column="68" selection-end-line="42" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Dispatcher.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -1033,10 +1019,67 @@
             <element signature="e#393#394#0" expanded="true" />
             <element signature="e#694#695#0" expanded="true" />
             <element signature="e#741#742#0" expanded="true" />
-            <element signature="e#2603#2604#0" expanded="true" />
-            <element signature="e#2654#2655#0" expanded="true" />
-            <element signature="e#2694#2695#0" expanded="true" />
-            <element signature="e#2768#2769#0" expanded="true" />
+            <element signature="e#2695#2696#0" expanded="true" />
+            <element signature="e#2746#2747#0" expanded="true" />
+            <element signature="e#2786#2787#0" expanded="true" />
+            <element signature="e#2860#2861#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/ntcore-sources.jar!/edu/wpi/first/networktables/NetworkTablesJNI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1620">
+          <caret line="119" column="67" lean-forward="true" selection-start-line="119" selection-start-column="67" selection-end-line="119" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/ntcore-sources.jar!/edu/wpi/first/networktables/NetworkTableInstance.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="282">
+          <caret line="324" column="26" lean-forward="false" selection-start-line="324" selection-start-column="26" selection-end-line="324" selection-end-column="26" />
+          <folding>
+            <element signature="e#10848#10849#0" expanded="true" />
+            <element signature="e#10904#10905#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/wpilib/java/current/lib/ntcore-sources.jar!/edu/wpi/first/networktables/NetworkTableEntry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1359">
+          <caret line="758" column="25" lean-forward="true" selection-start-line="758" selection-start-column="25" selection-end-line="758" selection-end-column="25" />
+          <folding>
+            <element signature="e#26065#26066#0" expanded="true" />
+            <element signature="e#26111#26112#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/NTVar.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="71" column="22" lean-forward="true" selection-start-line="71" selection-start-column="22" selection-end-line="71" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/Communication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="585">
+          <caret line="46" column="0" lean-forward="false" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/comm/Transmitter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="4" lean-forward="true" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
+          <folding>
+            <element signature="e#100#101#0" expanded="true" />
+            <element signature="e#156#157#0" expanded="true" />
           </folding>
         </state>
       </provider>

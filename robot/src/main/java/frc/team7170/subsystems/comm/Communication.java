@@ -42,4 +42,8 @@ public class Communication {
         LOGGER.fine("Entry with key "+key+" created in table "+table+".");
         return nt_inst.getTable(table).getEntry(key);
     }
+
+    public static void register_transmitter(Transmitter trans) {
+
+    }
 }

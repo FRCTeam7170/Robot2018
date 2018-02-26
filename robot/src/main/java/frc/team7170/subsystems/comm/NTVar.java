@@ -46,6 +46,7 @@ public class NTVar<T> {
         } catch (ClassCastException e) {
             // This should never happen unless the type is changed outside of this interface because
             // NetworkTableEntry.setValue() throws an exception if the initial value type is illegal
+            // and set() only allows for setting to the predefined type anyway.
             LOGGER.severe("Cast to specified NTVar generic type failed.");
             e.printStackTrace();
             return null;

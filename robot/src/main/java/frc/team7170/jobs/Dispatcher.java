@@ -30,7 +30,7 @@ public class Dispatcher {
 
     public void add_job(Job job) {
         if (can_run_job(job)) {
-            start_job(job);
+            start_job(job, false);
         } else {
             queued_jobs.add(job);
         }
@@ -49,29 +49,32 @@ public class Dispatcher {
             for (Job job: queued_jobs) {
                 if (can_run_job(job)) {
                     queued_jobs.remove(job);
-                    start_job(job);
+                    start_job(job, false);
                 }
             }
         }
 
-        // Update each module and run defaults if free
+        // Update each module and run defaults if locks are free
         modules.forEach((Module mod, Boolean locked) -> {
             mod._update();
             if (!locked) {
-                mod.get_current_job()._update();  // TODO: Incorporate into main running_jobs set and remove it if a non-default job wants to run
+                start_job(mod.get_default_job(), true);
             }
         });
 
         jobs_updated = false;
     }
 
-    private void start_job(Job job) {
-        for (Module mod: job.requirements) {
-            if (!mod.claim_lock(job)) {
-                // If the dispatcher handles jobs & modules correctly, this should never happen.
-                throw new RuntimeException("Job "+job+" attempted to claim Module lock from "+mod+" but Job "+mod.get_current_job()+" owns the lock!");
+    private void start_job(Job job, boolean is_default) {
+        if (!is_default) {
+            for (Module mod : job.requirements) {
+                running_jobs.remove(mod.get_default_job());
+                if (!mod.claim_lock(job)) {
+                    // If the dispatcher handles jobs & modules correctly, this should never happen.
+                    throw new RuntimeException("Job " + job + " attempted to claim Module lock from " + mod + " but Job " + mod.get_current_job() + " owns the lock!");
+                }
+                modules.replace(mod, true);
             }
-            modules.replace(mod, true);
         }
         running_jobs.add(job);
         job.start();
