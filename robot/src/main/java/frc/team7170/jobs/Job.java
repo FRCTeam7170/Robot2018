@@ -1,14 +1,13 @@
 package frc.team7170.jobs;
 
-import java.util.Map;
 import java.util.HashSet;
 
 
 public abstract class Job {
 
-    HashSet<Module> requirements = new HashSet<>();
-
+    private HashSet<Module> requirements = new HashSet<>();
     private boolean running = false;
+    private boolean started = false;
     private boolean interruptable = false;
     private HashSet<Module> disabled_parents = new HashSet<>();
 
@@ -25,32 +24,39 @@ public abstract class Job {
     }
 
     void start() {
-        if (!running) {
+        if (!running & !started) {
             running = true;
+            started = true;
             init();
         }
     }
 
-    void stop(boolean peaceful) {
-        if (running) {
-            if (peaceful) {
-                running = false;
-                end();
-            } else {
-                running = false;
-                interrupted();
-            }
+    boolean cancel(boolean override) {
+        if (running & (interruptable | override)) {
+            running = false;
+            interrupted();
+            return true;
         }
+        return false;
     }
 
     boolean _update() {
-        if (is_running()) {
+        if (is_updating()) {
             update();
         }
-        return is_finished();
+        if (is_finished()) {
+            running = false;
+            end();
+            return true;
+        }
+        return false;
     }
 
     public final boolean is_running() {
+        return running;
+    }
+
+    public final boolean is_updating() {
         return running & disabled_parents.isEmpty();
     }
 
@@ -69,6 +75,10 @@ public abstract class Job {
         return requirements.contains(mod);
     }
 
+    protected HashSet<Module> get_requirements() {
+        return requirements;
+    }
+
     void signal_parent_state_change(Module mod, boolean disabled) {
         if (disabled) {
             disabled_parents.add(mod);
@@ -77,7 +87,7 @@ public abstract class Job {
         }
     }
 
-    protected abstract void init();
+    protected void init() {}
 
     protected abstract void update();
 
@@ -100,15 +110,6 @@ public abstract class Job {
                 if (!req.add(mod)) {
                     return true;
                 }
-            }
-        }
-        return false;
-    }
-
-    public static boolean conflicts(Job job, Map<Module, Boolean> mods) {
-        for (Module mod: job.requirements) {
-            if (mods.get(mod)) {
-                return true;
             }
         }
         return false;

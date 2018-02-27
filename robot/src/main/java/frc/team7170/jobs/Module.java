@@ -43,14 +43,16 @@ public abstract class Module {
     }
 
     public final void set_enabled(boolean enabled) {
-        this.enabled = enabled;
-        if (enabled) {
-            enabled();
-        } else {
-            disabled();
-        }
-        if (curr_job != null) {
-            curr_job.signal_parent_state_change(this, !enabled);
+        if (enabled != this.enabled) {
+            this.enabled = enabled;
+            if (enabled) {
+                enabled();
+            } else {
+                disabled();
+            }
+            if (curr_job != null) {
+                curr_job.signal_parent_state_change(this, !enabled);
+            }
         }
     }
 
