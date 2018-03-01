@@ -5,11 +5,15 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.robot.control.KeyBindings;
+import edu.wpi.first.wpilibj.DigitalOutput;
 
 
 public class Arm {
 
     private final static Logger LOGGER = Logger.getLogger(Arm.class.getName());
+
+    // TODO: TEMP
+    private final static DigitalOutput dos = new DigitalOutput(9);
 
     private static Spark spark_left_endE;
     private static Spark spark_right_endE;
@@ -36,6 +40,7 @@ public class Arm {
     }
 
     public static void update() {
+        /*
         if (KeyBindings.action2button(KeyBindings.Action.ENDE_PUSH).get_pressed()) {
             push_endE();
         } else if (KeyBindings.action2button(KeyBindings.Action.ENDE_SUCK).get_pressed()) {
@@ -44,7 +49,6 @@ public class Arm {
             kill_endE();
         }
         arm_analog(KeyBindings.action2axis(KeyBindings.Action.ARM_ANALOG).get());
-        /*
         if (KeyBindings.action2pov(KeyBindings.Action.ARM_UP).get()) {
             arm_up();
         } else if (KeyBindings.action2pov(KeyBindings.Action.ARM_DOWN).get()) {
@@ -53,18 +57,20 @@ public class Arm {
             arm_kill();
         }
         */
+        /*
         if (KeyBindings.action2button(KeyBindings.Action.TRY_ARM_TOGGLE).get_pressed()) {
             Pneumatics.set_solenoids(!Pneumatics.get_solenoids());
         }
-        /*
+        */
         if (extended & !safe_zone()) {
             extended = false;
-            Pneumatics.set_solenoids(false);
+            dos.set(true);
+            // Pneumatics.set_solenoids(false);
         } else if (!extended & !danger_zone()) {
             extended = true;
-            Pneumatics.set_solenoids(true);
+            dos.set(false);
+            // Pneumatics.set_solenoids(true);
         }
-        */
     }
 
     public static boolean safe_zone() {

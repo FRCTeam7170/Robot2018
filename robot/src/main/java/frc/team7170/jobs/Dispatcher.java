@@ -6,6 +6,15 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 
+/**
+ * This class controls dispatching jobs to modules and ensures that no module will be assigned more than one job to
+ * avoid motor conflicts, etcetera. This class also manages the initialization and updating of each module and job.
+ *
+ * Quick guidelines:
+ * Call register_module(Module) in the constructor of each module.
+ * Call add_job(Job) to queue/run each job.
+ * Call run() regularly in the robot main loop.
+ */
 public class Dispatcher {
 
     private final static Logger LOGGER = Logger.getLogger(Dispatcher.class.getName());
@@ -20,10 +29,10 @@ public class Dispatcher {
 
     private ArrayList<Job> queued_jobs = new ArrayList<>();
     private HashSet<Job> running_jobs = new HashSet<>();
-    private HashMap<Module, Boolean> modules = new HashMap<>();
+    private HashMap<Module, Boolean> modules = new HashMap<>();  // Module-Boolean pairs where the boolean represents if the module is locked.
 
-    private boolean jobs_updated = false;
-    private boolean modules_initialized = false;
+    private boolean jobs_updated = false;  // State variable to indicate whether a running job has terminated and thus queued jobs should be queried (see run()).
+    private boolean modules_initialized = false;  // State variable to indicate whether all the modules have been initialized or not.
 
     /**
      * Must be called by each class that inherits from Module, most likely in the constructor (therefore each module should be a singleton).
@@ -60,7 +69,7 @@ public class Dispatcher {
                 mod.get_default_job().start();  // This will only have any effect if the job has not started yet
             } else {
                 // Remove the default job if the module has a current job
-                // Doing these every iteration isn't ideal, but this call should be pretty cheap and I can't think of a better method without a lot of work
+                // Doing this every iteration isn't ideal, but this call should be pretty cheap and I can't think of a better method without a lot of work
                 running_jobs.remove(mod.get_default_job());
             }
         });
