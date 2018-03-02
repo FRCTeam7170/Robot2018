@@ -1,4 +1,4 @@
-package frc.team7170.subsystems.comm;
+package frc.team7170.comm;
 
 
 public interface Transmitter {

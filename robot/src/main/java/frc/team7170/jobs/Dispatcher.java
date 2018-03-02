@@ -63,7 +63,7 @@ public class Dispatcher {
         // Update each module and run defaults if locks are free
         modules.forEach((Module mod, Boolean locked) -> {
             mod._update();
-            if (mod.get_current_job() == null) {
+            if (mod.get_current_job() == null & mod.get_default_job() != null) {
                 // Start the default job without claiming the lock so new jobs with this module as a requirement can override it
                 running_jobs.add(mod.get_default_job());
                 mod.get_default_job().start();  // This will only have any effect if the job has not started yet

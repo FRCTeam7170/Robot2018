@@ -1,4 +1,4 @@
-package frc.team7170.subsystems.comm;
+package frc.team7170.comm;
 
 import java.util.function.Consumer;
 import java.util.logging.Logger;

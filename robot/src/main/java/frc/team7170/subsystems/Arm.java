@@ -4,7 +4,6 @@ import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import frc.team7170.robot.RobotMap;
-import frc.team7170.robot.control.KeyBindings;
 import edu.wpi.first.wpilibj.DigitalOutput;
 
 

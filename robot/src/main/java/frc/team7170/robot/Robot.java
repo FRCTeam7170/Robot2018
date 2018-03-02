@@ -2,13 +2,11 @@ package frc.team7170.robot;
 
 import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import frc.team7170.robot.control.Control;
-import frc.team7170.robot.control.GamepadDefaultBindings;
-import frc.team7170.robot.control.KeyBindings;
+import frc.team7170.control.Control;
+import frc.team7170.control.KeyBindings;
 import frc.team7170.subsystems.Pneumatics;
-import frc.team7170.subsystems.comm.Communication;
+import frc.team7170.comm.Communication;
 import frc.team7170.subsystems.nav.Navigation;
-import frc.team7170.util.TimedTask;
 import frc.team7170.subsystems.Drive;
 import frc.team7170.subsystems.Arm;
 

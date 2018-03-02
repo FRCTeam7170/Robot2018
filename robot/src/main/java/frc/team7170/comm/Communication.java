@@ -1,4 +1,4 @@
-package frc.team7170.subsystems.comm;
+package frc.team7170.comm;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;

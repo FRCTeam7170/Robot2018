@@ -1,4 +1,7 @@
-package frc.team7170.robot.control;
+package frc.team7170.control.keymaps;
+
+import frc.team7170.control.Control;
+import frc.team7170.control.KeyBindings;
 
 
 public class GamepadDefaultBindings extends KeyMap {

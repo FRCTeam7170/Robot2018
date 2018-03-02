@@ -1,4 +1,7 @@
-package frc.team7170.robot.control;
+package frc.team7170.control;
+
+import frc.team7170.control.keymaps.GamepadDefaultBindings;
+import frc.team7170.control.keymaps.KeyMap;
 
 import java.util.logging.Logger;
 
