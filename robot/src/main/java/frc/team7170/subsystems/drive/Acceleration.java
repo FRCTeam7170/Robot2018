@@ -1,7 +1,7 @@
-package frc.team7170.subsystems.nav;
-
+package frc.team7170.subsystems.drive;
 
 import frc.team7170.util.CalcUtil;
+
 
 public class Acceleration {
 

@@ -3,10 +3,10 @@ package frc.team7170.control;
 
 /**
  * Enum of all valid actions usable in the key binding system.
- * @see KeyBindings
+ * @see Control
  *
  * {@link frc.team7170.control.keymaps.KeyMap}s don't necessarily need to provide a mapping for each action, but if they
- * don't, {@link KeyBindings#action2axis(Action)} and {@link KeyBindings#action2button(Action)} return null, and, as
+ * don't, {@link Control#action2axis(Action)} and {@link Control#action2button(Action)} return null, and, as
  * such, null checking must be implemented.
  *
  * All actions that require an axis (double) input should be prefixed with "A_..."

@@ -1,22 +1,53 @@
 package frc.team7170.control;
 
 import java.util.logging.Logger;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import frc.team7170.control.keymaps.DefaultJoystickBindings;
+import frc.team7170.control.keymaps.KeyMap;
 import frc.team7170.robot.RobotMap;
 
 
+/**
+ * The control system is simply the system responsible for managing human input from the joysticks.
+ *
+ * This class provides a whole suite of convenience bindings for both the Logitech ED Extreme Pro joystick and the
+ * Logitech Gamepad F310. This makes referencing buttons/axes on the devices much easier with something like
+ * {@code joystick.Buttons.TRIGGER.get()} as opposed to {@code joystick.getButton(1)}, which isn't as explicit
+ * and requires an id number.
+ *
+ * Each POV direction of the devices can be treated as a button mutually exclusive with each other POV
+ * direction thanks to the {@link HIDPOVAccessor} class.
+ *
+ * To make switching key bindings easier in the future, all attempts to poll a button or axis should be done so through
+ * {@link Control#action2button(Action)} or {@link Control#action2axis(Action)}. Note these methods return null if a
+ * given action is unbound for the current key binding, so null checking must be implemented.
+ */
 public class Control {
 
     private final static Logger LOGGER = Logger.getLogger(Control.class.getName());
 
-    // Technically I don't think these have to be a Joystick because we're simply accessing raw values anyway: could prob just be GenericHID
-    private static Joystick _joystick = new Joystick(RobotMap.Controllers.joystick);
-    private static Joystick _gamepad = new Joystick(RobotMap.Controllers.gamepad);
+    private static Control instance = new Control();  // Singleton
+    public static Control get_instance() {
+        return instance;
+    }
+    private Control() {}
+
+    // Technically these don't have to be a Joystick because we're simply accessing raw values
+    private Joystick _joystick = new Joystick(RobotMap.Controllers.joystick);
+    private Joystick _gamepad = new Joystick(RobotMap.Controllers.gamepad);
+
+    /**
+     * A map of action-button/axis pairs so we can easily switch bindings without having to change code in multiple different classes
+     */
+    private KeyMap keymap = new DefaultJoystickBindings();
 
 
-    public static class _POV {
+    // Here we provide an easy way to reference buttons/axes by doing something like:
+    //     joystick.Buttons.TRIGGER.get()
+    // More verbose, but also more explicit than something like joystick.getButton(1)
+
+    public class _POV {
         public final HIDPOVAccessor TOP;
         public final HIDPOVAccessor TOP_RIGHT;
         public final HIDPOVAccessor RIGHT;
@@ -47,7 +78,7 @@ public class Control {
         }
     }
 
-    public static class _JoystickButtons {
+    public class _JoystickButtons {
         public final HIDButtonAccessor B1      = new HIDButtonAccessor(1, _joystick);
         public final HIDButtonAccessor B2      = new HIDButtonAccessor(2, _joystick);
         public final HIDButtonAccessor B3      = new HIDButtonAccessor(3, _joystick);
@@ -66,7 +97,7 @@ public class Control {
         _JoystickButtons() {}
     }
 
-    public static class _JoystickAxes {
+    public class _JoystickAxes {
         public final HIDAxisAccessor X        = new HIDAxisAccessor(0, _joystick);
         public final HIDAxisAccessor Y        = new HIDAxisAccessor(1, _joystick);
         public final HIDAxisAccessor Z        = new HIDAxisAccessor(2, _joystick);
@@ -76,17 +107,17 @@ public class Control {
         _JoystickAxes() {}
     }
 
-    public static class _Joystick {
+    public class _Joystick {
         public final _JoystickButtons Buttons = new _JoystickButtons();  // Singleton
         public final _JoystickAxes Axes = new _JoystickAxes();  // Singleton
         public final _POV POV = new _POV(_joystick);
 
         _Joystick() {}
     }
-    public static final _Joystick joystick = new _Joystick();  // Singleton
+    public final _Joystick joystick = new _Joystick();  // Singleton
 
 
-    public static class _GamepadButtons {
+    public class _GamepadButtons {
         public final HIDButtonAccessor A      = new HIDButtonAccessor(1, _gamepad);
         public final HIDButtonAccessor B      = new HIDButtonAccessor(2, _gamepad);
         public final HIDButtonAccessor X      = new HIDButtonAccessor(3, _gamepad);
@@ -101,7 +132,7 @@ public class Control {
         _GamepadButtons() {}
     }
 
-    public static class _GamepadAxes {
+    public class _GamepadAxes {
         public final HIDAxisAccessor LX = new HIDAxisAccessor(0, _gamepad);
         public final HIDAxisAccessor LY = new HIDAxisAccessor(1, _gamepad);
         public final HIDAxisAccessor LT = new HIDAxisAccessor(2, _gamepad);
@@ -112,19 +143,17 @@ public class Control {
         _GamepadAxes() {}
     }
 
-    public static class _Gamepad {
+    public class _Gamepad {
         public final _GamepadButtons Buttons = new _GamepadButtons();  // Singleton
         public final _GamepadAxes Axes = new _GamepadAxes();  // Singleton
         public final _POV POV = new _POV(_gamepad);
 
         _Gamepad() {}
     }
-    public static final _Gamepad gamepad = new _Gamepad();  // Singleton
+    public final _Gamepad gamepad = new _Gamepad();  // Singleton
 
 
-    /* ----- Misc ----- */
-
-    public static void init() {
+    public void init() {
         LOGGER.info("Initializing control system.");
         /*
         _joystick = new Joystick(RobotMap.Controllers.joystick);
@@ -132,7 +161,48 @@ public class Control {
         */
     }
 
-    public static void set_gamepad_rumble(GenericHID.RumbleType side, double value) {
+    /**
+     * Sets the rumble on the gamepad.
+     * @see Joystick#setRumble(GenericHID.RumbleType, double)
+     * @param side A {@link edu.wpi.first.wpilibj.GenericHID.RumbleType} side.
+     * @param value Magnitude of the rumble in [0, 1].
+     */
+    public void set_gamepad_rumble(GenericHID.RumbleType side, double value) {
         _gamepad.setRumble(side, value);
+    }
+
+    /**
+     * This is the recommended way to reference buttons on HIDs.
+     * @param act The action to poll the keymap for.
+     * @return The {@link HIDButtonAccessor} object bound to the given action or null if the action is unbound.
+     */
+    public HIDButtonAccessor action2button(Action act) {
+        HIDButtonAccessor btn = keymap.get_buttons().get(act);
+        if (btn == null) {
+            LOGGER.warning("Unregistered action requested: " + act + " not in KeyMap " + keymap.getClass().getName() + ".");
+        }
+        return btn;
+    }
+
+    /**
+     * This is the recommended way to reference axes on HIDs.
+     * @param act The action to poll the keymap for.
+     * @return The {@link HIDAxisAccessor} object bound to the given action or null if the action is unbound.
+     */
+    public HIDAxisAccessor action2axis(Action act) {
+        HIDAxisAccessor axis = keymap.get_axes().get(act);
+        if (axis == null) {
+            LOGGER.warning("Unregistered action requested: " + act + " not in KeyMap " + keymap.getClass().getName() + ".");
+        }
+        return axis;
+    }
+
+    /**
+     * Change the keymap. This is useful for when switching joysticks or drivers.
+     * @param km The new keymap to use.
+     */
+    public void set_keymap(KeyMap km) {
+        LOGGER.info("Switching KeyMap from " + keymap.getClass().getName() + " to " + km.getClass().getName() + ".");
+        keymap = km;
     }
 }
