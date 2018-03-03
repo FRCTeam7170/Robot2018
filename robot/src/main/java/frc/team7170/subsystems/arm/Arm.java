@@ -1,30 +1,38 @@
-package frc.team7170.subsystems;
+package frc.team7170.subsystems.arm;
 
 import java.util.logging.Logger;
+
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import frc.team7170.jobs.Dispatcher;
+import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
-import edu.wpi.first.wpilibj.DigitalOutput;
+import frc.team7170.subsystems.Pneumatics;
 
 
-public class Arm {
+public class Arm extends Module {
 
     private final static Logger LOGGER = Logger.getLogger(Arm.class.getName());
 
-    // TODO: TEMP
-    private final static DigitalOutput dos = new DigitalOutput(9);
+    private static Arm instance = new Arm();  // Singleton
+    public static Arm get_instance() {
+        return instance;
+    }
+    private Arm() {
+        Dispatcher.get_instance().register_module(this);
+    }
 
-    private static Spark spark_left_endE;
-    private static Spark spark_right_endE;
-    private static Spark spark_left_arm;
-    private static Spark spark_right_arm;
+    private Spark spark_left_endE;
+    private Spark spark_right_endE;
+    private Spark spark_left_arm;
+    private Spark spark_right_arm;
 
-    private static AnalogPotentiometer pot;
+    private AnalogPotentiometer pot;
 
-    private static boolean extended = false;
+    private boolean extended = false;
 
-
-    public static void init() {
+    @Override
+    protected void init() {
         LOGGER.info("Initializing arm system.");
 
         spark_left_endE = new Spark(RobotMap.PWM.endE_left_motor);
@@ -38,7 +46,8 @@ public class Arm {
         pot = new AnalogPotentiometer(RobotMap.AIO.arm_pot, RobotMap.Arm.pot_scale, RobotMap.Arm.pot_offset);
     }
 
-    public static void update() {
+    @Override
+    protected void update() {
         /*
         if (KeyBindings.action2button(KeyBindings.Action.ENDE_PUSH).get_pressed()) {
             push_endE();
@@ -55,66 +64,73 @@ public class Arm {
         } else {
             arm_kill();
         }
-        */
-        /*
         if (KeyBindings.action2button(KeyBindings.Action.TRY_ARM_TOGGLE).get_pressed()) {
             Pneumatics.set_solenoids(!Pneumatics.get_solenoids());
         }
         */
-        if (extended & !safe_zone()) {
+        if (extended && !safe_zone()) {
             extended = false;
-            dos.set(true);
-            // Pneumatics.set_solenoids(false);
-        } else if (!extended & !danger_zone()) {
+            Pneumatics.set_solenoids(false);
+        } else if (!extended && !danger_zone()) {
             extended = true;
-            dos.set(false);
-            // Pneumatics.set_solenoids(true);
+            Pneumatics.set_solenoids(true);
         }
     }
 
-    public static boolean safe_zone() {
+    @Override
+    protected void enabled() {}
+
+    @Override
+    protected void disabled() {}
+
+    @Override
+    public String toString() {
+        return "Arm module.";
+    }
+
+    public boolean safe_zone() {
         double pot_read = pot.get();
-        return (pot_read <= RobotMap.Arm.pot_value_kill_lower_inner |
+        return (pot_read <= RobotMap.Arm.pot_value_kill_lower_inner ||
                 pot_read >= RobotMap.Arm.pot_value_kill_upper_inner);
     }
 
-    public static boolean danger_zone() {
+    public boolean danger_zone() {
         double pot_read = pot.get();
-        return (pot_read >= RobotMap.Arm.pot_value_kill_lower_outer &
+        return (pot_read >= RobotMap.Arm.pot_value_kill_lower_outer &&
                 pot_read <= RobotMap.Arm.pot_value_kill_upper_outer);
     }
 
-    public static void suck_endE() {
+    public void suck_endE() {
         spark_left_endE.set(RobotMap.Arm.endE_speed);
         spark_right_endE.set(RobotMap.Arm.endE_speed);
     }
 
-    public static void push_endE() {
+    public void push_endE() {
         spark_left_endE.set(-RobotMap.Arm.endE_speed);
         spark_right_endE.set(-RobotMap.Arm.endE_speed);
     }
 
-    public static void kill_endE() {
+    public void kill_endE() {
         spark_left_endE.set(0);
         spark_right_endE.set(0);
     }
 
-    public static void arm_up() {
+    public void arm_up() {
         spark_left_arm.set(RobotMap.Arm.arm_speed);
         spark_right_arm.set(RobotMap.Arm.arm_speed);
     }
 
-    public static void arm_down() {
+    public void arm_down() {
         spark_left_arm.set(-RobotMap.Arm.arm_speed);
         spark_right_arm.set(-RobotMap.Arm.arm_speed);
     }
 
-    public static void arm_kill() {
+    public void arm_kill() {
         spark_left_arm.set(0);
         spark_right_arm.set(0);
     }
 
-    public static void arm_analog(double speed) {
+    public void arm_analog(double speed) {
         spark_left_arm.set(speed);
         spark_right_arm.set(speed);
     }

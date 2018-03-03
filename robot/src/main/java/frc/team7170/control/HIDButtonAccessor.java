@@ -12,7 +12,7 @@ public class HIDButtonAccessor {
     final GenericHID joy;
 
     /**
-     * @param port The port number on {@link joy} to poll for the button state.
+     * @param port The port number on {@link HIDButtonAccessor#joy} to poll for the button state.
      * @param joy The {@link GenericHID} to poll for the button state.
      */
     HIDButtonAccessor(int port, GenericHID joy) {

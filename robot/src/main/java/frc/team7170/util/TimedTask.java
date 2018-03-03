@@ -55,7 +55,7 @@ public class TimedTask {
      * Call this regularly in a loop.
      */
     public void run() {
-        if (this.running & System.currentTimeMillis() >= time + delay) {
+        if (this.running && System.currentTimeMillis() >= time + delay) {
             func.run();
             time = System.currentTimeMillis();
         }

@@ -32,11 +32,11 @@ public class HIDPOVAccessor extends HIDButtonAccessor {
 
     @Override
     public boolean get_pressed() {
-        return !pressed & get();
+        return !pressed && get();
     }
 
     @Override
     public boolean get_released() {
-        return pressed & !get();
+        return pressed && !get();
     }
 }

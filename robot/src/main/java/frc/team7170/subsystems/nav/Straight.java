@@ -1,7 +1,7 @@
 package frc.team7170.subsystems.nav;
 
 import frc.team7170.robot.RobotMap;
-import frc.team7170.subsystems.Drive;
+import frc.team7170.subsystems.drive.Drive;
 import frc.team7170.util.CalcUtil;
 
 

@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 
 
 /**
- * This class controls dispatching jobs to modules and ensures that no module will be assigned more than one job to
- * avoid motor conflicts, etcetera. This class also manages the initialization and updating of each module and job.
+ * This class controls dispatching {@link Job}s to {@link Module}s and ensures that no module will be assigned more than one
+ * job to avoid motor conflicts, etcetera. This class also manages the initialization and updating of each module and job.
  *
  * Quick guidelines:
  * Call register_module(Module) in the constructor of each module.
@@ -19,12 +19,10 @@ public class Dispatcher {
 
     private final static Logger LOGGER = Logger.getLogger(Dispatcher.class.getName());
 
-    private Dispatcher instance = new Dispatcher();  // Singleton
-
-    public Dispatcher get_instance() {
+    private static Dispatcher instance = new Dispatcher();  // Singleton
+    public static Dispatcher get_instance() {
         return instance;
     }
-
     private Dispatcher() {}
 
     private ArrayList<Job> queued_jobs = new ArrayList<>();
@@ -43,8 +41,8 @@ public class Dispatcher {
     }
 
     /**
-     * Run a job if its required modules are free. Otherwise queue the job and run it when the module locks are freed.
-     * Note that the priority of the jobs is the order they are added in.
+     * Run a {@link Job} if its required {@link Module}s are free. Otherwise queue the job and run it
+     * when the module locks are freed. Note that the priority of the jobs is the order they are added in.
      * @param job The job to run/queue
      */
     public void add_job(Job job) {
@@ -56,14 +54,14 @@ public class Dispatcher {
     }
 
     /**
-     * Updates every registered module, updates running jobs, and runs queued jobs if module locks are free.
+     * Updates every registered {@link Module}, updates running {@link Job}, and runs queued jobs if module locks are free.
      * This should be called regularly in the robot main loop.
      */
     public void run() {
         // Update each module and run defaults if locks are free
         modules.forEach((Module mod, Boolean locked) -> {
             mod._update();
-            if (mod.get_current_job() == null & mod.get_default_job() != null) {
+            if (mod.get_current_job() == null && mod.get_default_job() != null) {
                 // Start the default job without claiming the lock so new jobs with this module as a requirement can override it
                 running_jobs.add(mod.get_default_job());
                 mod.get_default_job().start();  // This will only have any effect if the job has not started yet
@@ -96,7 +94,7 @@ public class Dispatcher {
     }
 
     /**
-     * Called internally to claim module locks, populate the running_jobs list, and start a job.
+     * Called internally to claim {@link Module} locks, populate the running_jobs list, and start a {@link Job}.
      * @param job The job to start
      */
     private void start_job(Job job) {
@@ -113,8 +111,8 @@ public class Dispatcher {
     }
 
     /**
-     * Essentially the opposite of start_job(), except, because a peaceful termination of a job ends itself,
-     *     we only free module locks and remove the job from the running_jobs set.
+     * Essentially the opposite of start_job(), except, because a peaceful termination of a {@link Job} ends itself,
+     * we only free {@link Module} locks and remove the job from the running_jobs set.
      * @param job The job to free locks from.
      */
     private void free_module_locks(Job job) {
@@ -126,7 +124,7 @@ public class Dispatcher {
     }
 
     /**
-     * Checks if the given job can be ran or not by iterating its requirements and comparing to the state of each module.
+     * Checks if the given {@link Job} can be ran or not by iterating its requirements and comparing to the state of each {@link Module}.
      * @param job The job to check for conflicts on.
      * @return Whether or not the job can be ran.
      */
@@ -140,7 +138,7 @@ public class Dispatcher {
     }
 
     /**
-     * Initializes (calls the init() method on) each module.
+     * Initializes (calls the {@link Module#init()} method on) each module.
      */
     public void initialize_modules() {
         if (!modules_initialized) {  // prevent the user from accidentally initializing each module multiple times
@@ -150,7 +148,7 @@ public class Dispatcher {
     }
 
     /**
-     * Forcefully cancel the given job.
+     * Forcefully {@link Job#cancel(boolean)} the given job.
      * @param job The job to cancel.
      * @param override Whether or not to override the job's interruptable attribute.
      * @return Whether or not the cancellation was successful. This will always be true if override is true.
@@ -160,7 +158,7 @@ public class Dispatcher {
     }
 
     /**
-     * Forcefully cancel every job.
+     * Forcefully {@link Job#cancel(boolean)} every job.
      */
     public void cancel_all() {
         queued_jobs.clear();  // Clear the queued jobs.

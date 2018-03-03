@@ -33,7 +33,7 @@ public class Acceleration {
 
     public double get(double prog) {
         prog = CalcUtil.apply_bounds(prog, 0, 1);
-        if (!max_reached & prog < start_decel) {  // Accelerate
+        if (!max_reached && prog < start_decel) {  // Accelerate
             prev_out = lin_accel ? accel_lin(prog) : accel_const(prog);
             if (prev_out >= max_out) {
                 max_reached = true;  // Stop accelerating

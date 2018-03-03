@@ -7,8 +7,8 @@ import frc.team7170.control.KeyBindings;
 import frc.team7170.subsystems.Pneumatics;
 import frc.team7170.comm.Communication;
 import frc.team7170.subsystems.nav.Navigation;
-import frc.team7170.subsystems.Drive;
-import frc.team7170.subsystems.Arm;
+import frc.team7170.subsystems.drive.Drive;
+import frc.team7170.subsystems.arm.Arm;
 
 
 public class Robot extends IterativeRobot {

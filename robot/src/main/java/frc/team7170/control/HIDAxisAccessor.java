@@ -12,7 +12,7 @@ public class HIDAxisAccessor {
     final GenericHID joy;
 
     /**
-     * @param port The port number on {@link joy} to poll for the axis value.
+     * @param port The port number on {@link HIDAxisAccessor#joy} to poll for the axis value.
      * @param joy The {@link GenericHID} to poll for the axis value.
      */
     HIDAxisAccessor(int port, GenericHID joy) {

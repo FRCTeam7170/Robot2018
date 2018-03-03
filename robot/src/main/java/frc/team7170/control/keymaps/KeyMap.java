@@ -24,7 +24,7 @@ import java.util.HashMap;
  * speed, for example, intrinsically requires a numerical input in some range (i.e. axis input.) A pneumatic arm, on
  * the other hand, naturally requires a boolean on or off value (i.e. button input.)
  */
-abstract class KeyMap {
+public abstract class KeyMap {
 
     HashMap<Action, HIDButtonAccessor> buttons = new HashMap<>();
 
@@ -35,4 +35,16 @@ abstract class KeyMap {
      * {@link _POV#get_degree()}.
      */
     _POV POV;
+
+    public HashMap<Action, HIDButtonAccessor> get_buttons() {
+        return buttons;
+    }
+
+    public HashMap<Action, HIDAxisAccessor> get_axes() {
+        return axes;
+    }
+
+    public _POV get_POV() {
+        return POV;
+    }
 }

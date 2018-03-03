@@ -4,8 +4,8 @@ import java.util.HashSet;
 
 
 /**
- * Defines a job: an operation that works on zero or more Modules. Only one job can work on each user-defined module
- * at a time (this is enforced by the dispatcher).
+ * Defines a job: an operation that works on zero or more {@link Module}. Only one job can work on each user-defined module
+ * at a time (this is enforced by the {@link Dispatcher}).
  *
  * As an example, if you made a drive base module/subsystem, you may want to define a job that turns the bot theta degrees.
  * It might use encoder values to set motor speeds. This job can then be used multiple times whenever autonomously turning
@@ -24,7 +24,7 @@ public abstract class Job {
     private HashSet<Module> requirements = new HashSet<>();  // Set of required modules for this job
 
     /**
-     * Register a module or modules that this job requires. This ensures that upon the execution of this job,
+     * Register a {@link Module} or modules that this job requires. This ensures that upon the execution of this job,
      * the necessary module locks will be claimed. It is recommended that this method be called appropriately
      * in the constructor of each job object.
      * @param mods Modules to set as required.
@@ -43,12 +43,12 @@ public abstract class Job {
     }
 
     /**
-     * Method called from dispatch to start a job.
+     * Method called from {@link Dispatcher} to start a job.
      */
     void start() {
         // Disallow running this method if it's already been started. A consequence of this is that jobs are not recyclable.
         // If is_finished() == true, it's expected that the job is to be garbage collected; it no longer has any purpose.
-        if (!running & !started) {
+        if (!running && !started) {
             running = true;
             started = true;  // This second state variable is required because running is set back to false when the job terminates.
             init();  // Call the user-defined init method.
@@ -61,7 +61,7 @@ public abstract class Job {
      * @return If cancelling the job was successful.
      */
     boolean cancel(boolean override) {
-        if (running & (interruptable | override)) {
+        if (running && (interruptable || override)) {
             running = false;
             interrupted();  // Forced termination
             return true;
@@ -70,7 +70,7 @@ public abstract class Job {
     }
 
     /**
-     * Called from within dispatch. Updates the job and peacefully terminates if the job is finished.
+     * Called from within {@link Dispatcher}. Updates the job and peacefully terminates if the job is finished.
      * @return
      */
     boolean _update() {
@@ -96,7 +96,7 @@ public abstract class Job {
      * @return If this job is updating (more restrictive than is_running() ).
      */
     public final boolean is_updating() {
-        return running & disabled_parents.isEmpty();
+        return running && disabled_parents.isEmpty();
     }
 
     /**
@@ -119,7 +119,7 @@ public abstract class Job {
     }
 
     /**
-     * Check if this job requires the given module.
+     * Check if this job requires the given {@link Module}.
      * @param mod The module to check for dependency on.
      * @return Whether this job is dependent on that module or not.
      */
@@ -128,14 +128,14 @@ public abstract class Job {
     }
 
     /**
-     * @return A set of all the required modules for this job.
+     * @return A set of all the required {@link Module}s for this job.
      */
     protected HashSet<Module> get_requirements() {
         return requirements;
     }
 
     /**
-     * Called from within modules to signal when they changed from enabled to disabled or vice versa.
+     * Called from within {@link Module}s to signal when they changed from enabled to disabled or vice versa.
      * This makes the job only run when all its parents are enabled.
      * @param mod The module having its state changed.
      * @param disabled True if the module is being disabled.
@@ -154,7 +154,7 @@ public abstract class Job {
     protected void init() {}
 
     /**
-     * Override this with any tasks that need to be updated frequently. Called every time run() in dispatch is called.
+     * Override this with any tasks that need to be updated frequently. Called every time {@link Dispatcher#run()} is called.
      * This is required.
      */
     protected abstract void update();

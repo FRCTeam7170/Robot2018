@@ -3,22 +3,47 @@ package frc.team7170.subsystems;
 import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
+import frc.team7170.jobs.Dispatcher;
+import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 
 
-public class Pneumatics {
+public class Pneumatics extends Module {
 
     private final static Logger LOGGER = Logger.getLogger(Pneumatics.class.getName());
+
+    private static Pneumatics instance = new Pneumatics();  // Singleton
+    public static Pneumatics get_instance() {
+        return instance;
+    }
+    private Pneumatics() {
+        Dispatcher.get_instance().register_module(this);
+    }
 
     private static Compressor compressor;
     private static Solenoid arm_left;
     private static Solenoid arm_right;
 
-    public static void init() {
+    @Override
+    protected void init() {
         LOGGER.info("Initializing pneumatics system.");
         compressor = new Compressor(RobotMap.CAN.PCM);
         arm_left = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.left_solenoid);
         arm_right = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.right_solenoid);
+    }
+
+    @Override
+    protected void update() {}
+
+    @Override
+    protected void enabled() {}
+
+    @Override
+    protected void disabled() {}
+
+    @Override
+    public String toString() {
+        return "Pneumatics module.";
     }
 
     public static boolean get_solenoids() {

@@ -3,7 +3,7 @@ package frc.team7170.jobs;
 
 /**
  * Defines a module/subsystem on the robot. Each module should have its own resources, such as motors or sensors.
- * Each module can only run one job at a time.
+ * Each module can only run one {@link Job} at a time.
  *
  * As an example, you may want to create subsystems for the robot base and some sort of claw or arm.
  *
@@ -22,7 +22,7 @@ public abstract class Module {
     private Job default_job = null;  // Holds the default job to run if the dispatcher assigns no other job
 
     /**
-     * Attempt to claim the lock on this module and assign it to the given job.
+     * Attempt to claim the lock on this module and assign it to the given {@link Job}.
      * @param job The job that claims this lock.
      * @return Whether the operation was successful (returns false if the lock was already engaged when this function is called)
      */
@@ -42,8 +42,8 @@ public abstract class Module {
     }
 
     /**
-     * Frees this module's lock. Note that this doesn't actually stop a previously assigned job from running.
-     * The dispatcher is responsible for signalling to a job that its parent has moved on from it (FeelsBadMan).
+     * Frees this module's lock. Note that this doesn't actually stop a previously assigned {@link Job} from running.
+     * The {@link Dispatcher} is responsible for signalling to a job that its parent has moved on from it (FeelsBadMan).
      */
     void free_lock() {
         locked = false;
@@ -65,7 +65,7 @@ public abstract class Module {
     }
 
     /**
-     * Set the default job to run while this module's lock is free.
+     * Set the default {@link Job} to run while this module's lock is free.
      * @param job The job to set the default job to.
      */
     protected final void set_default_job(Job job) {
@@ -81,7 +81,7 @@ public abstract class Module {
 
     /**
      * Set the enabled state of this module. Disabled modules won't have their update() method executed
-     * and jobs assigned to this module won't execute.
+     * and {@link Job}s assigned to this module won't execute.
      * @param enabled Boolean state; on or off.
      */
     public final void set_enabled(boolean enabled) {
@@ -107,7 +107,7 @@ public abstract class Module {
     }
 
     /**
-     * Called internally from dispatch to match sure that the update function is only called if this module is enabled.
+     * Called internally from {@link Dispatcher} to make sure that the update function is only called if this module is enabled.
      */
     void _update() {
         if (enabled) {
@@ -116,12 +116,12 @@ public abstract class Module {
     }
 
     /**
-     * Override this with any init tasks. Called when the initialize_modules() function in dispatch is called.
+     * Override this with any init tasks. Called when the {@link Dispatcher#initialize_modules()} method is called.
      */
     protected void init() {}
 
     /**
-     * Override this with any tasks that need to be updated frequently. Called every time run() in dispatch is called.
+     * Override this with any tasks that need to be updated frequently. Called every time {@link Dispatcher#run()} is called.
      */
     protected void update() {}
 

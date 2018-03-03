@@ -1,31 +1,42 @@
-package frc.team7170.subsystems;
+package frc.team7170.subsystems.drive;
 
 import java.util.logging.Logger;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.util.CalcUtil;
+import frc.team7170.jobs.Dispatcher;
 
 
-public class Drive {
+public class Drive extends Module {
 
     private final static Logger LOGGER = Logger.getLogger(Drive.class.getName());
 
-    private static WPI_TalonSRX front_left_motor;
-    private static WPI_TalonSRX front_right_motor;
-    private static WPI_TalonSRX back_left_motor;
-    private static WPI_TalonSRX back_right_motor;
+    private static Drive instance = new Drive();  // Singleton
+    public static Drive get_instance() {
+        return instance;
+    }
+    private Drive() {
+        Dispatcher.get_instance().register_module(this);
+    }
 
-    private static SpeedControllerGroup left_motors;
-    private static SpeedControllerGroup right_motors;
+    private WPI_TalonSRX front_left_motor;
+    private WPI_TalonSRX front_right_motor;
+    private WPI_TalonSRX back_left_motor;
+    private WPI_TalonSRX back_right_motor;
 
-    private static DifferentialDrive drive;
+    private SpeedControllerGroup left_motors;
+    private SpeedControllerGroup right_motors;
+
+    private DifferentialDrive drive;
 
     // These hold the L and R speeds actually sent to the speed controllers
-    private static double rob_L = 0, rob_R = 0;
+    private double rob_L = 0, rob_R = 0;
 
-    public static void init() {
+    @Override
+    protected void init() {
         LOGGER.info("Initializing drive system.");
 
         front_left_motor = new WPI_TalonSRX(RobotMap.CAN.front_left_motor);
@@ -39,16 +50,30 @@ public class Drive {
         drive = new DifferentialDrive(left_motors, right_motors);
     }
 
-    private static void smooth_current(double left, double right) {
+    @Override
+    protected void update() {}
+
+    @Override
+    protected void enabled() {}
+
+    @Override
+    protected void disabled() {}
+
+    @Override
+    public String toString() {
+        return "Drive module.";
+    }
+
+    private void smooth_current(double left, double right) {
         double dL = left - rob_L;
         double dR = right - rob_R;
-        if (Math.abs(left) < RobotMap.DriveSmooth.logic_threshold_L & dL > 0 &
+        if (Math.abs(left) < RobotMap.DriveSmooth.logic_threshold_L && dL > 0 &&
                 dL > RobotMap.DriveSmooth.tolerance_L) {
             rob_L += RobotMap.DriveSmooth.jump_L;
         } else {
             rob_L = left;
         }
-        if (Math.abs(right) < RobotMap.DriveSmooth.logic_threshold_R & dR > 0 &
+        if (Math.abs(right) < RobotMap.DriveSmooth.logic_threshold_R && dR > 0 &&
                 dR > RobotMap.DriveSmooth.tolerance_R) {
             rob_R += RobotMap.DriveSmooth.jump_R;
         } else {
@@ -56,7 +81,7 @@ public class Drive {
         }
     }
 
-    public static void set_arcade(double joy_Y, double joy_Z, boolean smooth, boolean square) {
+    public void set_arcade(double joy_Y, double joy_Z, boolean smooth, boolean square) {
         joy_Y = CalcUtil.apply_bounds(joy_Y, -1.0, 1.0);
         joy_Z = CalcUtil.apply_bounds(joy_Z, -1.0, 1.0);
 
@@ -89,7 +114,7 @@ public class Drive {
         set_tank(left, right, smooth, square);
     }
 
-    public static void set_tank(double left, double right, boolean smooth, boolean square) {
+    public void set_tank(double left, double right, boolean smooth, boolean square) {
         if (smooth) {
             smooth_current(left, right);
         } else {
@@ -99,23 +124,23 @@ public class Drive {
         drive.tankDrive(rob_L, rob_R, square);
     }
 
-    public static void brake() {
+    public void brake() {
         drive.stopMotor();
     }
 
-    public static double get_L() {
+    public double get_L() {
         return rob_L;
     }
 
-    public static double get_R() {
+    public double get_R() {
         return rob_R;
     }
 
-    public static double get_Y() {
+    public double get_Y() {
         return rob_R + (rob_L - rob_R)/2;
     }
 
-    public static double get_Z() {
+    public double get_Z() {
         return (rob_L - rob_R)/2;
     }
 

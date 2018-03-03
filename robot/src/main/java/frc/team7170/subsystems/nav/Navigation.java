@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import frc.team7170.robot.RobotMap;
-import frc.team7170.subsystems.Drive;
+import frc.team7170.subsystems.drive.Drive;
 
 
 public class Navigation {
