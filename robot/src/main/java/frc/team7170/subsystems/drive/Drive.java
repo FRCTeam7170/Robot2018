@@ -2,6 +2,8 @@ package frc.team7170.subsystems.drive;
 
 import java.util.logging.Logger;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.team7170.jobs.Module;
@@ -19,6 +21,7 @@ public class Drive extends Module {
         return instance;
     }
     private Drive() {
+        init();
         Dispatcher.get_instance().register_module(this);
     }
 
@@ -31,6 +34,11 @@ public class Drive extends Module {
     private SpeedControllerGroup right_motors;
 
     private DifferentialDrive drive;
+
+    private Encoder left_enc;
+    private Encoder right_enc;
+
+    private BuiltInAccelerometer accelerometer;
 
     // These hold the L and R speeds actually sent to the speed controllers
     private double rob_L = 0, rob_R = 0;
@@ -48,6 +56,21 @@ public class Drive extends Module {
         right_motors = new SpeedControllerGroup(front_right_motor, back_right_motor);
 
         drive = new DifferentialDrive(left_motors, right_motors);
+
+        left_enc = new Encoder(RobotMap.DIO.encoder_left_A, RobotMap.DIO.encoder_left_B);
+        right_enc = new Encoder(RobotMap.DIO.encoder_right_A, RobotMap.DIO.encoder_right_B);
+        accelerometer = new BuiltInAccelerometer();
+
+        /*
+        Let:
+            r = wheel radius
+            d = distance travelled
+            p = #pulses
+        Knowing that [ 1p = 1 degree of rotation ] and [ arc length = angle(radians) * radius ]...
+        d = pi*p*r/180
+         */
+        left_enc.setDistancePerPulse(Math.PI * RobotMap.RobotDims.wheel_radius / 180);
+        right_enc.setDistancePerPulse(Math.PI * RobotMap.RobotDims.wheel_radius / 180);
     }
 
     @Override
@@ -142,6 +165,73 @@ public class Drive extends Module {
 
     public double get_Z() {
         return (rob_L - rob_R)/2;
+    }
+
+    /**
+     * Reset the encoder values to zero.
+     */
+    public void reset_encoders() {
+        LOGGER.fine("Resetting encoders.");
+        left_enc.reset();
+        right_enc.reset();
+    }
+
+
+    // Accelerometer accessors
+
+    public double get_accel_X() {
+        return 9.80*accelerometer.getX();  // Convert to m/s
+    }
+
+    public double get_accel_Y() {
+        return 9.80*accelerometer.getY();  // Convert to m/s
+    }
+
+    public double get_accel_Z() {
+        return 9.80*accelerometer.getZ();  // Convert to m/s
+    }
+
+
+    // Encoder accessors
+
+    public int get_Lenc() {
+        return left_enc.get();
+    }
+
+    public double get_Lenc_dist() {
+        return left_enc.getDistance();
+    }
+
+    public double get_Lenc_rate() {
+        return left_enc.getRate();
+    }
+
+    public boolean get_Lenc_dir() {
+        return left_enc.getDirection();
+    }
+
+    public boolean get_Lenc_stopped() {
+        return left_enc.getStopped();
+    }
+
+    public int get_Renc() {
+        return right_enc.get();
+    }
+
+    public double get_Renc_dist() {
+        return right_enc.getDistance();
+    }
+
+    public double get_Renc_rate() {
+        return right_enc.getRate();
+    }
+
+    public boolean get_Renc_dir() {
+        return right_enc.getDirection();
+    }
+
+    public boolean get_Renc_stopped() {
+        return right_enc.getStopped();
     }
 
     // TODO: Accessors for CAN data on motors, ex: current output

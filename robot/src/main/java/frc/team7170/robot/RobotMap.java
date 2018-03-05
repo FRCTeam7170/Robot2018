@@ -85,8 +85,8 @@ public class RobotMap {
     }
 
     public static class Arm {
-        public static double pot_scale = 290;
-        public static double pot_offset = 0;
+        public static double pot_scale = 300;  // Max rotation of arm
+        public static double pot_offset = 0;  // Offset off of perfectly vertical
         public static double endE_speed = 0.75;
         public static double arm_speed = 1;
         public static boolean reverse_endE_left = true;

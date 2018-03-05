@@ -6,7 +6,7 @@ package frc.team7170.util;
  * to ensure that the timing is close to exact--although, be warned, it never will be.
  * Consider other timing methods in the java libraries for more exactly timing.
  */
-public class TimedTask {
+public class TimedTask implements Runnable {
 
     private final int delay;
     private final Runnable func;
@@ -34,7 +34,7 @@ public class TimedTask {
     }
 
     /**
-     * Starts the timer. Note that the function is run once as soon as you start if start param is true.
+     * Starts the timer. Note that the function is run once as soon as you instantiate if the start param is true.
      */
     public void start() {
         func.run();

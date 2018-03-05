@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 import edu.wpi.first.wpilibj.Servo;
 import frc.team7170.robot.RobotMap;
 
+
 public class CameraGimbal {
 
     private final static Logger LOGGER = Logger.getLogger(CameraGimbal.class.getName());

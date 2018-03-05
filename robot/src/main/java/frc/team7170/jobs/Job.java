@@ -14,6 +14,7 @@ import java.util.HashSet;
  * Quick guidelines:
  * Call requires with all the modules this job uses otherwise two jobs might try to simultaneously change motor speeds on the same motors, for example.
  * Override the init, update, is_finished, end, and interrupted methods appropriately.
+ * All classes which inherit from Job should be prefixed with J...
  */
 public abstract class Job {
 

@@ -117,6 +117,8 @@ public abstract class Module {
 
     /**
      * Override this with any init tasks. Called when the {@link Dispatcher#initialize_modules()} method is called.
+     * This method should be considered second-level initialization. First-level initialization should be placed
+     * in the constructor of each module.
      */
     protected void init() {}
 

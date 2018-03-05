@@ -1,7 +1,6 @@
 package frc.team7170.subsystems.arm;
 
 import java.util.logging.Logger;
-
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import frc.team7170.jobs.Dispatcher;
@@ -10,6 +9,10 @@ import frc.team7170.robot.RobotMap;
 import frc.team7170.subsystems.Pneumatics;
 
 
+/**
+ * Module to handle all interactions with the arm of the robot. This includes the end effector wheel motors, the motors
+ * that power the arm rotation, and the
+ */
 public class Arm extends Module {
 
     private final static Logger LOGGER = Logger.getLogger(Arm.class.getName());
