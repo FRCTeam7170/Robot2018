@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface Transmitter {
 
-    String[] value() default "";
+    String[] value();  // end in "..._M" to make mutable
 
     TransmitFrequency poll_rate() default TransmitFrequency.MODERATE;
 

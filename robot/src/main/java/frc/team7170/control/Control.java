@@ -161,6 +161,7 @@ public class Control {
         */
     }
 
+
     /**
      * Sets the rumble on the gamepad.
      * @see Joystick#setRumble(GenericHID.RumbleType, double)

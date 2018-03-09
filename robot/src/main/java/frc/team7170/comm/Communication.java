@@ -1,12 +1,14 @@
 package frc.team7170.comm;
 
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.Module;
+import frc.team7170.util.TimedTask;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.logging.Logger;
 
 
@@ -26,8 +28,7 @@ public class Communication extends Module {
     }
 
     private NetworkTableInstance nt_inst;
-    private HashSet<Runnable> transmitters = new HashSet<>();
-    private HashMap<String, HashSet<Runnable>> receivers = new HashMap<>();
+    private HashMap<String, Runnable> transmitters = new HashMap<>();
 
     /**
      * Enum of all (sub)table paths for convenience.
@@ -54,8 +55,15 @@ public class Communication extends Module {
     }
 
     @Override
-    protected void update() {}
+    protected void update() {
+        for (Runnable r : transmitters.values()) {
+            if (r != null) {
+                r.run();
+            }
+        }
+    }
 
+    // TODO: Disable callbacks on disable?
     @Override
     protected void enabled() {}
 
@@ -75,40 +83,85 @@ public class Communication extends Module {
                 throw new RuntimeException("Method in communicator declared as transmitter AND receiver.");
             }
             if (transmitter != null) {
-                if (meth.getReturnType() != NTPacket.class ||
+                if (meth.getReturnType() != void.class ||
                         meth.getParameterCount() != 1 ||
-                        meth.getParameterTypes()[0] != String.class) {
+                        meth.getParameterTypes()[0] != NetworkTableEntry.class) {
                     throw new RuntimeException("Transmitter method in communicator does not feature proper signature.");
                 }
-                // TODO Prohibit transmitter with key already created
                 if (transmitter.poll_rate() == TransmitFrequency.STATIC) {
                     for (String key : transmitter.value()) {
-                        // TODO
+                        key = rectify_key(key, true);
+                        if (transmitters.containsKey(key)) {
+                            throw new RuntimeException("Multiple transmitters for same key registered.");
+                        }
+                        transmitters.put(key, null);  // Populate map to indicate that a transmitter with this key exists
+                        try {
+                            meth.invoke(communicator, nt_inst.getTable(Tables.OUT.get()).getEntry(key));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else if (transmitter.poll_rate() == TransmitFrequency.VOLATILE) {
                     for (String key : transmitter.value()) {
-                        transmitters.add(() -> {
+                        final String k = rectify_key(key, true);  // Make key final for use in lambda
+                        if (transmitters.containsKey(key)) {
+                            throw new RuntimeException("Multiple transmitters for same key registered.");
+                        }
+                        transmitters.put(key, () -> {
                             try {
-                                meth.invoke(communicator, "O_"+key);  // TODO?
+                                meth.invoke(communicator, nt_inst.getTable(Tables.OUT.get()).getEntry(k));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         });
                     }
-                } else {
+                } else {  // One of specific delays in milliseconds
                     for (String key : transmitter.value()) {
-                        // TODO
+                        final String k = rectify_key(key, true);  // Make key final for use in lambda
+                        if (transmitters.containsKey(key)) {
+                            throw new RuntimeException("Multiple transmitters for same key registered.");
+                        }
+                        transmitters.put(key, new TimedTask(() -> {
+                            try {
+                                meth.invoke(communicator, nt_inst.getTable(Tables.OUT.get()).getEntry(k));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }, transmitter.poll_rate_ms() == -1 ? transmitter.poll_rate().freq : transmitter.poll_rate_ms()));
                     }
                 }
             }
             if (receiver != null) {
                 if (meth.getReturnType() != void.class ||
                         meth.getParameterCount() != 1 ||
-                        meth.getParameterTypes()[0] != NTPacket.class) {
+                        meth.getParameterTypes()[0] != EntryNotification.class) {
                     throw new RuntimeException("Receiver method in communicator does not feature proper signature.");
                 }
-                // TODO
+                for (String key : receiver.value()) {
+                    key = rectify_key(key, false);
+                    nt_inst.getTable(Tables.IN.get()).getEntry(key).addListener((event) -> {
+                        try {
+                            meth.invoke(communicator, event);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, EntryListenerFlags.kUpdate);
+                }
             }
         }
+    }
+
+    private String rectify_key(String key, boolean output) {
+        if (output) {
+            if (!key.startsWith("O_")) {
+                key = "O_".concat(key);
+            }
+            if (!key.endsWith("_M") || !key.endsWith("_S")) {
+                key = key.concat("_S");  // Keys default to being static
+            }
+        } else if (!key.startsWith("I_")) {
+            key = "I_".concat(key);
+        }
+        return key;
     }
 }

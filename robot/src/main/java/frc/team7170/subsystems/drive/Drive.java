@@ -21,7 +21,6 @@ public class Drive extends Module {
         return instance;
     }
     private Drive() {
-        init();
         Dispatcher.get_instance().register_module(this);
     }
 
