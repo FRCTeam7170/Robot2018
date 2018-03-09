@@ -1,6 +1,8 @@
 package frc.team7170.robot;
 
 import java.util.logging.Logger;
+
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import frc.team7170.control.Control;
 import frc.team7170.control.Action;
@@ -27,6 +29,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         LOGGER.info("Initializing robot...");
         Dispatcher.get_instance().initialize_modules();
+        CameraServer.getInstance().startAutomaticCapture();
         LOGGER.info("Initialization done.");
     }
 

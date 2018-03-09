@@ -34,8 +34,8 @@ public class Control {
     private Control() {}
 
     // Technically these don't have to be a Joystick because we're simply accessing raw values
-    private Joystick _joystick = new Joystick(RobotMap.Controllers.joystick);
-    private Joystick _gamepad = new Joystick(RobotMap.Controllers.gamepad);
+    private final Joystick _joystick = new Joystick(RobotMap.Controllers.joystick);
+    private final Joystick _gamepad = new Joystick(RobotMap.Controllers.gamepad);
 
     /**
      * A map of action-button/axis pairs so we can easily switch bindings without having to change code in multiple different classes

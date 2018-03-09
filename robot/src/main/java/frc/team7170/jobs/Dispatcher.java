@@ -141,7 +141,7 @@ public class Dispatcher {
      * Initializes (calls the {@link Module#init()} method on) each module.
      */
     public void initialize_modules() {
-        if (!modules_initialized) {  // prevent the user from accidentally initializing each module multiple times
+        if (!modules_initialized) {  // prevent the user from initializing each module multiple times
             modules_initialized = true;
             modules.forEach((Module mod, Boolean locked) -> mod.init());
         }

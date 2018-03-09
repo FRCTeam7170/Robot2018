@@ -8,11 +8,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface Transmitter {
+public @interface RPCCaller {
 
     String[] value();
-
-    TransmitFrequency poll_rate() default TransmitFrequency.MODERATE;
-
-    int poll_rate_ms() default -1;
 }
