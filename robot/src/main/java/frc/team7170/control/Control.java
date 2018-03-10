@@ -31,7 +31,9 @@ public class Control {
     public static Control get_instance() {
         return instance;
     }
-    private Control() {}
+    private Control() {
+        LOGGER.info("Initializing control system.");
+    }
 
     // Technically these don't have to be a Joystick because we're simply accessing raw values
     private final Joystick _joystick = new Joystick(RobotMap.Controllers.joystick);
@@ -151,15 +153,6 @@ public class Control {
         _Gamepad() {}
     }
     public final _Gamepad gamepad = new _Gamepad();  // Singleton
-
-
-    public void init() {
-        LOGGER.info("Initializing control system.");
-        /*
-        _joystick = new Joystick(RobotMap.Controllers.joystick);
-        _gamepad = new Joystick(RobotMap.Controllers.gamepad);
-        */
-    }
 
 
     /**

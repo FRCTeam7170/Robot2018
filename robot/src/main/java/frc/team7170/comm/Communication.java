@@ -3,9 +3,12 @@ package frc.team7170.comm;
 import edu.wpi.first.networktables.*;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.Module;
+import frc.team7170.robot.RobotMap;
 import frc.team7170.util.TimedTask;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -66,12 +69,6 @@ import java.util.logging.Logger;
  * {@link Transmitter} with a {@link TransmitFrequency#STATIC} poll rate that manually registers a given method as an
  * RPC method via {@link NetworkTableInstance#createRpc(NetworkTableEntry, Consumer)}.
  *
- * TODO
- * TODO
- * TODO CONTROL FOR *WHAT* DATA IS SENT OVER THE NETWORK VIA A STRING ARRAY ENTRY SENT FROM THE DASHBOARD
- * TODO
- * TODO
- *
  * @see TransmitFrequency
  * @see Transmitter
  * @see Receiver
@@ -87,6 +84,17 @@ public class Communication extends Module {
         return instance;
     }
     private Communication() {
+        LOGGER.info("Initializing communication system.");
+        nt_inst = NetworkTableInstance.getDefault();
+        nt_inst.getTable(Tables.IN.get()).getEntry(rectify_key(RobotMap.Communication.DB_to_send_key, 2)).addListener((event) -> {
+            senders.clear();
+            try {
+                senders.addAll(Arrays.asList(event.value.getStringArray()));
+            } catch (ClassCastException e) {
+                LOGGER.severe("DB senders list entry updated but it is not a string array!");
+                e.printStackTrace();
+            }
+        }, EntryListenerFlags.kUpdate);
         Dispatcher.get_instance().register_module(this);
     }
 
@@ -96,6 +104,11 @@ public class Communication extends Module {
      * poll rate is {@link TransmitFrequency#STATIC} or the method is a {@link RPCCaller}.
      */
     private HashMap<String, Runnable> transmitters = new HashMap<>();
+    /**
+     * This set contains the keys of all entries to send over to the dashboard and is updated by the dashboard whenever
+     * a key is to be stopped being sent or when a new key is to start being sent.
+     */
+    private HashSet<String> senders = new HashSet<>();
 
     /**
      * Enum of all (sub)table paths for convenience ease of modification.
@@ -116,14 +129,9 @@ public class Communication extends Module {
     }
 
     @Override
-    protected void init() {
-        LOGGER.info("Initializing communication system.");
-        nt_inst = NetworkTableInstance.getDefault();
-    }
-
-    @Override
     protected void update() {
-        for (Runnable r : transmitters.values()) {
+        for (String key : senders) {
+            Runnable r = transmitters.get(key);
             if (r != null) {  // We map null to a key for static or rpc transmitters, hence we must null check
                 r.run();
             }

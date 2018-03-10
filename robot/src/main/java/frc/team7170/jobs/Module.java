@@ -9,7 +9,7 @@ package frc.team7170.jobs;
  *
  * Quick guidelines:
  * Call Dispatcher.register_module in the constructor of each module (this implies each module should be a singleton.)
- * Override the init, update, enabled, or disabled methods appropriately.
+ * Override the update, enabled, or disabled methods appropriately.
  * Use set_default_job to set the default job (runs when the dispatcher assigns no other job to this module.)
  * use set_enabled to enable/disable this module when it does/doesn't need to run.
  */
@@ -116,13 +116,6 @@ public abstract class Module {
     }
 
     /**
-     * Override this with any init tasks. Called when the {@link Dispatcher#initialize_modules()} method is called.
-     * This method should be considered second-level initialization. First-level initialization should be placed
-     * in the constructor of each module.
-     */
-    protected void init() {}
-
-    /**
      * Override this with any tasks that need to be updated frequently. Called every time {@link Dispatcher#run()} is called.
      */
     protected void update() {}
@@ -130,7 +123,7 @@ public abstract class Module {
     /**
      * Override this with any tasks that need to be performed when this module enters the enabled state.
      * Note this is not called when the module initializes into the enabled state. If you want this method
-     * to be called on initialization, call it from the init() method.
+     * to be called on initialization, call it from the module's constructor.
      */
     protected void enabled() {}
 

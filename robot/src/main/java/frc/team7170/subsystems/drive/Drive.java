@@ -24,29 +24,6 @@ public class Drive extends Module {
         return instance;
     }
     private Drive() {
-        Dispatcher.get_instance().register_module(this);
-    }
-
-    private WPI_TalonSRX front_left_motor;
-    private WPI_TalonSRX front_right_motor;
-    private WPI_TalonSRX back_left_motor;
-    private WPI_TalonSRX back_right_motor;
-
-    private SpeedControllerGroup left_motors;
-    private SpeedControllerGroup right_motors;
-
-    private DifferentialDrive drive;
-
-    private Encoder left_enc;
-    private Encoder right_enc;
-
-    private BuiltInAccelerometer accelerometer;
-
-    // These hold the L and R speeds actually sent to the speed controllers
-    private double rob_L = 0, rob_R = 0;
-
-    @Override
-    protected void init() {
         LOGGER.info("Initializing drive system.");
 
         front_left_motor = new WPI_TalonSRX(RobotMap.CAN.front_left_motor);
@@ -73,7 +50,27 @@ public class Drive extends Module {
          */
         left_enc.setDistancePerPulse(Math.PI * RobotMap.RobotDims.wheel_radius / 180);
         right_enc.setDistancePerPulse(Math.PI * RobotMap.RobotDims.wheel_radius / 180);
+
+        Dispatcher.get_instance().register_module(this);
     }
+
+    private WPI_TalonSRX front_left_motor;
+    private WPI_TalonSRX front_right_motor;
+    private WPI_TalonSRX back_left_motor;
+    private WPI_TalonSRX back_right_motor;
+
+    private SpeedControllerGroup left_motors;
+    private SpeedControllerGroup right_motors;
+
+    private DifferentialDrive drive;
+
+    private Encoder left_enc;
+    private Encoder right_enc;
+
+    private BuiltInAccelerometer accelerometer;
+
+    // These hold the L and R speeds actually sent to the speed controllers
+    private double rob_L = 0, rob_R = 0;
 
     @Override
     protected void update() {}

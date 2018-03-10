@@ -1,19 +1,11 @@
 package frc.team7170.robot;
 
 import java.util.logging.Logger;
-
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import frc.team7170.control.Control;
-import frc.team7170.control.Action;
 import frc.team7170.jobs.Dispatcher;
-import frc.team7170.subsystems.Pneumatics;
-import frc.team7170.comm.Communication;
-import frc.team7170.subsystems.drive.Acceleration;
 import frc.team7170.subsystems.drive.Drive;
-import frc.team7170.subsystems.arm.Arm;
-import edu.wpi.first.wpilibj.Encoder;
-import frc.team7170.util.TimedTask;
 
 
 public class Robot extends IterativeRobot {
@@ -28,7 +20,6 @@ public class Robot extends IterativeRobot {
 
     public void robotInit() {
         LOGGER.info("Initializing robot...");
-        Dispatcher.get_instance().initialize_modules();
         CameraServer.getInstance().startAutomaticCapture();
         LOGGER.info("Initialization done.");
     }

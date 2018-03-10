@@ -30,7 +30,6 @@ public class Dispatcher {
     private HashMap<Module, Boolean> modules = new HashMap<>();  // Module-Boolean pairs where the boolean represents if the module is locked.
 
     private boolean jobs_updated = false;  // State variable to indicate whether a running job has terminated and thus queued jobs should be queried (see run()).
-    private boolean modules_initialized = false;  // State variable to indicate whether all the modules have been initialized or not.
 
     /**
      * Must be called by each class that inherits from Module, most likely in the constructor (therefore each module should be a singleton).
@@ -135,16 +134,6 @@ public class Dispatcher {
             }
         }
         return true;
-    }
-
-    /**
-     * Initializes (calls the {@link Module#init()} method on) each module.
-     */
-    public void initialize_modules() {
-        if (!modules_initialized) {  // prevent the user from initializing each module multiple times
-            modules_initialized = true;
-            modules.forEach((Module mod, Boolean locked) -> mod.init());
-        }
     }
 
     /**

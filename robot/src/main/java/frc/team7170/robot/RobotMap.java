@@ -101,4 +101,8 @@ public class RobotMap {
         public static double pot_value_scale = 0;
         public static double pot_value_reverse = 0;
     }
+
+    public static class Communication {
+        public static final String DB_to_send_key = "I_SEND_THESE";
+    }
 }
