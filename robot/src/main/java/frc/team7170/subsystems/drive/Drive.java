@@ -179,15 +179,15 @@ public class Drive extends Module {
     // Accelerometer accessors
 
     public double get_accel_X() {
-        return 9.80*accelerometer.getX();  // Convert to m/s
+        return 9.80*accelerometer.getX();  // Convert to m/s^2
     }
 
     public double get_accel_Y() {
-        return 9.80*accelerometer.getY();  // Convert to m/s
+        return 9.80*accelerometer.getY();  // Convert to m/s^2
     }
 
     public double get_accel_Z() {
-        return 9.80*accelerometer.getZ();  // Convert to m/s
+        return 9.80*accelerometer.getZ();  // Convert to m/s^2
     }
 
 
