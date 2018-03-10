@@ -51,30 +51,10 @@ public class Arm extends Module {
 
     @Override
     protected void update() {
-        /*
-        if (KeyBindings.action2button(KeyBindings.Action.ENDE_PUSH).get_pressed()) {
-            push_endE();
-        } else if (KeyBindings.action2button(KeyBindings.Action.ENDE_SUCK).get_pressed()) {
-            suck_endE();
-        } else if (KeyBindings.action2button(KeyBindings.Action.ENDE_OFF).get_pressed()) {
-            kill_endE();
-        }
-        arm_analog(KeyBindings.action2axis(KeyBindings.Action.ARM_ANALOG).get());
-        if (KeyBindings.action2pov(KeyBindings.Action.ARM_UP).get()) {
-            arm_up();
-        } else if (KeyBindings.action2pov(KeyBindings.Action.ARM_DOWN).get()) {
-            arm_down();
-        } else {
-            arm_kill();
-        }
-        if (KeyBindings.action2button(KeyBindings.Action.TRY_ARM_TOGGLE).get_pressed()) {
-            Pneumatics.set_solenoids(!Pneumatics.get_solenoids());
-        }
-        */
-        if (extended && !safe_zone()) {
+        if (extended && in_inner_thresh()) {
             extended = false;
             Pneumatics.set_solenoids(false);
-        } else if (!extended && !danger_zone()) {
+        } else if (!extended && !in_outer_thresh()) {
             extended = true;
             Pneumatics.set_solenoids(true);
         }
@@ -84,38 +64,52 @@ public class Arm extends Module {
     protected void enabled() {}
 
     @Override
-    protected void disabled() {}
+    protected void disabled() {
+        arm_kill();
+        endE_kill();
+    }
 
     @Override
     public String toString() {
         return "Arm module.";
     }
 
-    public boolean safe_zone() {
+    /**
+     * @return If the arm is in the inner thresholds.
+     */
+    public boolean in_inner_thresh() {
         double pot_read = pot.get();
-        return (pot_read <= RobotMap.Arm.pot_value_kill_lower_inner ||
-                pot_read >= RobotMap.Arm.pot_value_kill_upper_inner);
+        return (pot_read >= RobotMap.Arm.pot_value_kill_lower_inner &&
+                pot_read <= RobotMap.Arm.pot_value_kill_upper_inner);
     }
 
-    public boolean danger_zone() {
+    /**
+     * @return If the arm is in the outer thresholds.
+     */
+    public boolean in_outer_thresh() {
         double pot_read = pot.get();
         return (pot_read >= RobotMap.Arm.pot_value_kill_lower_outer &&
                 pot_read <= RobotMap.Arm.pot_value_kill_upper_outer);
     }
 
-    public void suck_endE() {
+    public void endE_suck() {
         spark_left_endE.set(RobotMap.Arm.endE_speed);
         spark_right_endE.set(RobotMap.Arm.endE_speed);
     }
 
-    public void push_endE() {
+    public void endE_push() {
         spark_left_endE.set(-RobotMap.Arm.endE_speed);
         spark_right_endE.set(-RobotMap.Arm.endE_speed);
     }
 
-    public void kill_endE() {
+    public void endE_kill() {
         spark_left_endE.set(0);
         spark_right_endE.set(0);
+    }
+
+    public void endE_analog(double speed) {
+        spark_left_endE.set(speed);
+        spark_right_endE.set(speed);
     }
 
     public void arm_up() {

@@ -6,6 +6,7 @@ import frc.team7170.jobs.Module;
 import frc.team7170.util.TimedTask;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 
@@ -35,6 +36,7 @@ import java.util.logging.Logger;
  * accordingly. Note that a specific naming system for each entry's key exists:
  *      an "O_..." prefix specifies a one-way robot-to-dashboard entry;
  *      an "I_..." prefix specifies a one-way dashboard-to-robot entry;
+ *      an "R_..." prefix specifies a remote procedure call (RPC) entry;
  *      an "..._M" affix specifies that an entry be mutable by the dashboard (that is, the corresponding entry key
  *          with an "I_..." prefix may actually exist and hence a receiver may be assigned to listen for it);
  *      an "..._S" affix specifies that an entry be static (not mutable by the dashboard).
@@ -55,6 +57,15 @@ import java.util.logging.Logger;
  * initialization. {@link EntryNotification#name} can be used to identify which entry an event refers to if the
  * receiver receives multiple entry keys.
  *
+ * Any methods of a subscribed module that are remote procedure call (RPC) methods must be annotated with
+ * {@link RPCCaller}. This accepts a list of strings, each corresponding to a {@link NetworkTableEntry} key to be
+ * associated with the method in question's RPC. This method must accept one {@link RpcAnswer} parameter and return
+ * void, lest an exception will be thrown during robot initialization. This method will be called whenever the entry's
+ * {@link NetworkTableEntry#callRpc(byte[])} method is called. Note this way of identifying a method as RPC with the
+ * {@link RPCCaller} annotation is essentially for convenience as the same effect could easily be achieved with a
+ * {@link Transmitter} with a {@link TransmitFrequency#STATIC} poll rate that manually registers a given method as an
+ * RPC method via {@link NetworkTableInstance#createRpc(NetworkTableEntry, Consumer)}.
+ *
  * @see TransmitFrequency
  * @see Transmitter
  * @see Receiver
@@ -74,10 +85,14 @@ public class Communication extends Module {
     }
 
     private NetworkTableInstance nt_inst;
+    /**
+     * This maps each entry key to the {@link Runnable} transmitter that it corresponds to, or null if the transmitter's
+     * poll rate is {@link TransmitFrequency#STATIC} or the method is a {@link RPCCaller}.
+     */
     private HashMap<String, Runnable> transmitters = new HashMap<>();
 
     /**
-     * Enum of all (sub)table paths for convenience.
+     * Enum of all (sub)table paths for convenience ease of modification.
      */
     public enum Tables {
         OUT ("/out"),
@@ -124,24 +139,39 @@ public class Communication extends Module {
         return "Communication module.";
     }
 
+    /**
+     * This method is can be called from {@link Communicator#register_comm()} (preferable) or manually to register
+     * a module as containing {@link Transmitter}, {@link Receiver}, or {@link RPCCaller} method. This allows this
+     * method to search the {@link Communicator} for these annotated methods using reflection and handle them
+     * appropriately.
+     * @param communicator The {@link Communicator} to register.
+     */
     public void register_communicator(Communicator communicator) {
+        // Loop through the communicator's methods
         for (Method meth : communicator.getClass().getDeclaredMethods()) {
+            // Attempt to identify each type of the annotations
             Transmitter transmitter = meth.getDeclaredAnnotation(Transmitter.class);
             Receiver receiver = meth.getDeclaredAnnotation(Receiver.class);
             RPCCaller rpccaller = meth.getDeclaredAnnotation(RPCCaller.class);
+
+            // State variable to store whether a method has been found to have a annotation on it already.
+            // This is used to enforce that only one of the three annotations be used per method in a communicator
             boolean anno_used = false;
 
-            if (transmitter != null) {
+            if (transmitter != null) {  // If the method is annotated with Transmitter
                 anno_used = true;
+                // Check the signature of the method and throw an exception if it isn't correct
                 if (meth.getReturnType() != void.class ||
                         meth.getParameterCount() != 1 ||
                         meth.getParameterTypes()[0] != NetworkTableEntry.class) {
                     throw new RuntimeException("Transmitter method in communicator does not feature proper signature.");
                 }
+                // Special cases for when the transmitter's poll rate is static or volatile
                 if (transmitter.poll_rate() == TransmitFrequency.STATIC) {
                     for (String key : transmitter.value()) {
                         key = rectify_key(key, 1);
                         if (transmitters.containsKey(key)) {
+                            // Throw an exception if a transmitter for this key has already been mapped
                             throw new RuntimeException("Multiple transmitters/rpc caller for same key registered.");
                         }
                         transmitters.put(key, null);  // Populate map to indicate that a transmitter with this key exists
@@ -155,8 +185,10 @@ public class Communication extends Module {
                     for (String key : transmitter.value()) {
                         final String k = rectify_key(key, 1);  // Make key final for use in lambda
                         if (transmitters.containsKey(k)) {
+                            // Throw an exception if a transmitter for this key has already been mapped
                             throw new RuntimeException("Multiple transmitters/rpc caller for same key registered.");
                         }
+                        // Map a Runnable in transmitters without any delay for a volatile poll rate
                         transmitters.put(k, () -> {
                             try {
                                 meth.invoke(communicator, nt_inst.getTable(Tables.OUT.get()).getEntry(k));
@@ -169,8 +201,10 @@ public class Communication extends Module {
                     for (String key : transmitter.value()) {
                         final String k = rectify_key(key, 1);  // Make key final for use in lambda
                         if (transmitters.containsKey(k)) {
+                            // Throw an exception if a transmitter for this key has already been mapped
                             throw new RuntimeException("Multiple transmitters/rpc caller for same key registered.");
                         }
+                        // Map a Runnable in transmitters with a delay for a non-volatile poll rate
                         transmitters.put(k, new TimedTask(() -> {
                             try {
                                 meth.invoke(communicator, nt_inst.getTable(Tables.OUT.get()).getEntry(k));
@@ -184,9 +218,11 @@ public class Communication extends Module {
 
             if (receiver != null) {
                 if (anno_used) {
+                    // Throw an exception if transmitter already exists on this method
                     throw new RuntimeException("Method in communicator declared as transmitter AND/OR receiver AND/OR rpc caller.");
                 }
                 anno_used = true;
+                // Check the signature of the method and throw an exception if it isn't correct
                 if (meth.getReturnType() != void.class ||
                         meth.getParameterCount() != 1 ||
                         meth.getParameterTypes()[0] != EntryNotification.class) {
@@ -194,6 +230,7 @@ public class Communication extends Module {
                 }
                 for (String key : receiver.value()) {
                     key = rectify_key(key, 2);
+                    // Add a listener to the entry key which invokes the method whenever the entry is remotely updated
                     nt_inst.getTable(Tables.IN.get()).getEntry(key).addListener((event) -> {
                         try {
                             meth.invoke(communicator, event);
@@ -206,8 +243,10 @@ public class Communication extends Module {
 
             if (rpccaller != null) {
                 if (anno_used) {
+                    // Throw an exception if a transmitter or receiver already exists on this method
                     throw new RuntimeException("Method in communicator declared as transmitter AND/OR receiver AND/OR rpc caller.");
                 }
+                // Check the signature of the method and throw an exception if it isn't correct
                 if (meth.getReturnType() != void.class ||
                         meth.getParameterCount() != 1 ||
                         meth.getParameterTypes()[0] != RpcAnswer.class) {
@@ -216,9 +255,11 @@ public class Communication extends Module {
                 for (String key : rpccaller.value()) {
                     key = rectify_key(key, 0);
                     if (transmitters.containsKey(key)) {
+                        // Throw an error if a transmitter for this key has already been mapped
                         throw new RuntimeException("Multiple transmitters/rpc caller for same key registered.");
                     }
                     transmitters.put(key, null);  // Populate map to indicate that a transmitter with this key exists
+                    // Create an RPC on the Network Tables instance for the entry key which invokes the method
                     nt_inst.createRpc(nt_inst.getTable(Tables.OUT.get()).getEntry(key), (rpca) -> {
                         try {
                             meth.invoke(communicator, rpca);
@@ -231,11 +272,18 @@ public class Communication extends Module {
         }
     }
 
+    /**
+     * Fix a key to follow the naming scheme described in this class's docstring.
+     * @param key The key to fix.
+     * @param type The type of the key. This specifies the prefix according to:
+     *             0 = "R_..."
+     *             1 = "O_..."
+     *             2 (or any other integer) = "I_..."
+     * @return The rectified key.
+     */
     public String rectify_key(String key, int type) {
-        if (type == 0) {
-            if (!key.startsWith("R_")) {
-                key = "R_".concat(key);
-            }
+        if (type == 0 && !key.startsWith("R_")) {
+            key = "R_".concat(key);
         } else if (type == 1) {
             if (!key.startsWith("O_")) {
                 key = "O_".concat(key);
@@ -249,7 +297,12 @@ public class Communication extends Module {
         return key;
     }
 
+    /**
+     * Strips the given key of any prefixes or affixes using regex and returns the root only.
+     * @param key The key to parse.
+     * @return The key stripped of pre/affixes.
+     */
     public String get_key_root(String key) {
-        return "TODO";
+        return key.replaceFirst("^R_|^O_|^I_", "").replaceFirst("_M\\$|_S\\$", "");
     }
 }
