@@ -85,7 +85,7 @@ public class Communication extends Module {
     }
     private Communication() {
         LOGGER.info("Initializing communication system.");
-        nt_inst = NetworkTableInstance.getDefault();
+
         nt_inst.getTable(Tables.IN.get()).getEntry(rectify_key(RobotMap.Communication.DB_to_send_key, 2)).addListener((event) -> {
             senders.clear();
             try {
@@ -95,10 +95,11 @@ public class Communication extends Module {
                 e.printStackTrace();
             }
         }, EntryListenerFlags.kUpdate);
+
         Dispatcher.get_instance().register_module(this);
     }
 
-    private NetworkTableInstance nt_inst;
+    private NetworkTableInstance nt_inst = NetworkTableInstance.getDefault();
     /**
      * This maps each entry key to the {@link Runnable} transmitter that it corresponds to, or null if the transmitter's
      * poll rate is {@link TransmitFrequency#STATIC} or the method is a {@link RPCCaller}.

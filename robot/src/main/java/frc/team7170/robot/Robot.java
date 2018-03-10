@@ -20,6 +20,7 @@ public class Robot extends IterativeRobot {
 
     public void robotInit() {
         LOGGER.info("Initializing robot...");
+        // TODO: Manually force load & initialization of each module with Class.forName() ?
         CameraServer.getInstance().startAutomaticCapture();
         LOGGER.info("Initialization done.");
     }

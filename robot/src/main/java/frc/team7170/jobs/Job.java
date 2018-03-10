@@ -224,12 +224,9 @@ public abstract class Job {
 
             @Override
             boolean cancel(boolean override) {
-                if (this.running && (interruptable || override)) {
-                    this.running = false;
-                    interrupted();
+                if (super.cancel(override)) {
                     for (Job job : jobs) {
-                        job.running = false;
-                        job.interrupted();
+                        job.cancel(true);
                     }
                     return true;
                 }
@@ -276,6 +273,7 @@ public abstract class Job {
         for (Job job : jobs) {
             meshed.requires((Module[]) job.requirements.toArray());
         }
+        meshed.set_interruptable(interruptable);
         return meshed;
     }
 }

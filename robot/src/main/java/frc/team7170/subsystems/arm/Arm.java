@@ -24,25 +24,18 @@ public class Arm extends Module {
     private Arm() {
         LOGGER.info("Initializing arm system.");
 
-        spark_left_endE = new Spark(RobotMap.PWM.endE_left_motor);
-        spark_right_endE = new Spark(RobotMap.PWM.endE_right_motor);
-        spark_left_arm = new Spark(RobotMap.PWM.arm_left_motor);
-        spark_right_arm = new Spark(RobotMap.PWM.arm_right_motor);
-
         spark_left_endE.setInverted(RobotMap.Arm.reverse_endE_left);
         spark_right_endE.setInverted(RobotMap.Arm.reverse_endE_right);
-
-        pot = new AnalogPotentiometer(RobotMap.AIO.arm_pot, RobotMap.Arm.pot_scale, RobotMap.Arm.pot_offset);
 
         Dispatcher.get_instance().register_module(this);
     }
 
-    private Spark spark_left_endE;
-    private Spark spark_right_endE;
-    private Spark spark_left_arm;
-    private Spark spark_right_arm;
+    private Spark spark_left_endE = new Spark(RobotMap.PWM.endE_left_motor);
+    private Spark spark_right_endE = new Spark(RobotMap.PWM.endE_right_motor);
+    private Spark spark_left_arm = new Spark(RobotMap.PWM.arm_left_motor);
+    private Spark spark_right_arm = new Spark(RobotMap.PWM.arm_right_motor);
 
-    private AnalogPotentiometer pot;
+    private AnalogPotentiometer pot = new AnalogPotentiometer(RobotMap.AIO.arm_pot, RobotMap.Arm.pot_scale, RobotMap.Arm.pot_offset);
 
     private boolean extended = false;
 

@@ -24,16 +24,13 @@ public class Pneumatics extends Module {
     }
     private Pneumatics() {
         LOGGER.info("Initializing pneumatics system.");
-        compressor = new Compressor(RobotMap.CAN.PCM);
-        arm_left = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.left_solenoid);
-        arm_right = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.right_solenoid);
 
         Dispatcher.get_instance().register_module(this);
     }
 
-    private static Compressor compressor;
-    private static Solenoid arm_left;
-    private static Solenoid arm_right;
+    private static Compressor compressor = new Compressor(RobotMap.CAN.PCM);
+    private static Solenoid arm_left = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.left_solenoid);
+    private static Solenoid arm_right = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.right_solenoid);
 
     @Override
     protected void update() {}

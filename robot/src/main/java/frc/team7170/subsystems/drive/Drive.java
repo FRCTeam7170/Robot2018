@@ -26,21 +26,8 @@ public class Drive extends Module {
     private Drive() {
         LOGGER.info("Initializing drive system.");
 
-        front_left_motor = new WPI_TalonSRX(RobotMap.CAN.front_left_motor);
-        front_right_motor = new WPI_TalonSRX(RobotMap.CAN.front_right_motor);
-        back_left_motor = new WPI_TalonSRX(RobotMap.CAN.back_left_motor);
-        back_right_motor = new WPI_TalonSRX(RobotMap.CAN.back_right_motor);
-
-        left_motors = new SpeedControllerGroup(front_left_motor, back_left_motor);
-        right_motors = new SpeedControllerGroup(front_right_motor, back_right_motor);
-
-        drive = new DifferentialDrive(left_motors, right_motors);
-
-        left_enc = new Encoder(RobotMap.DIO.encoder_left_A, RobotMap.DIO.encoder_left_B);
-        right_enc = new Encoder(RobotMap.DIO.encoder_right_A, RobotMap.DIO.encoder_right_B);
-        accelerometer = new BuiltInAccelerometer();
-
         /*
+        Explanation of the calculation in the encoder's distance scaling below:
         Let:
             r = wheel radius
             d = distance travelled
@@ -54,20 +41,20 @@ public class Drive extends Module {
         Dispatcher.get_instance().register_module(this);
     }
 
-    private WPI_TalonSRX front_left_motor;
-    private WPI_TalonSRX front_right_motor;
-    private WPI_TalonSRX back_left_motor;
-    private WPI_TalonSRX back_right_motor;
+    private WPI_TalonSRX front_left_motor = new WPI_TalonSRX(RobotMap.CAN.front_left_motor);
+    private WPI_TalonSRX front_right_motor = new WPI_TalonSRX(RobotMap.CAN.front_right_motor);
+    private WPI_TalonSRX back_left_motor = new WPI_TalonSRX(RobotMap.CAN.back_left_motor);
+    private WPI_TalonSRX back_right_motor = new WPI_TalonSRX(RobotMap.CAN.back_right_motor);
 
-    private SpeedControllerGroup left_motors;
-    private SpeedControllerGroup right_motors;
+    private SpeedControllerGroup left_motors = new SpeedControllerGroup(front_left_motor, back_left_motor);
+    private SpeedControllerGroup right_motors = new SpeedControllerGroup(front_right_motor, back_right_motor);
 
-    private DifferentialDrive drive;
+    private DifferentialDrive drive = new DifferentialDrive(left_motors, right_motors);
 
-    private Encoder left_enc;
-    private Encoder right_enc;
+    private Encoder left_enc = new Encoder(RobotMap.DIO.encoder_left_A, RobotMap.DIO.encoder_left_B);
+    private Encoder right_enc = new Encoder(RobotMap.DIO.encoder_right_A, RobotMap.DIO.encoder_right_B);
 
-    private BuiltInAccelerometer accelerometer;
+    private BuiltInAccelerometer accelerometer = new BuiltInAccelerometer();
 
     // These hold the L and R speeds actually sent to the speed controllers
     private double rob_L = 0, rob_R = 0;
