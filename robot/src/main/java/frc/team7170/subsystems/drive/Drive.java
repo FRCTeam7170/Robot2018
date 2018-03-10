@@ -12,6 +12,9 @@ import frc.team7170.util.CalcUtil;
 import frc.team7170.jobs.Dispatcher;
 
 
+/**
+ * Module to handle drive base motors, navigational sensors, and all interactions with them.
+ */
 public class Drive extends Module {
 
     private final static Logger LOGGER = Logger.getLogger(Drive.class.getName());
@@ -79,13 +82,21 @@ public class Drive extends Module {
     protected void enabled() {}
 
     @Override
-    protected void disabled() {}
+    protected void disabled() {
+        brake();
+    }
 
     @Override
     public String toString() {
         return "Drive module.";
     }
 
+    /**
+     * Optional algorithm to reduce jerk (change in acceleration) during teleop manual control period. This method
+     * alters the rob_L and rob_R motor speeds in-place.
+     * @param left Left motor speed on joystick.
+     * @param right RIght motor speed on joystick.
+     */
     private void smooth_current(double left, double right) {
         double dL = left - rob_L;
         double dR = right - rob_R;
@@ -103,11 +114,21 @@ public class Drive extends Module {
         }
     }
 
+    /**
+     * Set the motors using an arcade joystick style. Note that this is literally a copy-paste of the arcade algorithm
+     * used in {@link DifferentialDrive#arcadeDrive(double, double, boolean)} so that we can keep all interactions with
+     * the motors in a consistent tank-drive system while still offering the ability to control the robot via arcade
+     * drive.
+     * @param joy_Y Joystick Y axis.
+     * @param joy_Z Joystick Z (turn) axis.
+     * @param smooth Whether to use {@link Drive#smooth_current(double, double)}.
+     * @param square Whether to square the motor outputs to allow fine control at low speeds.
+     */
     public void set_arcade(double joy_Y, double joy_Z, boolean smooth, boolean square) {
         joy_Y = CalcUtil.apply_bounds(joy_Y, -1.0, 1.0);
         joy_Z = CalcUtil.apply_bounds(joy_Z, -1.0, 1.0);
 
-        // This is copied from the setArcade function in DifferentialDrive
+        // The following is copied from the setArcade function in DifferentialDrive
         double left;
         double right;
 
@@ -136,6 +157,13 @@ public class Drive extends Module {
         set_tank(left, right, smooth, square);
     }
 
+    /**
+     * Set the motors using a tank drive style.
+     * @param left Left motor speed.
+     * @param right Right motor speed.
+     * @param smooth Whether to use {@link Drive#smooth_current(double, double)}.
+     * @param square Whether to square the motor outputs to allow fine control at low speeds.
+     */
     public void set_tank(double left, double right, boolean smooth, boolean square) {
         if (smooth) {
             smooth_current(left, right);
@@ -146,22 +174,37 @@ public class Drive extends Module {
         drive.tankDrive(rob_L, rob_R, square);
     }
 
+    /**
+     * Stop the motors.
+     */
     public void brake() {
         drive.stopMotor();
     }
 
+    /**
+     * @return Left motor speed.
+     */
     public double get_L() {
         return rob_L;
     }
 
+    /**
+     * @return Right motor speed.
+     */
     public double get_R() {
         return rob_R;
     }
 
+    /**
+     * @return Y motor speed via conversion of left and right motor speeds.
+     */
     public double get_Y() {
         return rob_R + (rob_L - rob_R)/2;
     }
 
+    /**
+     * @return Z motor speed via conversion of left and right motor speeds.
+     */
     public double get_Z() {
         return (rob_L - rob_R)/2;
     }

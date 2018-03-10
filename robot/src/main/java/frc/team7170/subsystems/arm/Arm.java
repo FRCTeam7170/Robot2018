@@ -11,7 +11,7 @@ import frc.team7170.subsystems.Pneumatics;
 
 /**
  * Module to handle all interactions with the arm of the robot. This includes the end effector wheel motors, the motors
- * that power the arm rotation, and the
+ * that power the arm rotation, and the pneumatic arms.
  */
 public class Arm extends Module {
 

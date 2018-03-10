@@ -66,6 +66,12 @@ import java.util.logging.Logger;
  * {@link Transmitter} with a {@link TransmitFrequency#STATIC} poll rate that manually registers a given method as an
  * RPC method via {@link NetworkTableInstance#createRpc(NetworkTableEntry, Consumer)}.
  *
+ * TODO
+ * TODO
+ * TODO CONTROL FOR *WHAT* DATA IS SENT OVER THE NETWORK VIA A STRING ARRAY ENTRY SENT FROM THE DASHBOARD
+ * TODO
+ * TODO
+ *
  * @see TransmitFrequency
  * @see Transmitter
  * @see Receiver

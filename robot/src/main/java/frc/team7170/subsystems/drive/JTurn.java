@@ -5,6 +5,9 @@ import frc.team7170.robot.RobotMap;
 import frc.team7170.util.CalcUtil;
 
 
+/**
+ * Job for turning on the spot for a certain amount of degrees.
+ */
 public class JTurn extends Job {
 
     private final double degrees;
@@ -24,11 +27,14 @@ public class JTurn extends Job {
     @Override
     protected void init() {
         drive.reset_encoders();
+        // Only set turn (Z) speed, keep forward (Y) speed at what it is already at.
         drive.set_arcade(drive.get_Y(), accel.get(0), false, false);
     }
 
     @Override
     protected void update() {
+        // Only set turn (Z) speed, keep forward (Y) speed at what it is already at.
+        // Progress of maneuver is calculated by average encoder distance over projected distance.
         drive.set_arcade(drive.get_Y(), accel.get((Math.abs(drive.get_Lenc()) + Math.abs(drive.get_Renc()))/2/predicted_final_enc),
                 false, false);
     }
@@ -41,6 +47,7 @@ public class JTurn extends Job {
 
     @Override
     protected void end() {
+        // End by setting turn (Z) speed to whatever 100% of acceleration algorithm progress is
         drive.set_arcade(drive.get_Y(), accel.get(1), false, false);
     }
 

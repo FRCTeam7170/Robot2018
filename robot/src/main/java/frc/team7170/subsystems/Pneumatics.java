@@ -8,6 +8,12 @@ import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 
 
+/**
+ * This class handles all pneumatics on the robot, but does not actually do any sort of logic to determine when the arm
+ * should be extended, for example. Such code is all contained in {@link frc.team7170.subsystems.arm.Arm}.
+ *
+ * @see frc.team7170.subsystems.arm.Arm
+ */
 public class Pneumatics extends Module {
 
     private final static Logger LOGGER = Logger.getLogger(Pneumatics.class.getName());
@@ -50,14 +56,18 @@ public class Pneumatics extends Module {
         return arm_left.get();  // Doesn't matter which
     }
 
+    /**
+     * Sets both solenoids to the given value. Note that because of this level of abstraction it is impossible to turn
+     * one solenoid off and the other on, which could be dangerous.
+     * @param on Whether to turn the solenoids on or off.
+     */
     public static void set_solenoids(boolean on) {
         arm_left.set(on);
         arm_right.set(on);
     }
 
     public static void toggle_solenoids() {
-        arm_left.set(!arm_left.get());
-        arm_right.set(!arm_right.get());
+        set_solenoids(!get_solenoids());
     }
 
 

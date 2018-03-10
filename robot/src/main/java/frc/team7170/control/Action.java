@@ -14,16 +14,18 @@ package frc.team7170.control;
  */
 public enum Action {
     A_DRIVE_Y,
-    A_DRIVE_X,
+    A_DRIVE_Z,
     A_THROTTLE_CONTROL,
 
     B_ARM_UP,
     B_ARM_DOWN,
     A_ARM_ANALOG,
+    // TODO: Preset scale/switch positions for arm
 
     B_ENDE_SUCK,
     B_ENDE_PUSH,
     B_ENDE_OFF,
+    A_ENDE_ANALOG,
 
     B_ARM_RETRACT,
     B_TRY_ARM_EXTEND,

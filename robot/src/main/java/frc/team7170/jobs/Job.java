@@ -72,7 +72,7 @@ public abstract class Job {
 
     /**
      * Called from within {@link Dispatcher}. Updates the job and peacefully terminates if the job is finished.
-     * @return
+     * @return If the job finished peacefully.
      */
     boolean _update() {
         if (is_updating()) {  // Only update if running and all required modules are enabled.
@@ -203,11 +203,79 @@ public abstract class Job {
     }
 
     /**
-     * TODO
-     * @param jobs
-     * @return
+     * Group together a set of jobs to be ran in parallel. This DOES NOT disallow conflicting requirements so this must
+     * be used responsibly.
+     * Each meshed job starts at the same time as the others, but may terminate early depending on its own
+     * {@link Job#is_finished()} conditions. Cancelling a job mesh terminates all the meshed jobs at the same time. All
+     * meshed jobs will halt if any of the required modules for any of the meshed jobs becomes disabled.
+     * @param jobs Set of jobs to be ran in parallel.
+     * @param interruptable Whether the meshed job is interruptable or not.
+     * @return The meshed job.
      */
-    public static Job mesh(Job ...jobs) {
-        return null;  // TODO
+    public static Job mesh(HashSet<Job> jobs, boolean interruptable) {
+        Job meshed = new Job() {
+            @Override
+            void start() {
+                super.start();
+                for (Job job : jobs) {
+                    job.start();
+                }
+            }
+
+            @Override
+            boolean cancel(boolean override) {
+                if (this.running && (interruptable || override)) {
+                    this.running = false;
+                    interrupted();
+                    for (Job job : jobs) {
+                        job.running = false;
+                        job.interrupted();
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            boolean _update() {
+                if (is_updating()) {
+                    for (Job job : jobs) {
+                        job._update();
+                    }
+                }
+                return super._update();
+            }
+
+            @Override
+            protected void init() {}
+
+            @Override
+            protected void update() {}
+
+            @Override
+            protected boolean is_finished() {
+                for (Job job : jobs) {
+                    if (!job.is_finished()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            protected void end() {}
+
+            @Override
+            protected void interrupted() {}
+
+            @Override
+            public String toString() {
+                return "Meshed job group.";
+            }
+        };
+        for (Job job : jobs) {
+            meshed.requires((Module[]) job.requirements.toArray());
+        }
+        return meshed;
     }
 }

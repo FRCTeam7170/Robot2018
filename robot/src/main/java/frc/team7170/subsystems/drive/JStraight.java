@@ -5,6 +5,9 @@ import frc.team7170.robot.RobotMap;
 import frc.team7170.util.CalcUtil;
 
 
+/**
+ * Job for driving in a straight line for a certain distance (without correction, so it may not actually be straight.)
+ */
 public class JStraight extends Job {
 
     private final double distance;
@@ -22,11 +25,14 @@ public class JStraight extends Job {
     @Override
     protected void init() {
         drive.reset_encoders();
+        // Only set forward (Y) speed, keep turn (Z) speed at what it is already at.
         drive.set_arcade(accel.get(0), drive.get_Z(), false, false);
     }
 
     @Override
     protected void update() {
+        // Only set forward (Y) speed, keep turn (Z) speed at what it is already at.
+        // Progress of maneuver is calculated by average encoder distance over projected distance.
         drive.set_arcade(accel.get((Math.abs(drive.get_Lenc_dist()) + Math.abs(drive.get_Renc_dist()))/2/distance),
                 drive.get_Z(), false, false);
     }
@@ -39,6 +45,7 @@ public class JStraight extends Job {
 
     @Override
     protected void end() {
+        // End by setting forward (Y) speed to whatever 100% of acceleration algorithm progress is
         drive.set_arcade(accel.get(1), drive.get_Y(), false, false);
     }
 
