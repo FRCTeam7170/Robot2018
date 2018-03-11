@@ -8,10 +8,6 @@ package frc.team7170.robot;
  */
 public class RobotMap {
 
-    public static class Debug {
-        public static final boolean print_current = false;
-    }
-
     public static class DriveSmooth {
         public static double logic_threshold_L = 0.5;
         public static double logic_threshold_R = 0.5;

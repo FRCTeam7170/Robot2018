@@ -2,10 +2,16 @@ package frc.team7170.subsystems.drive;
 
 import java.util.logging.Logger;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.networktables.EntryNotification;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.team7170.comm.Communicator;
+import frc.team7170.comm.Receiver;
+import frc.team7170.comm.TransmitFrequency;
+import frc.team7170.comm.Transmitter;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.util.CalcUtil;
@@ -15,7 +21,7 @@ import frc.team7170.jobs.Dispatcher;
 /**
  * Module to handle drive base motors, navigational sensors, and all interactions with them.
  */
-public class Drive extends Module {
+public class Drive extends Module implements Communicator {
 
     private final static Logger LOGGER = Logger.getLogger(Drive.class.getName());
 
@@ -39,6 +45,7 @@ public class Drive extends Module {
         right_enc.setDistancePerPulse(Math.PI * RobotMap.RobotDims.wheel_radius / 180);
 
         Dispatcher.get_instance().register_module(this);
+        register_comm();
     }
 
     private WPI_TalonSRX front_left_motor = new WPI_TalonSRX(RobotMap.CAN.front_left_motor);
@@ -67,6 +74,8 @@ public class Drive extends Module {
 
     @Override
     protected void disabled() {
+        rob_L = 0;
+        rob_R = 0;
         brake();
     }
 
@@ -109,6 +118,10 @@ public class Drive extends Module {
      * @param square Whether to square the motor outputs to allow fine control at low speeds.
      */
     public void set_arcade(double joy_Y, double joy_Z, boolean smooth, boolean square) {
+        // Disallow setting motors while disabled
+        if (!get_enabled()) {
+            return;
+        }
         joy_Y = CalcUtil.apply_bounds(joy_Y, -1.0, 1.0);
         joy_Z = CalcUtil.apply_bounds(joy_Z, -1.0, 1.0);
 
@@ -149,6 +162,10 @@ public class Drive extends Module {
      * @param square Whether to square the motor outputs to allow fine control at low speeds.
      */
     public void set_tank(double left, double right, boolean smooth, boolean square) {
+        // Disallow setting motors while disabled
+        if (!get_enabled()) {
+            return;
+        }
         if (smooth) {
             smooth_current(left, right);
         } else {
@@ -261,4 +278,110 @@ public class Drive extends Module {
     }
 
     // TODO: Accessors for CAN data on motors, ex: current output
+
+    @Transmitter(poll_rate=TransmitFrequency.FAST, value={
+            "O_DRIVE_LEFT_S",
+            "O_DRIVE_RIGHT_S",
+            "O_ACCEL_X_S",
+            "O_ACCEL_Y_S",
+            "O_ACCEL_Z_S",
+            "O_ENCODER_LEFT_S",
+            "O_ENCODER_RIGHT_S"
+    })
+    private void transmitter_fast(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_DRIVE_LEFT_S":
+                entry.setDouble(rob_L);
+                break;
+            case "O_DRIVE_RIGHT_S":
+                entry.setDouble(rob_R);
+                break;
+            case "O_ACCEL_X_S":
+                entry.setDouble(get_accel_X());
+                break;
+            case "O_ACCEL_Y_S":
+                entry.setDouble(get_accel_Y());
+                break;
+            case "O_ACCEL_Z_S":
+                entry.setDouble(get_accel_Z());
+                break;
+            case "O_ENCODER_LEFT_S":
+                entry.setDouble(get_Lenc());
+                break;
+            case "O_ENCODER_RIGHT_S":
+                entry.setDouble(get_Renc());
+                break;
+        }
+    }
+
+    @Transmitter(poll_rate=TransmitFrequency.STATIC, value={
+            "O_TURN_ANGLE_TOLERANCE_M",
+            "O_STRAIGHT_DISTANCE_TOLERANCE_M",
+            "O_CAN_ID_FRONT_LEFT_MOTOR_S",
+            "O_CAN_ID_FRONT_RIGHT_MOTOR_S",
+            "O_CAN_ID_BACK_LEFT_MOTOR_S",
+            "O_CAN_ID_BACK_RIGHT_MOTOR_S",
+            "O_DIO_ENCODER_LEFT_A_S",
+            "O_DIO_ENCODER_LEFT_B_S",
+            "O_DIO_ENCODER_RIGHT_A_S",
+            "O_DIO_ENCODER_RIGHT_B_S",
+    })
+    private void transmitter_static(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_TURN_ANGLE_TOLERANCE_M":
+                entry.setDouble(RobotMap.Maneuvers.turn_angle_tolerance);
+                break;
+            case "O_STRAIGHT_DISTANCE_TOLERANCE_M":
+                entry.setDouble(RobotMap.Maneuvers.straight_distance_tolerance);
+                break;
+            case "O_CAN_ID_FRONT_LEFT_MOTOR_S":
+                entry.setDouble(RobotMap.CAN.front_left_motor);
+                break;
+            case "O_CAN_ID_FRONT_RIGHT_MOTOR_S":
+                entry.setDouble(RobotMap.CAN.front_right_motor);
+                break;
+            case "O_CAN_ID_BACK_LEFT_MOTOR_S":
+                entry.setDouble(RobotMap.CAN.back_left_motor);
+                break;
+            case "O_CAN_ID_BACK_RIGHT_MOTOR_S":
+                entry.setDouble(RobotMap.CAN.back_right_motor);
+                break;
+            case "O_DIO_ENCODER_LEFT_A_S":
+                entry.setDouble(RobotMap.DIO.encoder_left_A);
+                break;
+            case "O_DIO_ENCODER_LEFT_B_S":
+                entry.setDouble(RobotMap.DIO.encoder_left_B);
+                break;
+            case "O_DIO_ENCODER_RIGHT_A_S":
+                entry.setDouble(RobotMap.DIO.encoder_right_A);
+                break;
+            case "O_DIO_ENCODER_RIGHT_B_S":
+                entry.setDouble(RobotMap.DIO.encoder_right_B);
+                break;
+        }
+    }
+
+    @Receiver({
+            "I_TURN_ANGLE_TOLERANCE",
+            "I_STRAIGHT_DISTANCE_TOLERANCE"
+    })
+    private void receiver(EntryNotification event) {
+        switch (event.name) {
+            case "I_TURN_ANGLE_TOLERANCE":
+                if (event.value.isDouble()) {
+                    RobotMap.Maneuvers.turn_angle_tolerance = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 360.0);
+                } else {
+                    LOGGER.severe("I_TURN_ANGLE_TOLERANCE entry updated but it is not a double!");
+                }
+                break;
+            case "I_STRAIGHT_DISTANCE_TOLERANCE":
+                if (event.value.isDouble()) {
+                    // Limit distance tolerance to [0, 10] metres (10 metres is already a ridiculous upper bound)
+                    RobotMap.Maneuvers.straight_distance_tolerance = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 10.0);
+                } else {
+                    LOGGER.severe("I_STRAIGHT_DISTANCE_TOLERANCE entry updated but it is not a double!");
+                }
+                break;
+        }
+    }
 }
