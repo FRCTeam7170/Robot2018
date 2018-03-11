@@ -69,6 +69,11 @@ import java.util.logging.Logger;
  * {@link Transmitter} with a {@link TransmitFrequency#STATIC} poll rate that manually registers a given method as an
  * RPC method via {@link NetworkTableInstance#createRpc(NetworkTableEntry, Consumer)}.
  *
+ * As a side note, consider annotating each transmitter, receiver, or RPC method with {@link SuppressWarnings} and
+ * "unused" because the method should not be called without reflection. That is, {@code @SuppressWarnings("unused")}.
+ * Also, all transmitter, receiver, or RPC methods must be public in order for {@link Method#invoke(Object, Object...)}
+ * to not fail.
+ *
  * @see TransmitFrequency
  * @see Transmitter
  * @see Receiver
@@ -86,6 +91,7 @@ public class Communication extends Module {
     private Communication() {
         LOGGER.info("Initializing communication system.");
 
+        // Setup listener for sender whitelist from dashboard
         nt_inst.getTable(Tables.IN.get()).getEntry(rectify_key(RobotMap.Communication.DB_to_send_key, 2)).addListener((event) -> {
             senders.clear();
             try {
@@ -107,7 +113,8 @@ public class Communication extends Module {
     private HashMap<String, Runnable> transmitters = new HashMap<>();
     /**
      * This set contains the keys of all entries to send over to the dashboard and is updated by the dashboard whenever
-     * a key is to be stopped being sent or when a new key is to start being sent.
+     * a key is to be stopped being sent or when a new key is to start being sent. I.e this is a whitelist for which
+     * keys to actually update and send to the dashboard.
      */
     private HashSet<String> senders = new HashSet<>();
 
@@ -174,6 +181,7 @@ public class Communication extends Module {
             boolean anno_used = false;
 
             if (transmitter != null) {  // If the method is annotated with Transmitter
+                LOGGER.fine("Transmitter "+meth.getName()+" found in "+communicator.getClass().getSimpleName()+".");
                 anno_used = true;
                 // Check the signature of the method and throw an exception if it isn't correct
                 if (meth.getReturnType() != void.class ||
@@ -232,6 +240,7 @@ public class Communication extends Module {
             }
 
             if (receiver != null) {
+                LOGGER.fine("Receiver "+meth.getName()+" found in "+communicator.getClass().getSimpleName()+".");
                 if (anno_used) {
                     // Throw an exception if transmitter already exists on this method
                     throw new RuntimeException("Method in communicator declared as transmitter AND/OR receiver AND/OR rpc caller.");
@@ -257,6 +266,7 @@ public class Communication extends Module {
             }
 
             if (rpccaller != null) {
+                LOGGER.fine("RPCCaller "+meth.getName()+" found in "+communicator.getClass().getSimpleName()+".");
                 if (anno_used) {
                     // Throw an exception if a transmitter or receiver already exists on this method
                     throw new RuntimeException("Method in communicator declared as transmitter AND/OR receiver AND/OR rpc caller.");

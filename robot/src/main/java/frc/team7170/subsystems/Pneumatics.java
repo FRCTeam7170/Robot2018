@@ -1,8 +1,13 @@
 package frc.team7170.subsystems;
 
 import java.util.logging.Logger;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
+import frc.team7170.comm.Communicator;
+import frc.team7170.comm.TransmitFrequency;
+import frc.team7170.comm.Transmitter;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
@@ -14,7 +19,7 @@ import frc.team7170.robot.RobotMap;
  *
  * @see frc.team7170.subsystems.arm.Arm
  */
-public class Pneumatics extends Module {
+public class Pneumatics extends Module implements Communicator {
 
     private final static Logger LOGGER = Logger.getLogger(Pneumatics.class.getName());
 
@@ -26,27 +31,35 @@ public class Pneumatics extends Module {
         LOGGER.info("Initializing pneumatics system.");
 
         Dispatcher.get_instance().register_module(this);
+        register_comm();
     }
 
-    private static Compressor compressor = new Compressor(RobotMap.CAN.PCM);
-    private static Solenoid arm_left = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.left_solenoid);
-    private static Solenoid arm_right = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.right_solenoid);
+    private Compressor compressor = new Compressor(RobotMap.CAN.PCM);
+    private Solenoid arm_left = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.left_solenoid);
+    private Solenoid arm_right = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.right_solenoid);
 
     @Override
     protected void update() {}
 
     @Override
-    protected void enabled() {}
+    protected void enabled() {
+        LOGGER.info("Pneumatics enabled.");
+    }
 
     @Override
-    protected void disabled() {}
+    protected void disabled() {
+        LOGGER.info("Pneumatics disabled.");
+        // Retract the arms, but the compressor is allowed to continue functioning.
+        arm_left.set(false);
+        arm_right.set(false);
+    }
 
     @Override
     public String toString() {
         return "Pneumatics module.";
     }
 
-    public static boolean get_solenoids() {
+    public boolean get_solenoids() {
         return arm_left.get();  // Doesn't matter which
     }
 
@@ -55,38 +68,87 @@ public class Pneumatics extends Module {
      * one solenoid off and the other on, which could be dangerous.
      * @param on Whether to turn the solenoids on or off.
      */
-    public static void set_solenoids(boolean on) {
+    public void set_solenoids(boolean on) {
+        if (!get_enabled()) {
+            return;
+        }
         arm_left.set(on);
         arm_right.set(on);
     }
 
-    public static void toggle_solenoids() {
+    public void toggle_solenoids() {
         set_solenoids(!get_solenoids());
     }
 
 
     // Compressor accessors
 
-    public static void compressor_start() {
+    public void compressor_start() {
         LOGGER.fine("Starting compressor.");
         compressor.start();
     }
 
-    public static void compressor_stop() {
+    public void compressor_stop() {
         LOGGER.fine("Stopping compressor.");
         compressor.stop();
     }
 
-    public static void compressor_auto() {
-        LOGGER.fine("Setting compressor to auto.");
-        compressor.setClosedLoopControl(true);
+    /**
+     * @return True if the compressor is on.
+     */
+    public boolean get_compressor_state() {
+        return compressor.getClosedLoopControl();
     }
 
-    public static double get_compressor_current() {
+    public double get_compressor_current() {
         return compressor.getCompressorCurrent();
     }
 
-    public static boolean get_pressure_low() {
+    public boolean get_pressure_low() {
         return compressor.getPressureSwitchValue();
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
+            "O_PNEUMATICS_ARM_STATE_S",
+            "O_PNEUMATICS_COMPRESSOR_STATE_S",
+            "O_PNEUMATICS_COMPRESSOR_CURRENT_S",
+            "O_PNEUMATICS_COMPRESSOR_LOW_PRESSURE_S"
+    })
+    public void transmitter_fast(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_PNEUMATICS_ARM_STATE_S":
+                entry.setBoolean(get_solenoids());
+                break;
+            case "O_PNEUMATICS_COMPRESSOR_STATE_S":
+                entry.setBoolean(get_compressor_state());
+                break;
+            case "O_PNEUMATICS_COMPRESSOR_CURRENT_S":
+                entry.setDouble(get_compressor_current());
+                break;
+            case "O_PNEUMATICS_COMPRESSOR_LOW_PRESSURE_S":
+                entry.setBoolean(get_pressure_low());
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
+            "O_CAN_ID_PCM_S",
+            "O_PCM_SOLENOID_LEFT_S",
+            "O_PCM_SOLENOID_RIGHT_S"
+    })
+    public void transmitter_static(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_CAN_ID_PCM_S":
+                entry.setDouble(RobotMap.CAN.PCM);
+                break;
+            case "O_PCM_SOLENOID_LEFT_S":
+                entry.setDouble(RobotMap.PCM.left_solenoid);
+                break;
+            case "O_PCM_SOLENOID_RIGHT_S":
+                entry.setDouble(RobotMap.PCM.right_solenoid);
+                break;
+        }
     }
 }

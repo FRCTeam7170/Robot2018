@@ -37,4 +37,9 @@ public class HIDButtonAccessor {
     public boolean get_released() {
         return joy.getRawButtonReleased(port);
     }
+
+    @Override
+    public String toString() {
+        return joy.getName()+"."+port;
+    }
 }

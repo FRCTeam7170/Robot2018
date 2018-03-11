@@ -70,10 +70,13 @@ public class Drive extends Module implements Communicator {
     protected void update() {}
 
     @Override
-    protected void enabled() {}
+    protected void enabled() {
+        LOGGER.info("Drive enabled.");
+    }
 
     @Override
     protected void disabled() {
+        LOGGER.info("Drive disabled.");
         rob_L = 0;
         rob_R = 0;
         brake();
@@ -279,7 +282,8 @@ public class Drive extends Module implements Communicator {
 
     // TODO: Accessors for CAN data on motors, ex: current output
 
-    @Transmitter(poll_rate=TransmitFrequency.FAST, value={
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
             "O_DRIVE_LEFT_S",
             "O_DRIVE_RIGHT_S",
             "O_ACCEL_X_S",
@@ -288,7 +292,7 @@ public class Drive extends Module implements Communicator {
             "O_ENCODER_LEFT_S",
             "O_ENCODER_RIGHT_S"
     })
-    private void transmitter_fast(NetworkTableEntry entry) {
+    public void transmitter_fast(NetworkTableEntry entry) {
         switch (entry.getName()) {
             case "O_DRIVE_LEFT_S":
                 entry.setDouble(rob_L);
@@ -314,7 +318,8 @@ public class Drive extends Module implements Communicator {
         }
     }
 
-    @Transmitter(poll_rate=TransmitFrequency.STATIC, value={
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
             "O_TURN_ANGLE_TOLERANCE_M",
             "O_STRAIGHT_DISTANCE_TOLERANCE_M",
             "O_CAN_ID_FRONT_LEFT_MOTOR_S",
@@ -325,8 +330,14 @@ public class Drive extends Module implements Communicator {
             "O_DIO_ENCODER_LEFT_B_S",
             "O_DIO_ENCODER_RIGHT_A_S",
             "O_DIO_ENCODER_RIGHT_B_S",
+            "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_LEFT_M",
+            "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_RIGHT_M",
+            "O_DRIVE_SMOOTH_TOLERANCE_LEFT_M",
+            "O_DRIVE_SMOOTH_TOLERANCE_RIGHT_M",
+            "O_DRIVE_SMOOTH_JUMP_LEFT_M",
+            "O_DRIVE_SMOOTH_JUMP_RIGHT_M"
     })
-    private void transmitter_static(NetworkTableEntry entry) {
+    public void transmitter_static(NetworkTableEntry entry) {
         switch (entry.getName()) {
             case "O_TURN_ANGLE_TOLERANCE_M":
                 entry.setDouble(RobotMap.Maneuvers.turn_angle_tolerance);
@@ -358,20 +369,45 @@ public class Drive extends Module implements Communicator {
             case "O_DIO_ENCODER_RIGHT_B_S":
                 entry.setDouble(RobotMap.DIO.encoder_right_B);
                 break;
+            case "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_LEFT_M":
+                entry.setDouble(RobotMap.DriveSmooth.logic_threshold_L);
+                break;
+            case "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_RIGHT_M":
+                entry.setDouble(RobotMap.DriveSmooth.logic_threshold_R);
+                break;
+            case "O_DRIVE_SMOOTH_TOLERANCE_LEFT_M":
+                entry.setDouble(RobotMap.DriveSmooth.tolerance_L);
+                break;
+            case "O_DRIVE_SMOOTH_TOLERANCE_RIGHT_M":
+                entry.setDouble(RobotMap.DriveSmooth.tolerance_R);
+                break;
+            case "O_DRIVE_SMOOTH_JUMP_LEFT_M":
+                entry.setDouble(RobotMap.DriveSmooth.jump_L);
+                break;
+            case "O_DRIVE_SMOOTH_JUMP_RIGHT_M":
+                entry.setDouble(RobotMap.DriveSmooth.jump_R);
+                break;
         }
     }
 
+    @SuppressWarnings("unused")
     @Receiver({
             "I_TURN_ANGLE_TOLERANCE",
-            "I_STRAIGHT_DISTANCE_TOLERANCE"
+            "I_STRAIGHT_DISTANCE_TOLERANCE",
+            "I_DRIVE_SMOOTH_LOGIC_THRESHOLD_LEFT",
+            "I_DRIVE_SMOOTH_LOGIC_THRESHOLD_RIGHT",
+            "I_DRIVE_SMOOTH_TOLERANCE_LEFT",
+            "I_DRIVE_SMOOTH_TOLERANCE_RIGHT",
+            "I_DRIVE_SMOOTH_JUMP_LEFT",
+            "I_DRIVE_SMOOTH_JUMP_RIGHT"
     })
-    private void receiver(EntryNotification event) {
+    public void receiver(EntryNotification event) {
         switch (event.name) {
             case "I_TURN_ANGLE_TOLERANCE":
                 if (event.value.isDouble()) {
                     RobotMap.Maneuvers.turn_angle_tolerance = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 360.0);
                 } else {
-                    LOGGER.severe("I_TURN_ANGLE_TOLERANCE entry updated but it is not a double!");
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
                 }
                 break;
             case "I_STRAIGHT_DISTANCE_TOLERANCE":
@@ -379,7 +415,49 @@ public class Drive extends Module implements Communicator {
                     // Limit distance tolerance to [0, 10] metres (10 metres is already a ridiculous upper bound)
                     RobotMap.Maneuvers.straight_distance_tolerance = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 10.0);
                 } else {
-                    LOGGER.severe("I_STRAIGHT_DISTANCE_TOLERANCE entry updated but it is not a double!");
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_DRIVE_SMOOTH_LOGIC_THRESHOLD_LEFT":
+                if (event.value.isDouble()) {
+                    RobotMap.DriveSmooth.logic_threshold_L = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1.0);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_DRIVE_SMOOTH_LOGIC_THRESHOLD_RIGHT":
+                if (event.value.isDouble()) {
+                    RobotMap.DriveSmooth.logic_threshold_R = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1.0);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_DRIVE_SMOOTH_TOLERANCE_LEFT":
+                if (event.value.isDouble()) {
+                    RobotMap.DriveSmooth.tolerance_L = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1.0);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_DRIVE_SMOOTH_TOLERANCE_RIGHT":
+                if (event.value.isDouble()) {
+                    RobotMap.DriveSmooth.tolerance_R = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1.0);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_DRIVE_SMOOTH_JUMP_LEFT":
+                if (event.value.isDouble()) {
+                    RobotMap.DriveSmooth.jump_L = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1.0);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_DRIVE_SMOOTH_JUMP_RIGHT":
+                if (event.value.isDouble()) {
+                    RobotMap.DriveSmooth.jump_R = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1.0);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
                 }
                 break;
         }

@@ -81,24 +81,25 @@ public class RobotMap {
     }
 
     public static class Arm {
-        public static double pot_scale = 300;  // Max rotation of arm
-        public static double pot_offset = 0;  // Offset off of perfectly vertical
+        public static double pot_scale = 300.0;  // Max rotation of arm
+        public static double pot_offset = 0.0;  // Offset off of perfectly vertical
         public static double endE_speed = 0.75;
-        public static double arm_speed = 1;
+        public static double arm_speed = 1.0;
         public static boolean reverse_endE_left = true;
         public static boolean reverse_endE_right = false;
-        public static double pot_value_kill_lower_inner = 90;
-        public static double pot_value_kill_upper_inner = 120;
-        public static double pot_value_kill_lower_outer = 80;
-        public static double pot_value_kill_upper_outer = 130;
-        public static double pot_value_home = 0;
-        public static double pot_value_base = 0;
-        public static double pot_value_switch = 0;
-        public static double pot_value_scale = 0;
-        public static double pot_value_reverse = 0;
+        public static double pot_value_kill_lower_inner = 90.0;
+        public static double pot_value_kill_upper_inner = 120.0;
+        public static double pot_value_kill_lower_outer = 80.0;
+        public static double pot_value_kill_upper_outer = 130.0;
+        public static double pot_value_home = 0.0;
+        public static double pot_value_base = 0.0;
+        public static double pot_value_switch = 0.0;
+        public static double pot_value_scale = 0.0;
+        public static double pot_value_reverse = 0.0;
     }
 
     public static class Communication {
         public static final String DB_to_send_key = "I_SEND_THESE";
+        public static final String DB_avail_keymaps = "O_AVAIL_KEYMAPS_S";
     }
 }

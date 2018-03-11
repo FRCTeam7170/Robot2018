@@ -23,4 +23,9 @@ public class HIDAxisAccessor {
     public double get() {
         return joy.getRawAxis(port);
     }
+
+    @Override
+    public String toString() {
+        return joy.getName()+"."+port;
+    }
 }

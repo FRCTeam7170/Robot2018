@@ -1,8 +1,16 @@
 package frc.team7170.control;
 
 import java.util.logging.Logger;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.RpcAnswer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import frc.team7170.comm.Communicator;
+import frc.team7170.comm.RPCCaller;
+import frc.team7170.comm.TransmitFrequency;
+import frc.team7170.comm.Transmitter;
 import frc.team7170.control.keymaps.DefaultJoystickBindings;
 import frc.team7170.control.keymaps.KeyMap;
 import frc.team7170.robot.RobotMap;
@@ -23,7 +31,7 @@ import frc.team7170.robot.RobotMap;
  * {@link Control#action2button(Action)} or {@link Control#action2axis(Action)}. Note these methods return null if a
  * given action is unbound for the current key binding, so null checking must be implemented.
  */
-public class Control {
+public class Control implements Communicator {
 
     private final static Logger LOGGER = Logger.getLogger(Control.class.getName());
 
@@ -33,6 +41,7 @@ public class Control {
     }
     private Control() {
         LOGGER.info("Initializing control system.");
+        register_comm();
     }
 
     // Technically these don't have to be a Joystick because we're simply accessing raw values
@@ -42,7 +51,7 @@ public class Control {
     /**
      * A map of action-button/axis pairs so we can easily switch bindings without having to change code in multiple different classes
      */
-    private KeyMap keymap = new DefaultJoystickBindings();
+    private KeyMap keymap = DefaultJoystickBindings.get_instance();
 
 
     // Here we provide an easy way to reference buttons/axes by doing something like:
@@ -196,7 +205,50 @@ public class Control {
      * @param km The new keymap to use.
      */
     public void set_keymap(KeyMap km) {
+        if (km == null) {
+            LOGGER.warning("Attempted to set keymap to null.");
+            return;
+        }
         LOGGER.info("Switching KeyMap from " + keymap.getClass().getName() + " to " + km.getClass().getName() + ".");
         keymap = km;
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
+            "O_JOYSTICK_PORT_S",
+            "O_GAMEPAD_PORT_S"
+    })
+    public void transmitter_static(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_JOYSTICK_PORT_S":
+                entry.setDouble(RobotMap.Controllers.joystick);
+                break;
+            case "O_GAMEPAD_PORT_S":
+                entry.setDouble(RobotMap.Controllers.gamepad);
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
+            "O_CURR_KEYMAP_M"
+    })
+    public void transmitter_slow(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_CURR_KEYMAP_M":
+                entry.setString(keymap.toString());
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @RPCCaller("R_SET_KEYMAP")
+    public void rpccaller_keymap(RpcAnswer rpc) {
+        // Only allow changing keymap while the robot is in disabled mode
+        if (DriverStation.getInstance().isDisabled()) {
+            set_keymap(KeyMap.registered_keymaps.get(rpc.params));
+            rpc.postResponse(new byte[] {1});  // Success (unless the value mapped to rpc.params was null)
+        }
+        rpc.postResponse(new byte[] {0});  // Failure
     }
 }
