@@ -4,11 +4,10 @@ import java.util.logging.Logger;
 
 import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.RpcAnswer;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import frc.team7170.comm.Receiver;
-import frc.team7170.comm.TransmitFrequency;
-import frc.team7170.comm.Transmitter;
+import frc.team7170.comm.*;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
@@ -20,7 +19,7 @@ import frc.team7170.util.CalcUtil;
  * Module to handle all interactions with the arm of the robot. This includes the end effector wheel motors, the motors
  * that power the arm rotation, and the pneumatic arms.
  */
-public class Arm extends Module {
+public class Arm extends Module implements Communicator {
 
     private final static Logger LOGGER = Logger.getLogger(Arm.class.getName());
 
@@ -35,6 +34,7 @@ public class Arm extends Module {
         spark_right_endE.setInverted(RobotMap.Arm.reverse_endE_right);
 
         Dispatcher.get_instance().register_module(this);
+        register_comm();
     }
 
     private Spark spark_left_endE = new Spark(RobotMap.PWM.endE_left_motor);
@@ -73,7 +73,7 @@ public class Arm extends Module {
 
     @Override
     public String toString() {
-        return "Arm module.";
+        return "Arm System";
     }
 
     /**
@@ -215,6 +215,18 @@ public class Arm extends Module {
     }
 
     @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
+            "O_ARM_ENABLED_S"
+    })
+    public void transmitter_slow(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_ARM_ENABLED_S":
+                entry.setBoolean(get_enabled());
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
             "O_ARM_POT_VAL_S",
             "O_ARM_CURR_SPEED_S",
@@ -332,5 +344,20 @@ public class Arm extends Module {
                 }
                 break;
         }
+    }
+
+    @SuppressWarnings("unused")
+    @RPCCaller("R_ARM_ENABLE")
+    public void rpccaller_enable(RpcAnswer rpc) {
+        if (rpc.params.getBytes()[0] == 1) {
+            LOGGER.info("Arm enabled via RPC.");
+            set_enabled(true);
+            rpc.postResponse(new byte[] {1});  // Success
+        } else if (rpc.params.getBytes()[0] == 0) {
+            LOGGER.info("Arm disabled via RPC.");
+            set_enabled(false);
+            rpc.postResponse(new byte[] {1});  // Success
+        }
+        rpc.postResponse(new byte[] {0});  // Failure
     }
 }

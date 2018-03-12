@@ -80,7 +80,7 @@ import java.util.logging.Logger;
  * @see RPCCaller
  * @see Communicator
  */
-public class Communication extends Module {
+public class Communication extends Module implements Communicator {
 
     private final static Logger LOGGER = Logger.getLogger(Communication.class.getName());
 
@@ -103,6 +103,7 @@ public class Communication extends Module {
         }, EntryListenerFlags.kUpdate);
 
         Dispatcher.get_instance().register_module(this);
+        register_comm();
     }
 
     private NetworkTableInstance nt_inst = NetworkTableInstance.getDefault();
@@ -158,7 +159,7 @@ public class Communication extends Module {
 
     @Override
     public String toString() {
-        return "Communication module.";
+        return "Communication System";
     }
 
     /**
@@ -306,7 +307,7 @@ public class Communication extends Module {
      *             2 (or any other integer) = "I_..."
      * @return The rectified key.
      */
-    public String rectify_key(String key, int type) {
+    public static String rectify_key(String key, int type) {
         if (type == 0 && !key.startsWith("R_")) {
             key = "R_".concat(key);
         } else if (type == 1) {
@@ -327,7 +328,34 @@ public class Communication extends Module {
      * @param key The key to parse.
      * @return The key stripped of pre/affixes.
      */
-    public String get_key_root(String key) {
+    public static String get_key_root(String key) {
         return key.replaceFirst("^R_|^O_|^I_", "").replaceFirst("_M\\$|_S\\$", "");
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
+            "O_COMMUNICATION_ENABLED_S"
+    })
+    public void transmitter_slow(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_COMMUNICATION_ENABLED_S":
+                entry.setBoolean(get_enabled());
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @RPCCaller("R_COMMUNICATION_ENABLE")
+    public void rpccaller_enable(RpcAnswer rpc) {
+        if (rpc.params.getBytes()[0] == 1) {
+            LOGGER.info("Communication enabled via RPC.");
+            set_enabled(true);
+            rpc.postResponse(new byte[] {1});  // Success
+        } else if (rpc.params.getBytes()[0] == 0) {
+            LOGGER.info("Communication disabled via RPC.");
+            set_enabled(false);
+            rpc.postResponse(new byte[] {1});  // Success
+        }
+        rpc.postResponse(new byte[] {0});  // Failure
     }
 }

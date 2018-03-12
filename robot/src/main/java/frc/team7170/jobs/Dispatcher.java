@@ -1,8 +1,10 @@
 package frc.team7170.jobs;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.HashMap;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import frc.team7170.comm.Communicator;
+import frc.team7170.comm.TransmitFrequency;
+import frc.team7170.comm.Transmitter;
+import java.util.*;
 import java.util.logging.Logger;
 
 
@@ -15,7 +17,7 @@ import java.util.logging.Logger;
  * Call add_job(Job) to queue/run each job.
  * Call run() regularly in the robot main loop.
  */
-public class Dispatcher {
+public class Dispatcher implements Communicator {
 
     private final static Logger LOGGER = Logger.getLogger(Dispatcher.class.getName());
 
@@ -23,7 +25,10 @@ public class Dispatcher {
     public static Dispatcher get_instance() {
         return instance;
     }
-    private Dispatcher() {}
+    private Dispatcher() {
+        LOGGER.info("Initializing dispatcher.");
+        register_comm();
+    }
 
     private ArrayList<Job> queued_jobs = new ArrayList<>();
     private HashSet<Job> running_jobs = new HashSet<>();
@@ -153,6 +158,38 @@ public class Dispatcher {
         queued_jobs.clear();  // Clear the queued jobs.
         for (Job job: running_jobs) {  // Clear the running jobs.
             job.cancel(true);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
+            "O_RUNNING_JOBS_S",
+            "O_QUEUED_JOBS_S"
+    })
+    public void transmitter_slow(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_RUNNING_JOBS_S":
+                String[] running_strs = new String[running_jobs.size()];
+                Iterator running_iter = running_jobs.iterator();
+                for (int i = 0; i < running_jobs.size(); i++) {
+                    if (!running_iter.hasNext()) {
+                        break;
+                    }
+                    running_strs[i] = running_iter.next().toString();
+                }
+                entry.setStringArray(running_strs);
+                break;
+            case "O_QUEUED_JOBS_S":
+                String[] queued_strs = new String[queued_jobs.size()];
+                Iterator queued_iter = queued_jobs.iterator();
+                for (int i = 0; i < queued_jobs.size(); i++) {
+                    if (!queued_iter.hasNext()) {
+                        break;
+                    }
+                    queued_strs[i] = queued_iter.next().toString();
+                }
+                entry.setStringArray(queued_strs);
+                break;
         }
     }
 }

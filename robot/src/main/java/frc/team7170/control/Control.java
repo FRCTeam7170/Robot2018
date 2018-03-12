@@ -231,7 +231,7 @@ public class Control implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
-            "O_CURR_KEYMAP_M"
+            "O_CURR_KEYMAP_S"
     })
     public void transmitter_slow(NetworkTableEntry entry) {
         switch (entry.getName()) {
@@ -248,7 +248,9 @@ public class Control implements Communicator {
         if (DriverStation.getInstance().isDisabled()) {
             set_keymap(KeyMap.registered_keymaps.get(rpc.params));
             rpc.postResponse(new byte[] {1});  // Success (unless the value mapped to rpc.params was null)
+            return;
         }
+        LOGGER.warning("Attempted to change keymap while robot is not in disabled state.");
         rpc.postResponse(new byte[] {0});  // Failure
     }
 }

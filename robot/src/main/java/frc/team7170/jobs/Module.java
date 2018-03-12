@@ -3,12 +3,16 @@ package frc.team7170.jobs;
 
 /**
  * Defines a module/subsystem on the robot. Each module should have its own resources, such as motors or sensors.
- * Each module can only run one {@link Job} at a time.
+ * Each module can only run one {@link Job} at a time. Alternatively, it is possible (in fact, recommended) to extend
+ * {@link Module} without any intention to actually take advantage of its incorporation with the job system, and hence
+ * use it merely to merge some update function with {@link Dispatcher#run()}, utilize the enable/disable system,
+ * etcetera.
  *
  * As an example, you may want to create subsystems for the robot base and some sort of claw or arm.
  *
  * Quick guidelines:
- * Call Dispatcher.register_module in the constructor of each module (this implies each module should be a singleton.)
+ * Call {@link Dispatcher#register_module(Module)} in the constructor of each module (this implies each module should be
+ *      a singleton.)
  * Override the update, enabled, or disabled methods appropriately.
  * Use set_default_job to set the default job (runs when the dispatcher assigns no other job to this module.)
  * use set_enabled to enable/disable this module when it does/doesn't need to run.

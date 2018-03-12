@@ -4,14 +4,12 @@ import java.util.logging.Logger;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.RpcAnswer;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.team7170.comm.Communicator;
-import frc.team7170.comm.Receiver;
-import frc.team7170.comm.TransmitFrequency;
-import frc.team7170.comm.Transmitter;
+import frc.team7170.comm.*;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.util.CalcUtil;
@@ -84,7 +82,7 @@ public class Drive extends Module implements Communicator {
 
     @Override
     public String toString() {
-        return "Drive module.";
+        return "Drive System";
     }
 
     /**
@@ -283,42 +281,6 @@ public class Drive extends Module implements Communicator {
     // TODO: Accessors for CAN data on motors, ex: current output
 
     @SuppressWarnings("unused")
-    @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
-            "O_DRIVE_LEFT_S",
-            "O_DRIVE_RIGHT_S",
-            "O_ACCEL_X_S",
-            "O_ACCEL_Y_S",
-            "O_ACCEL_Z_S",
-            "O_ENCODER_LEFT_S",
-            "O_ENCODER_RIGHT_S"
-    })
-    public void transmitter_fast(NetworkTableEntry entry) {
-        switch (entry.getName()) {
-            case "O_DRIVE_LEFT_S":
-                entry.setDouble(rob_L);
-                break;
-            case "O_DRIVE_RIGHT_S":
-                entry.setDouble(rob_R);
-                break;
-            case "O_ACCEL_X_S":
-                entry.setDouble(get_accel_X());
-                break;
-            case "O_ACCEL_Y_S":
-                entry.setDouble(get_accel_Y());
-                break;
-            case "O_ACCEL_Z_S":
-                entry.setDouble(get_accel_Z());
-                break;
-            case "O_ENCODER_LEFT_S":
-                entry.setDouble(get_Lenc());
-                break;
-            case "O_ENCODER_RIGHT_S":
-                entry.setDouble(get_Renc());
-                break;
-        }
-    }
-
-    @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
             "O_TURN_ANGLE_TOLERANCE_M",
             "O_STRAIGHT_DISTANCE_TOLERANCE_M",
@@ -386,6 +348,54 @@ public class Drive extends Module implements Communicator {
                 break;
             case "O_DRIVE_SMOOTH_JUMP_RIGHT_M":
                 entry.setDouble(RobotMap.DriveSmooth.jump_R);
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
+            "O_DRIVE_ENABLED_S"
+    })
+    public void transmitter_slow(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_DRIVE_ENABLED_S":
+                entry.setBoolean(get_enabled());
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
+            "O_DRIVE_LEFT_S",
+            "O_DRIVE_RIGHT_S",
+            "O_ACCEL_X_S",
+            "O_ACCEL_Y_S",
+            "O_ACCEL_Z_S",
+            "O_ENCODER_LEFT_S",
+            "O_ENCODER_RIGHT_S"
+    })
+    public void transmitter_fast(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_DRIVE_LEFT_S":
+                entry.setDouble(rob_L);
+                break;
+            case "O_DRIVE_RIGHT_S":
+                entry.setDouble(rob_R);
+                break;
+            case "O_ACCEL_X_S":
+                entry.setDouble(get_accel_X());
+                break;
+            case "O_ACCEL_Y_S":
+                entry.setDouble(get_accel_Y());
+                break;
+            case "O_ACCEL_Z_S":
+                entry.setDouble(get_accel_Z());
+                break;
+            case "O_ENCODER_LEFT_S":
+                entry.setDouble(get_Lenc());
+                break;
+            case "O_ENCODER_RIGHT_S":
+                entry.setDouble(get_Renc());
                 break;
         }
     }
@@ -461,5 +471,20 @@ public class Drive extends Module implements Communicator {
                 }
                 break;
         }
+    }
+
+    @SuppressWarnings("unused")
+    @RPCCaller("R_DRIVE_ENABLE")
+    public void rpccaller_enable(RpcAnswer rpc) {
+        if (rpc.params.getBytes()[0] == 1) {
+            LOGGER.info("Drive enabled via RPC.");
+            set_enabled(true);
+            rpc.postResponse(new byte[] {1});  // Success
+        } else if (rpc.params.getBytes()[0] == 0) {
+            LOGGER.info("Drive disabled via RPC.");
+            set_enabled(false);
+            rpc.postResponse(new byte[] {1});  // Success
+        }
+        rpc.postResponse(new byte[] {0});  // Failure
     }
 }

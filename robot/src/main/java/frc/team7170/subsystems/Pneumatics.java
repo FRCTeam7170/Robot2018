@@ -3,9 +3,11 @@ package frc.team7170.subsystems;
 import java.util.logging.Logger;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.RpcAnswer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.team7170.comm.Communicator;
+import frc.team7170.comm.RPCCaller;
 import frc.team7170.comm.TransmitFrequency;
 import frc.team7170.comm.Transmitter;
 import frc.team7170.jobs.Dispatcher;
@@ -56,7 +58,7 @@ public class Pneumatics extends Module implements Communicator {
 
     @Override
     public String toString() {
-        return "Pneumatics module.";
+        return "Pneumatics System";
     }
 
     public boolean get_solenoids() {
@@ -109,6 +111,38 @@ public class Pneumatics extends Module implements Communicator {
     }
 
     @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
+            "O_CAN_ID_PCM_S",
+            "O_PCM_SOLENOID_LEFT_S",
+            "O_PCM_SOLENOID_RIGHT_S"
+    })
+    public void transmitter_static(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_CAN_ID_PCM_S":
+                entry.setDouble(RobotMap.CAN.PCM);
+                break;
+            case "O_PCM_SOLENOID_LEFT_S":
+                entry.setDouble(RobotMap.PCM.left_solenoid);
+                break;
+            case "O_PCM_SOLENOID_RIGHT_S":
+                entry.setDouble(RobotMap.PCM.right_solenoid);
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
+            "O_PNEUMATICS_ENABLED_S"
+    })
+    public void transmitter_slow(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_PNEUMATICS_ENABLED_S":
+                entry.setBoolean(get_enabled());
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
             "O_PNEUMATICS_ARM_STATE_S",
             "O_PNEUMATICS_COMPRESSOR_STATE_S",
@@ -133,22 +167,17 @@ public class Pneumatics extends Module implements Communicator {
     }
 
     @SuppressWarnings("unused")
-    @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
-            "O_CAN_ID_PCM_S",
-            "O_PCM_SOLENOID_LEFT_S",
-            "O_PCM_SOLENOID_RIGHT_S"
-    })
-    public void transmitter_static(NetworkTableEntry entry) {
-        switch (entry.getName()) {
-            case "O_CAN_ID_PCM_S":
-                entry.setDouble(RobotMap.CAN.PCM);
-                break;
-            case "O_PCM_SOLENOID_LEFT_S":
-                entry.setDouble(RobotMap.PCM.left_solenoid);
-                break;
-            case "O_PCM_SOLENOID_RIGHT_S":
-                entry.setDouble(RobotMap.PCM.right_solenoid);
-                break;
+    @RPCCaller("R_PNEUMATICS_ENABLE")
+    public void rpccaller_enable(RpcAnswer rpc) {
+        if (rpc.params.getBytes()[0] == 1) {
+            LOGGER.info("Pneumatics enabled via RPC.");
+            set_enabled(true);
+            rpc.postResponse(new byte[] {1});  // Success
+        } else if (rpc.params.getBytes()[0] == 0) {
+            LOGGER.info("Pneumatics disabled via RPC.");
+            set_enabled(false);
+            rpc.postResponse(new byte[] {1});  // Success
         }
+        rpc.postResponse(new byte[] {0});  // Failure
     }
 }
