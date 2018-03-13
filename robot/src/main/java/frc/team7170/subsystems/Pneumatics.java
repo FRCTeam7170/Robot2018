@@ -68,6 +68,9 @@ public class Pneumatics extends Module implements Communicator {
     /**
      * Sets both solenoids to the given value. Note that because of this level of abstraction it is impossible to turn
      * one solenoid off and the other on, which could be dangerous.
+     * This should almost never be used by custom code. Use the methods for arm extension and retraction in
+     * {@link frc.team7170.subsystems.arm.Arm}, which has safeties to prevent the arm going outside of the robot
+     * perimeter.
      * @param on Whether to turn the solenoids on or off.
      */
     public void set_solenoids(boolean on) {
@@ -76,10 +79,6 @@ public class Pneumatics extends Module implements Communicator {
         }
         arm_left.set(on);
         arm_right.set(on);
-    }
-
-    public void toggle_solenoids() {
-        set_solenoids(!get_solenoids());
     }
 
 

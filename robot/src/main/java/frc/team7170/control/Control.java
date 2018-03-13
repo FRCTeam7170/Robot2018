@@ -1,5 +1,6 @@
 package frc.team7170.control;
 
+import java.util.HashSet;
 import java.util.logging.Logger;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -52,6 +53,11 @@ public class Control implements Communicator {
      * A map of action-button/axis pairs so we can easily switch bindings without having to change code in multiple different classes
      */
     private KeyMap keymap = DefaultJoystickBindings.get_instance();
+
+    /**
+     * Set of all actions that have had warnings logged about being unbound already to prevent console spam.
+     */
+    private HashSet<Action> warned = new HashSet<>();
 
 
     // Here we provide an easy way to reference buttons/axes by doing something like:
@@ -181,7 +187,8 @@ public class Control implements Communicator {
      */
     public HIDButtonAccessor action2button(Action act) {
         HIDButtonAccessor btn = keymap.get_buttons().get(act);
-        if (btn == null) {
+        if (btn == null && !warned.contains(act)) {
+            warned.add(act);
             LOGGER.warning("Unregistered action requested: " + act + " not in KeyMap " + keymap.getClass().getName() + ".");
         }
         return btn;
@@ -194,7 +201,8 @@ public class Control implements Communicator {
      */
     public HIDAxisAccessor action2axis(Action act) {
         HIDAxisAccessor axis = keymap.get_axes().get(act);
-        if (axis == null) {
+        if (axis == null && !warned.contains(act)) {
+            warned.add(act);
             LOGGER.warning("Unregistered action requested: " + act + " not in KeyMap " + keymap.getClass().getName() + ".");
         }
         return axis;
@@ -210,6 +218,7 @@ public class Control implements Communicator {
             return;
         }
         LOGGER.info("Switching KeyMap from " + keymap.getClass().getName() + " to " + km.getClass().getName() + ".");
+        warned.clear();
         keymap = km;
     }
 

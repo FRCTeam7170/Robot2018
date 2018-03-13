@@ -9,11 +9,12 @@ package frc.team7170.comm;
  * The default delay in {@link Transmitter} is moderate.
  */
 public enum TransmitFrequency {
-    STATIC   (-1),
-    VOLATILE (0),
-    SLOW     (500),
-    MODERATE (250),
-    FAST     (100);
+    STATIC              (-1),
+    AFTER_REMOTE_UPDATE (-1),  // TODO, OR HAVE CALLBACK SYSTEM IN PLACE TO INDICATE SUCCESS/FAILURE IN CHANGING ENTRY VALUE
+    VOLATILE            (0),
+    SLOW                (500),
+    MODERATE            (250),
+    FAST                (100);
 
     int freq;
 

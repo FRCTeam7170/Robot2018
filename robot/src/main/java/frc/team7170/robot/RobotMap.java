@@ -87,15 +87,17 @@ public class RobotMap {
         public static double arm_speed = 1.0;
         public static boolean reverse_endE_left = true;
         public static boolean reverse_endE_right = false;
-        public static double pot_value_kill_lower_inner = 90.0;
-        public static double pot_value_kill_upper_inner = 120.0;
-        public static double pot_value_kill_lower_outer = 80.0;
-        public static double pot_value_kill_upper_outer = 130.0;
-        public static double pot_value_home = 0.0;
-        public static double pot_value_base = 0.0;
-        public static double pot_value_switch = 0.0;
-        public static double pot_value_scale = 0.0;
-        public static double pot_value_reverse = 0.0;
+        public static double pot_value_kill_lower_inner = 90.0;   // TODO
+        public static double pot_value_kill_upper_inner = 120.0;  // TODO
+        public static double pot_value_kill_lower_outer = 80.0;   // TODO
+        public static double pot_value_kill_upper_outer = 130.0;  // TODO
+        public static double pot_value_base_conflict = 0.0;       // TODO
+        public static double pot_value_home = 0.0;     // TODO
+        public static double pot_value_base = 0.0;     // TODO
+        public static double pot_value_switch = 0.0;   // TODO
+        public static double pot_value_scale = 0.0;    // TODO
+        public static double pot_value_reverse = 0.0;  // TODO
+        public static double move_arm_pot_tolerance = 1.0;  // degrees
     }
 
     public static class Communication {

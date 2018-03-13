@@ -1,7 +1,6 @@
 package frc.team7170.subsystems.arm;
 
 import java.util.logging.Logger;
-
 import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.RpcAnswer;
@@ -9,6 +8,7 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import frc.team7170.comm.*;
 import frc.team7170.jobs.Dispatcher;
+import frc.team7170.jobs.JRunnable;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.subsystems.Pneumatics;
@@ -44,22 +44,20 @@ public class Arm extends Module implements Communicator {
 
     private AnalogPotentiometer pot = new AnalogPotentiometer(RobotMap.AIO.arm_pot, RobotMap.Arm.pot_scale, RobotMap.Arm.pot_offset);
 
-    private boolean extended = false;
-
     @Override
     protected void update() {
-        if (extended && in_inner_thresh()) {
-            extended = false;
+        // TODO: Option to not always default to extend when out of danger zone (commented out for now)
+        if (Pneumatics.get_instance().get_solenoids() && in_inner_thresh()) {
             Pneumatics.get_instance().set_solenoids(false);
-        } else if (!extended && !in_outer_thresh()) {
-            extended = true;
+        } /* else if (!Pneumatics.get_instance().get_solenoids() && !in_outer_thresh()) {
             Pneumatics.get_instance().set_solenoids(true);
-        }
+        }*/
     }
 
     @Override
     protected void enabled() {
         LOGGER.info("Arm enabled.");
+        Pneumatics.get_instance().set_enabled(true);
     }
 
     @Override
@@ -94,26 +92,53 @@ public class Arm extends Module implements Communicator {
                 pot_read <= RobotMap.Arm.pot_value_kill_upper_outer);
     }
 
+    /**
+     * @return If extending the arm would result in physically hitting the robot base (not good, so don't do it!).
+     */
+    public boolean base_conflicting_extend() {
+        return pot.get() < RobotMap.Arm.pot_value_base_conflict;
+    }
+
+    public boolean try_extend() {
+        if (Pneumatics.get_instance().get_solenoids() || base_conflicting_extend() || in_inner_thresh()) {
+            return false;
+        }
+        Pneumatics.get_instance().set_solenoids(true);
+        return true;
+    }
+
+    public void retract() {
+        Pneumatics.get_instance().set_solenoids(false);
+    }
+
+    public boolean try_toggle() {
+        if (Pneumatics.get_instance().get_solenoids()) {
+            retract();
+            return true;
+        }
+        return try_extend();
+    }
+
     public double get_pot_val() {
         return pot.get();
     }
 
     public void endE_suck() {
-        spark_left_endE.set(RobotMap.Arm.endE_speed);
-        spark_right_endE.set(RobotMap.Arm.endE_speed);
+        endE_analog(RobotMap.Arm.endE_speed);
     }
 
     public void endE_push() {
-        spark_left_endE.set(-RobotMap.Arm.endE_speed);
-        spark_right_endE.set(-RobotMap.Arm.endE_speed);
+        endE_analog(-RobotMap.Arm.endE_speed);
     }
 
     public void endE_kill() {
-        spark_left_endE.set(0);
-        spark_right_endE.set(0);
+        endE_analog(0);
     }
 
     public void endE_analog(double speed) {
+        if (!get_enabled() || has_job()) {
+            return;
+        }
         spark_left_endE.set(speed);
         spark_right_endE.set(speed);
     }
@@ -123,27 +148,56 @@ public class Arm extends Module implements Communicator {
     }
 
     public void arm_up() {
-        spark_left_arm.set(RobotMap.Arm.arm_speed);
-        spark_right_arm.set(RobotMap.Arm.arm_speed);
+        arm_analog(RobotMap.Arm.arm_speed);
     }
 
     public void arm_down() {
-        spark_left_arm.set(-RobotMap.Arm.arm_speed);
-        spark_right_arm.set(-RobotMap.Arm.arm_speed);
+        arm_analog(-RobotMap.Arm.arm_speed);
     }
 
     public void arm_kill() {
-        spark_left_arm.set(0);
-        spark_right_arm.set(0);
+        arm_analog(0);
     }
 
     public void arm_analog(double speed) {
+        if (!get_enabled() || has_job()) {
+            return;
+        }
         spark_left_arm.set(speed);
         spark_right_arm.set(speed);
     }
 
     public double get_arm_speed() {
         return spark_left_arm.get();  // Doesn't matter which
+    }
+
+    public void go_to_home_position() {
+        endE_kill();
+        Pneumatics.get_instance().set_solenoids(false);
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_home));
+    }
+
+    public void go_to_base_position() {
+        endE_kill();
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base));
+        // Extend the arm after getting to the base position
+        Dispatcher.get_instance().add_job(new JRunnable(() -> Pneumatics.get_instance().set_solenoids(true), this));
+    }
+
+    public void go_to_switch_position() {
+        endE_kill();
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_switch));
+    }
+
+    public void go_to_scale_position() {
+        endE_kill();
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_scale));
+    }
+
+    public void go_to_reverse_position() {
+        endE_kill();
+        Pneumatics.get_instance().set_solenoids(false);
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_reverse));
     }
 
     @SuppressWarnings("unused")

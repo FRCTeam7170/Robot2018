@@ -69,6 +69,13 @@ public abstract class Module {
     }
 
     /**
+     * @return if the module currently has a non-default job running on it.
+     */
+    public final boolean has_job() {
+        return curr_job != null;
+    }
+
+    /**
      * Set the default {@link Job} to run while this module's lock is free.
      * @param job The job to set the default job to.
      */

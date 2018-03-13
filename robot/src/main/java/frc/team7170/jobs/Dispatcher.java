@@ -110,6 +110,7 @@ public class Dispatcher implements Communicator {
             }
             modules.replace(mod, true);
         }
+        LOGGER.fine("Starting job: "+job.toString());
         running_jobs.add(job);
         job.start();
     }
@@ -148,15 +149,22 @@ public class Dispatcher implements Communicator {
      * @return Whether or not the cancellation was successful. This will always be true if override is true.
      */
     public boolean cancel_job(Job job, boolean override) {
-        return job.cancel(override);
+        LOGGER.fine("Cancelling job: "+job.toString());
+        if (job.cancel(override)) {
+            free_module_locks(job);
+            return true;
+        }
+        return false;
     }
 
     /**
      * Forcefully {@link Job#cancel(boolean)} every job.
      */
     public void cancel_all() {
+        LOGGER.fine("Cancelling all jobs.");
         queued_jobs.clear();  // Clear the queued jobs.
         for (Job job: running_jobs) {  // Clear the running jobs.
+            free_module_locks(job);
             job.cancel(true);
         }
     }
