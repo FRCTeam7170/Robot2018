@@ -12,6 +12,7 @@ import frc.team7170.comm.Communicator;
 import frc.team7170.comm.RPCCaller;
 import frc.team7170.comm.TransmitFrequency;
 import frc.team7170.comm.Transmitter;
+import frc.team7170.control.keymaps.DefaultGamepadBindings;
 import frc.team7170.control.keymaps.DefaultJoystickBindings;
 import frc.team7170.control.keymaps.KeyMap;
 import frc.team7170.robot.RobotMap;
@@ -52,7 +53,7 @@ public class Control implements Communicator {
     /**
      * A map of action-button/axis pairs so we can easily switch bindings without having to change code in multiple different classes
      */
-    private KeyMap keymap = DefaultJoystickBindings.get_instance();
+    private KeyMap keymap = DefaultGamepadBindings.get_instance();
 
     /**
      * Set of all actions that have had warnings logged about being unbound already to prevent console spam.

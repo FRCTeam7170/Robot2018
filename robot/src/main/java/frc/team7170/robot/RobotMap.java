@@ -22,6 +22,10 @@ public class RobotMap {
         public static double speed_Y = 0.02;
         public static double speed_X_45 = 0.02;
         public static double speed_Y_45 = 0.02;
+        public static int resolution_w = 1280;  // Max = 1280 for MS LC HD3000
+        public static int resolution_h = 720;  // Max = 720 for MS LC HD3000
+        public static int fps = 30;  // Max = 30 for MS LC HD3000
+        public static double brightness = 1;  // [0, 1]
     }
 
     public static class CAN {
@@ -87,6 +91,8 @@ public class RobotMap {
         public static double arm_speed = 1.0;
         public static boolean reverse_endE_left = true;
         public static boolean reverse_endE_right = false;
+        public static boolean reverse_arm_left = true;
+        public static boolean reverse_arm_right = false;
         public static double pot_value_kill_lower_inner = 90.0;   // TODO
         public static double pot_value_kill_upper_inner = 120.0;  // TODO
         public static double pot_value_kill_lower_outer = 80.0;   // TODO

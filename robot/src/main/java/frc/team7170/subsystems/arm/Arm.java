@@ -32,6 +32,9 @@ public class Arm extends Module implements Communicator {
 
         spark_left_endE.setInverted(RobotMap.Arm.reverse_endE_left);
         spark_right_endE.setInverted(RobotMap.Arm.reverse_endE_right);
+        // TODO: MAKE RECEIVERS/TRANSMITTERS FOR THESE
+        spark_left_arm.setInverted(RobotMap.Arm.reverse_arm_left);
+        spark_right_arm.setInverted(RobotMap.Arm.reverse_arm_right);
 
         Dispatcher.get_instance().register_module(this);
         register_comm();

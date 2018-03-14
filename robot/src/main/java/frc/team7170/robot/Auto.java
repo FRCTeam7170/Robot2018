@@ -125,6 +125,11 @@ public class Auto implements Communicator {
             }
             LOGGER.info("Autonomous not resolved in initialization. Attempting to resolve...Success.");
         }
+        // TODO: TEMP
+        double decel = Math.sqrt(Math.pow(Drive.get_instance().get_accel_X(), 2) + Math.pow(Drive.get_instance().get_accel_Y(), 2));
+        if (decel >= 19.6) {  // 2 g's of deceleration
+            Dispatcher.get_instance().cancel_all();
+        }
     }
 
     @SuppressWarnings("unused")

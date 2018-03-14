@@ -1,8 +1,16 @@
 package frc.team7170.robot;
 
 import java.util.logging.Logger;
+
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.networktables.EntryNotification;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import frc.team7170.comm.Communicator;
+import frc.team7170.comm.Receiver;
+import frc.team7170.comm.TransmitFrequency;
+import frc.team7170.comm.Transmitter;
 import frc.team7170.control.Action;
 import frc.team7170.control.Control;
 import frc.team7170.control.HIDAxisAccessor;
@@ -13,11 +21,12 @@ import frc.team7170.jobs.Module;
 import frc.team7170.subsystems.arm.Arm;
 import frc.team7170.subsystems.drive.Acceleration;
 import frc.team7170.subsystems.drive.Drive;
+import frc.team7170.subsystems.drive.JStraight;
 import frc.team7170.util.CalcUtil;
 import frc.team7170.util.DebugUtil;
 
 
-public class Robot extends IterativeRobot {
+public class Robot extends IterativeRobot implements Communicator {
 
     private final static Logger LOGGER = Logger.getLogger(Robot.class.getName());
 
@@ -46,9 +55,12 @@ public class Robot extends IterativeRobot {
             Class.forName("frc.team7170.subsystems.Pneumatics");
             Class.forName("frc.team7170.robot.Auto");
         } catch (ClassNotFoundException e) {
+            // Shouldn't happen -- using constant strings for class paths
             throw new RuntimeException("Exception while loading classes.");
         }
     }
+
+    private UsbCamera camera;
 
 
     //----------Inherited initialization functions----------//
@@ -56,8 +68,12 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
         LOGGER.info("Initializing robot...");
         load_classes();
+        register_comm();
         LOGGER.info("Starting camera capture.");
-        CameraServer.getInstance().startAutomaticCapture();
+        camera = CameraServer.getInstance().startAutomaticCapture();
+        camera.setResolution(RobotMap.Camera.resolution_w, RobotMap.Camera.resolution_h);
+        camera.setFPS(RobotMap.Camera.fps);
+        camera.setBrightness((int)(100*RobotMap.Camera.brightness));
         LOGGER.info("Initialization done.");
     }
 
@@ -72,11 +88,14 @@ public class Robot extends IterativeRobot {
 
     public void autonomousInit() {
         LOGGER.info("ROBOT IN AUTONOMOUS");
+        /* TODO: TEMP
         if (Auto.get_instance().resolve_auto()) {
             LOGGER.info("Resolving autonomous...Success.");
         } else {
             LOGGER.severe("Resolving autonomous...Failed.");
         }
+        */
+        Dispatcher.get_instance().add_job(new JStraight(3.05, 0.75, 0.25, 0.0, 0.4, 0.6, false, false));
         Drive.get_instance().set_enabled(true);
         Arm.get_instance().set_enabled(true);
     }
@@ -208,6 +227,73 @@ public class Robot extends IterativeRobot {
 
     public void testPeriodic() {
         teleopPeriodic();
+    }
 
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
+            "O_CAMERA_RES_W_MS",
+            "O_CAMERA_RES_H_MS",
+            "O_CAMERA_FPS_MS",
+            "O_CAMERA_BRIGHTNESS_MS"
+    })
+    public void transmitter_static(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_CAMERA_RES_W_MS":
+                entry.setDouble(RobotMap.Camera.resolution_w);
+                break;
+            case "O_CAMERA_RES_H_MS":
+                entry.setDouble(RobotMap.Camera.resolution_h);
+                break;
+            case "O_CAMERA_FPS_MS":
+                entry.setDouble(RobotMap.Camera.fps);
+                break;
+            case "O_CAMERA_BRIGHTNESS_MS":
+                entry.setDouble(RobotMap.Camera.brightness);
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Receiver({
+            "I_CAMERA_RES_W",
+            "I_CAMERA_RES_H",
+            "I_CAMERA_FPS",
+            "I_CAMERA_BRIGHTNESS"
+    })
+    public void receiver(EntryNotification event) {
+        switch (event.name) {
+            case "I_CAMERA_RES_W":
+                if (event.value.isDouble()) {
+                    RobotMap.Camera.resolution_w = (int) CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1280.0);
+                    camera.setResolution(RobotMap.Camera.resolution_w, RobotMap.Camera.resolution_h);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_CAMERA_RES_H":
+                if (event.value.isDouble()) {
+                    RobotMap.Camera.resolution_h = (int) CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 720.0);
+                    camera.setResolution(RobotMap.Camera.resolution_w, RobotMap.Camera.resolution_h);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_CAMERA_FPS":
+                if (event.value.isDouble()) {
+                    RobotMap.Camera.fps = (int) CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 30.0);
+                    camera.setFPS(RobotMap.Camera.fps);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_CAMERA_BRIGHTNESS":
+                if (event.value.isDouble()) {
+                    RobotMap.Camera.brightness = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1.0);
+                    camera.setBrightness((int)(100*RobotMap.Camera.brightness));
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+        }
     }
 }
