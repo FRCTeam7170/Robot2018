@@ -15,7 +15,7 @@ public class CalcUtil {
      * @return If the number lies within the threshold.
      */
     public static boolean in_threshold(double val, double median, double thresh) {
-        return (median - thresh < val) && (val < median + thresh);
+        return (median - thresh <= val) && (val <= median + thresh);
     }
 
     /**

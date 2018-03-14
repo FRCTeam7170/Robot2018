@@ -102,6 +102,6 @@ public class RobotMap {
 
     public static class Communication {
         public static final String DB_to_send_key = "I_SEND_THESE";
-        public static final String DB_avail_keymaps = "O_AVAIL_KEYMAPS_S";
+        public static final String DB_avail_keymaps = "O_AVAIL_KEYMAPS_NS";
     }
 }

@@ -8,9 +8,13 @@ import frc.team7170.control.Control;
 import frc.team7170.control.HIDAxisAccessor;
 import frc.team7170.control.HIDButtonAccessor;
 import frc.team7170.jobs.Dispatcher;
+import frc.team7170.jobs.JRunnable;
 import frc.team7170.jobs.Module;
 import frc.team7170.subsystems.arm.Arm;
+import frc.team7170.subsystems.drive.Acceleration;
 import frc.team7170.subsystems.drive.Drive;
+import frc.team7170.util.CalcUtil;
+import frc.team7170.util.DebugUtil;
 
 
 public class Robot extends IterativeRobot {
@@ -87,6 +91,49 @@ public class Robot extends IterativeRobot {
 
     public void testInit() {
         LOGGER.info("ROBOT IN TEST");
+        Drive.get_instance().set_enabled(true);
+        Arm.get_instance().set_enabled(true);
+
+        Dispatcher.get_instance().add_job(new JRunnable(
+                () -> System.out.println("Test job running for 5 seconds. Blocking Arm and Drive."),
+                () -> {},
+                () -> System.out.println("Done blocking Arm and Drive."),
+                5000, Drive.get_instance(), Arm.get_instance()
+        ));
+        Dispatcher.get_instance().add_job(new JRunnable(
+                () -> System.out.println("Test job running for 4 seconds. Blocking Arm."),
+                () -> {},
+                () -> System.out.println("Done blocking Arm."),
+                4000, Arm.get_instance()
+        ));
+        Dispatcher.get_instance().add_job(new JRunnable(
+                () -> System.out.println("Test job running for 2 seconds. Blocking Drive."),
+                () -> {},
+                () -> System.out.println("Done blocking Drive."),
+                2000, Drive.get_instance()
+        ));
+
+        DebugUtil.assert_(CalcUtil.in_threshold(5, 6, 2), "CalcUtil.in_threshold");
+        DebugUtil.assert_(!CalcUtil.in_threshold(0.8, 0.5, 0.1), "CalcUtil.in_threshold");
+        DebugUtil.assert_(CalcUtil.apply_bounds(1.32, 0, 1) == 1, "CalcUtil.apply_bounds");
+        DebugUtil.assert_(CalcUtil.apply_bounds(-0.13, 0, 1) == 0, "CalcUtil.apply_bounds");
+        DebugUtil.assert_(CalcUtil.apply_bounds(0.13, 0, 1) == 0.13, "CalcUtil.apply_bounds");
+
+        Acceleration accel = new Acceleration(0.85, 0.25, 0.1, 0.4, 0.8, false, false, false);
+        System.out.println("Running acceleration algorithm with 1000 steps with following params: maxout=0.85, transin=0.25, transout=0.1, stopaccel=0.4, startdecel=0.8, constaccel, constdecel, not reversed");
+        for (int i = 0; i < 1; i += 0.001) {
+            System.out.print(accel.get(i));
+        }
+        System.out.println();
+
+        accel = new Acceleration(0.99, 0.17, 0.22, 0.3, 0.9, true, true, true);
+        System.out.println("Running acceleration algorithm with 1000 steps with following params: maxout=0.99, transin=0.17, transout=0.22, stopaccel=0.3, startdecel=0.9, linaccel, lindecel, reversed");
+        for (int i = 0; i < 1; i += 0.001) {
+            System.out.print(accel.get(i));
+        }
+        System.out.println();
+
+        System.out.println("RUNNING TELEOP PERIODIC");
     }
 
 
@@ -159,5 +206,8 @@ public class Robot extends IterativeRobot {
     }
 
 
-    public void testPeriodic() {}
+    public void testPeriodic() {
+        teleopPeriodic();
+
+    }
 }

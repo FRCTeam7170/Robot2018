@@ -224,7 +224,7 @@ public class Control implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
-            "O_JOYSTICK_PORT_S",
+            "O_JOYSTICK_PORT_NS",
             "O_GAMEPAD_PORT_S"
     })
     public void transmitter_static(NetworkTableEntry entry) {

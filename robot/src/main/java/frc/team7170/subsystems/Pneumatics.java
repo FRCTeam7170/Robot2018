@@ -73,12 +73,13 @@ public class Pneumatics extends Module implements Communicator {
      * perimeter.
      * @param on Whether to turn the solenoids on or off.
      */
-    public void set_solenoids(boolean on) {
+    public boolean set_solenoids(boolean on) {
         if (!get_enabled()) {
-            return;
+            return false;
         }
         arm_left.set(on);
         arm_right.set(on);
+        return true;
     }
 
 
@@ -111,19 +112,19 @@ public class Pneumatics extends Module implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
-            "O_CAN_ID_PCM_S",
-            "O_PCM_SOLENOID_LEFT_S",
-            "O_PCM_SOLENOID_RIGHT_S"
+            "O_CAN_ID_PCM_NS",
+            "O_PCM_SOLENOID_LEFT_NS",
+            "O_PCM_SOLENOID_RIGHT_NS"
     })
     public void transmitter_static(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_CAN_ID_PCM_S":
+            case "O_CAN_ID_PCM_NS":
                 entry.setDouble(RobotMap.CAN.PCM);
                 break;
-            case "O_PCM_SOLENOID_LEFT_S":
+            case "O_PCM_SOLENOID_LEFT_NS":
                 entry.setDouble(RobotMap.PCM.left_solenoid);
                 break;
-            case "O_PCM_SOLENOID_RIGHT_S":
+            case "O_PCM_SOLENOID_RIGHT_NS":
                 entry.setDouble(RobotMap.PCM.right_solenoid);
                 break;
         }
@@ -131,11 +132,11 @@ public class Pneumatics extends Module implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
-            "O_PNEUMATICS_ENABLED_S"
+            "O_PNEUMATICS_ENABLED_RT"
     })
     public void transmitter_slow(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_PNEUMATICS_ENABLED_S":
+            case "O_PNEUMATICS_ENABLED_RT":
                 entry.setBoolean(get_enabled());
                 break;
         }
@@ -143,23 +144,23 @@ public class Pneumatics extends Module implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
-            "O_PNEUMATICS_ARM_STATE_S",
-            "O_PNEUMATICS_COMPRESSOR_STATE_S",
-            "O_PNEUMATICS_COMPRESSOR_CURRENT_S",
-            "O_PNEUMATICS_COMPRESSOR_LOW_PRESSURE_S"
+            "O_PNEUMATICS_ARM_STATE_NT",
+            "O_PNEUMATICS_COMPRESSOR_STATE_NT",
+            "O_PNEUMATICS_COMPRESSOR_CURRENT_NT",
+            "O_PNEUMATICS_COMPRESSOR_LOW_PRESSURE_NT"
     })
     public void transmitter_fast(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_PNEUMATICS_ARM_STATE_S":
+            case "O_PNEUMATICS_ARM_STATE_NT":
                 entry.setBoolean(get_solenoids());
                 break;
-            case "O_PNEUMATICS_COMPRESSOR_STATE_S":
+            case "O_PNEUMATICS_COMPRESSOR_STATE_NT":
                 entry.setBoolean(get_compressor_state());
                 break;
-            case "O_PNEUMATICS_COMPRESSOR_CURRENT_S":
+            case "O_PNEUMATICS_COMPRESSOR_CURRENT_NT":
                 entry.setDouble(get_compressor_current());
                 break;
-            case "O_PNEUMATICS_COMPRESSOR_LOW_PRESSURE_S":
+            case "O_PNEUMATICS_COMPRESSOR_LOW_PRESSURE_NT":
                 entry.setBoolean(get_pressure_low());
                 break;
         }

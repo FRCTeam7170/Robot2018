@@ -171,12 +171,12 @@ public class Dispatcher implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
-            "O_RUNNING_JOBS_S",
-            "O_QUEUED_JOBS_S"
+            "O_RUNNING_JOBS_NT",
+            "O_QUEUED_JOBS_NT"
     })
     public void transmitter_slow(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_RUNNING_JOBS_S":
+            case "O_RUNNING_JOBS_NT":
                 String[] running_strs = new String[running_jobs.size()];
                 Iterator running_iter = running_jobs.iterator();
                 for (int i = 0; i < running_jobs.size(); i++) {
@@ -187,7 +187,7 @@ public class Dispatcher implements Communicator {
                 }
                 entry.setStringArray(running_strs);
                 break;
-            case "O_QUEUED_JOBS_S":
+            case "O_QUEUED_JOBS_NT":
                 String[] queued_strs = new String[queued_jobs.size()];
                 Iterator queued_iter = queued_jobs.iterator();
                 for (int i = 0; i < queued_jobs.size(); i++) {

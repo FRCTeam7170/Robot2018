@@ -282,71 +282,71 @@ public class Drive extends Module implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
-            "O_TURN_ANGLE_TOLERANCE_M",
-            "O_STRAIGHT_DISTANCE_TOLERANCE_M",
-            "O_CAN_ID_FRONT_LEFT_MOTOR_S",
-            "O_CAN_ID_FRONT_RIGHT_MOTOR_S",
-            "O_CAN_ID_BACK_LEFT_MOTOR_S",
-            "O_CAN_ID_BACK_RIGHT_MOTOR_S",
-            "O_DIO_ENCODER_LEFT_A_S",
-            "O_DIO_ENCODER_LEFT_B_S",
-            "O_DIO_ENCODER_RIGHT_A_S",
-            "O_DIO_ENCODER_RIGHT_B_S",
-            "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_LEFT_M",
-            "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_RIGHT_M",
-            "O_DRIVE_SMOOTH_TOLERANCE_LEFT_M",
-            "O_DRIVE_SMOOTH_TOLERANCE_RIGHT_M",
-            "O_DRIVE_SMOOTH_JUMP_LEFT_M",
-            "O_DRIVE_SMOOTH_JUMP_RIGHT_M"
+            "O_TURN_ANGLE_TOLERANCE_MS",
+            "O_STRAIGHT_DISTANCE_TOLERANCE_MS",
+            "O_CAN_ID_FRONT_LEFT_MOTOR_NS",
+            "O_CAN_ID_FRONT_RIGHT_MOTOR_NS",
+            "O_CAN_ID_BACK_LEFT_MOTOR_NS",
+            "O_CAN_ID_BACK_RIGHT_MOTOR_NS",
+            "O_DIO_ENCODER_LEFT_A_NS",
+            "O_DIO_ENCODER_LEFT_B_NS",
+            "O_DIO_ENCODER_RIGHT_A_NS",
+            "O_DIO_ENCODER_RIGHT_B_NS",
+            "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_LEFT_MS",
+            "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_RIGHT_MS",
+            "O_DRIVE_SMOOTH_TOLERANCE_LEFT_MS",
+            "O_DRIVE_SMOOTH_TOLERANCE_RIGHT_MS",
+            "O_DRIVE_SMOOTH_JUMP_LEFT_MS",
+            "O_DRIVE_SMOOTH_JUMP_RIGHT_MS"
     })
     public void transmitter_static(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_TURN_ANGLE_TOLERANCE_M":
+            case "O_TURN_ANGLE_TOLERANCE_MS":
                 entry.setDouble(RobotMap.Maneuvers.turn_angle_tolerance);
                 break;
-            case "O_STRAIGHT_DISTANCE_TOLERANCE_M":
+            case "O_STRAIGHT_DISTANCE_TOLERANCE_MS":
                 entry.setDouble(RobotMap.Maneuvers.straight_distance_tolerance);
                 break;
-            case "O_CAN_ID_FRONT_LEFT_MOTOR_S":
+            case "O_CAN_ID_FRONT_LEFT_MOTOR_NS":
                 entry.setDouble(RobotMap.CAN.front_left_motor);
                 break;
-            case "O_CAN_ID_FRONT_RIGHT_MOTOR_S":
+            case "O_CAN_ID_FRONT_RIGHT_MOTOR_NS":
                 entry.setDouble(RobotMap.CAN.front_right_motor);
                 break;
-            case "O_CAN_ID_BACK_LEFT_MOTOR_S":
+            case "O_CAN_ID_BACK_LEFT_MOTOR_NS":
                 entry.setDouble(RobotMap.CAN.back_left_motor);
                 break;
-            case "O_CAN_ID_BACK_RIGHT_MOTOR_S":
+            case "O_CAN_ID_BACK_RIGHT_MOTOR_NS":
                 entry.setDouble(RobotMap.CAN.back_right_motor);
                 break;
-            case "O_DIO_ENCODER_LEFT_A_S":
+            case "O_DIO_ENCODER_LEFT_A_NS":
                 entry.setDouble(RobotMap.DIO.encoder_left_A);
                 break;
-            case "O_DIO_ENCODER_LEFT_B_S":
+            case "O_DIO_ENCODER_LEFT_B_NS":
                 entry.setDouble(RobotMap.DIO.encoder_left_B);
                 break;
-            case "O_DIO_ENCODER_RIGHT_A_S":
+            case "O_DIO_ENCODER_RIGHT_A_NS":
                 entry.setDouble(RobotMap.DIO.encoder_right_A);
                 break;
-            case "O_DIO_ENCODER_RIGHT_B_S":
+            case "O_DIO_ENCODER_RIGHT_B_NS":
                 entry.setDouble(RobotMap.DIO.encoder_right_B);
                 break;
-            case "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_LEFT_M":
+            case "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_LEFT_MS":
                 entry.setDouble(RobotMap.DriveSmooth.logic_threshold_L);
                 break;
-            case "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_RIGHT_M":
+            case "O_DRIVE_SMOOTH_LOGIC_THRESHOLD_RIGHT_MS":
                 entry.setDouble(RobotMap.DriveSmooth.logic_threshold_R);
                 break;
-            case "O_DRIVE_SMOOTH_TOLERANCE_LEFT_M":
+            case "O_DRIVE_SMOOTH_TOLERANCE_LEFT_MS":
                 entry.setDouble(RobotMap.DriveSmooth.tolerance_L);
                 break;
-            case "O_DRIVE_SMOOTH_TOLERANCE_RIGHT_M":
+            case "O_DRIVE_SMOOTH_TOLERANCE_RIGHT_MS":
                 entry.setDouble(RobotMap.DriveSmooth.tolerance_R);
                 break;
-            case "O_DRIVE_SMOOTH_JUMP_LEFT_M":
+            case "O_DRIVE_SMOOTH_JUMP_LEFT_MS":
                 entry.setDouble(RobotMap.DriveSmooth.jump_L);
                 break;
-            case "O_DRIVE_SMOOTH_JUMP_RIGHT_M":
+            case "O_DRIVE_SMOOTH_JUMP_RIGHT_MS":
                 entry.setDouble(RobotMap.DriveSmooth.jump_R);
                 break;
         }
@@ -354,11 +354,11 @@ public class Drive extends Module implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
-            "O_DRIVE_ENABLED_S"
+            "O_DRIVE_ENABLED_RT"
     })
     public void transmitter_slow(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_DRIVE_ENABLED_S":
+            case "O_DRIVE_ENABLED_RT":
                 entry.setBoolean(get_enabled());
                 break;
         }
@@ -366,35 +366,35 @@ public class Drive extends Module implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
-            "O_DRIVE_LEFT_S",
-            "O_DRIVE_RIGHT_S",
-            "O_ACCEL_X_S",
-            "O_ACCEL_Y_S",
-            "O_ACCEL_Z_S",
-            "O_ENCODER_LEFT_S",
-            "O_ENCODER_RIGHT_S"
+            "O_DRIVE_LEFT_NT",
+            "O_DRIVE_RIGHT_NT",
+            "O_ACCEL_X_NT",
+            "O_ACCEL_Y_NT",
+            "O_ACCEL_Z_NT",
+            "O_ENCODER_LEFT_NT",
+            "O_ENCODER_RIGHT_NT"
     })
     public void transmitter_fast(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_DRIVE_LEFT_S":
+            case "O_DRIVE_LEFT_NT":
                 entry.setDouble(rob_L);
                 break;
-            case "O_DRIVE_RIGHT_S":
+            case "O_DRIVE_RIGHT_NT":
                 entry.setDouble(rob_R);
                 break;
-            case "O_ACCEL_X_S":
+            case "O_ACCEL_X_NT":
                 entry.setDouble(get_accel_X());
                 break;
-            case "O_ACCEL_Y_S":
+            case "O_ACCEL_Y_NT":
                 entry.setDouble(get_accel_Y());
                 break;
-            case "O_ACCEL_Z_S":
+            case "O_ACCEL_Z_NT":
                 entry.setDouble(get_accel_Z());
                 break;
-            case "O_ENCODER_LEFT_S":
+            case "O_ENCODER_LEFT_NT":
                 entry.setDouble(get_Lenc());
                 break;
-            case "O_ENCODER_RIGHT_S":
+            case "O_ENCODER_RIGHT_NT":
                 entry.setDouble(get_Renc());
                 break;
         }

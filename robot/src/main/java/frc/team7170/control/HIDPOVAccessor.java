@@ -2,6 +2,8 @@ package frc.team7170.control;
 
 import edu.wpi.first.wpilibj.GenericHID;
 
+import java.util.logging.Logger;
+
 
 /**
  * Wrapper for a single POV direction on a given {@link GenericHID}.
@@ -10,7 +12,9 @@ import edu.wpi.first.wpilibj.GenericHID;
  */
 public class HIDPOVAccessor extends HIDButtonAccessor {
 
-    private boolean pressed;
+    private final static Logger LOGGER = Logger.getLogger(HIDPOVAccessor.class.getName());
+
+    private static boolean warned = false;
 
     /**
      * @param degrees The POV direction to poll.
@@ -22,21 +26,25 @@ public class HIDPOVAccessor extends HIDButtonAccessor {
 
     @Override
     public boolean get() {
-        if (joy.getPOV() == port) {
-            pressed = true;
-        } else {
-            pressed = false;
+        if (do_sim) {
+            return sim;
         }
-        return pressed;
+        return joy.getPOV() == port;
     }
 
     @Override
     public boolean get_pressed() {
-        return !pressed && get();
+        if (!warned) {
+            LOGGER.warning("get_pressed() and get_released() functionality not implemented for POV buttons. Relaying call to get().");
+        }
+        return get();
     }
 
     @Override
     public boolean get_released() {
-        return pressed && !get();
+        if (!warned) {
+            LOGGER.warning("get_pressed() and get_released() functionality not implemented for POV buttons. Relaying call to get().");
+        }
+        return !get();
     }
 }

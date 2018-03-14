@@ -42,14 +42,17 @@ import java.util.logging.Logger;
  *      an "R_..." prefix specifies a remote procedure call (RPC) entry;
  *      an "..._M" affix specifies that an entry be mutable by the dashboard (that is, the corresponding entry key
  *          with an "I_..." prefix may actually exist and hence a receiver may be assigned to listen for it);
- *      an "..._S" affix specifies that an entry be static (not mutable by the dashboard).
+ *      an "..._N" affix specifies that an entry be static (not mutable by the dashboard);
+ *      an ".._R" affix specifies than an entry is mutable indirectly by an RPCCaller;
+ *      the "..._T"(imed), "..._V"(olatile), and "..._S"(tatic) affixes refer to a {@link TransmitFrequency}.
  * Any text in between these pre/affixes can be used as wished to further differentiate each key. Note that the user
  * does not have to manually apply these pre/affixes; one may simply provide a key with just the root to an annotation's
- * value and they will be automatically fixed via {@link Communication#rectify_key(String, int)}. Do be wary, however,
- * that the entries passed to each communicating method will be named in accordance with this scheme, and, hence,
- * identifying each entry must take this into account. Use {@link Communication#get_key_root(String)} when identifying
- * entries to get only the root of the key. Also, note that {@link Communication#rectify_key(String, int)} defaults to
- * appending a key with the static identifier, so mutable keys must be manually specified.
+ * value and they will be automatically fixed via {@link Communication#rectify_key(String, String, String)}. Do be wary,
+ * however, that the entries passed to each communicating method will be named in accordance with this scheme, and,
+ * hence, identifying each entry must take this into account. Use {@link Communication#get_key_root(String)} when
+ * identifying entries to get only the root of the key. Also, note that
+ * {@link Communication#rectify_key(String, String, String)} defaults to appending a key with the static identifier, so
+ * mutable keys must be manually specified.
  *
  * Any methods of a subscribed module that receives data must be annotated with {@link Receiver} which accepts a list
  * of strings, each corresponding to a {@link NetworkTableEntry} key that the module in question wishes to receive
@@ -92,7 +95,7 @@ public class Communication extends Module implements Communicator {
         LOGGER.info("Initializing communication system.");
 
         // Setup listener for sender whitelist from dashboard
-        nt_inst.getTable(Tables.IN.get()).getEntry(rectify_key(RobotMap.Communication.DB_to_send_key, 2)).addListener((event) -> {
+        nt_inst.getTable(Tables.IN.get()).getEntry(rectify_key(RobotMap.Communication.DB_to_send_key, "I", "")).addListener((event) -> {
             senders.clear();
             try {
                 senders.addAll(Arrays.asList(event.value.getStringArray()));
@@ -162,6 +165,10 @@ public class Communication extends Module implements Communicator {
         return "Communication System";
     }
 
+    public NetworkTableInstance get_nt_inst() {
+        return nt_inst;
+    }
+
     /**
      * This method is can be called from {@link Communicator#register_comm()} (preferable) or manually to register
      * a module as containing {@link Transmitter}, {@link Receiver}, or {@link RPCCaller} method. This allows this
@@ -193,7 +200,7 @@ public class Communication extends Module implements Communicator {
                 // Special cases for when the transmitter's poll rate is static or volatile
                 if (transmitter.poll_rate() == TransmitFrequency.STATIC) {
                     for (String key : transmitter.value()) {
-                        key = rectify_key(key, 1);
+                        key = rectify_key(key, "O", "S");
                         if (transmitters.containsKey(key)) {
                             // Throw an exception if a transmitter for this key has already been mapped
                             throw new RuntimeException("Multiple transmitters/rpc caller for same key registered.");
@@ -207,7 +214,7 @@ public class Communication extends Module implements Communicator {
                     }
                 } else if (transmitter.poll_rate() == TransmitFrequency.VOLATILE) {
                     for (String key : transmitter.value()) {
-                        final String k = rectify_key(key, 1);  // Make key final for use in lambda
+                        final String k = rectify_key(key, "O", "V");  // Make key final for use in lambda
                         if (transmitters.containsKey(k)) {
                             // Throw an exception if a transmitter for this key has already been mapped
                             throw new RuntimeException("Multiple transmitters/rpc caller for same key registered.");
@@ -223,7 +230,7 @@ public class Communication extends Module implements Communicator {
                     }
                 } else {  // One of specific delays in milliseconds
                     for (String key : transmitter.value()) {
-                        final String k = rectify_key(key, 1);  // Make key final for use in lambda
+                        final String k = rectify_key(key, "O", "T");  // Make key final for use in lambda
                         if (transmitters.containsKey(k)) {
                             // Throw an exception if a transmitter for this key has already been mapped
                             throw new RuntimeException("Multiple transmitters/rpc caller for same key registered.");
@@ -254,7 +261,7 @@ public class Communication extends Module implements Communicator {
                     throw new RuntimeException("Receiver method in communicator does not feature proper signature.");
                 }
                 for (String key : receiver.value()) {
-                    key = rectify_key(key, 2);
+                    key = rectify_key(key, "I", "");
                     // Add a listener to the entry key which invokes the method whenever the entry is remotely updated
                     nt_inst.getTable(Tables.IN.get()).getEntry(key).addListener((event) -> {
                         try {
@@ -279,7 +286,7 @@ public class Communication extends Module implements Communicator {
                     throw new RuntimeException("RPCCaller method in communicator does not feature proper signature.");
                 }
                 for (String key : rpccaller.value()) {
-                    key = rectify_key(key, 0);
+                    key = rectify_key(key, "R", "");
                     if (transmitters.containsKey(key)) {
                         // Throw an error if a transmitter for this key has already been mapped
                         throw new RuntimeException("Multiple transmitters/rpc caller for same key registered.");
@@ -300,27 +307,26 @@ public class Communication extends Module implements Communicator {
 
     /**
      * Fix a key to follow the naming scheme described in this class's docstring.
-     * @param key The key to fix.
-     * @param type The type of the key. This specifies the prefix according to:
-     *             0 = "R_..."
-     *             1 = "O_..."
-     *             2 (or any other integer) = "I_..."
+     * @param root The key to fix.
+     * @param prefix The key's prefix. One of "O", "I", or "R".
+     * @param suffix THe key's suffix. A combination of "M", "N", or "R" AND "T", "V", or "S" (in that order).
      * @return The rectified key.
      */
-    public static String rectify_key(String key, int type) {
-        if (type == 0 && !key.startsWith("R_")) {
-            key = "R_".concat(key);
-        } else if (type == 1) {
-            if (!key.startsWith("O_")) {
-                key = "O_".concat(key);
-            }
-            if (!key.endsWith("_M") || !key.endsWith("_S")) {
-                key = key.concat("_S");  // Output keys default to being static
-            }
-        } else if (!key.startsWith("I_")) {
-            key = "I_".concat(key);
+    public static String rectify_key(String root, String prefix, String suffix) {
+        assert false;
+        if (!prefix.matches("^[OIR]\\$") || !suffix.matches("^[MNR]?[TVS]\\$|^\\$")) {
+            throw new IllegalArgumentException("Invalid prefix ("+prefix+") or suffix("+suffix+").");
         }
-        return key;
+        if (!root.startsWith(prefix+"_")) {
+            root = prefix + "_" + root;
+        }
+        if (!suffix.matches("[MNR]")) {
+            suffix = "N" + suffix;  // Default to non mutable
+        }
+        if (!root.endsWith("_"+suffix)) {
+            root = root + "_" + suffix;
+        }
+        return root;
     }
 
     /**
@@ -329,16 +335,16 @@ public class Communication extends Module implements Communicator {
      * @return The key stripped of pre/affixes.
      */
     public static String get_key_root(String key) {
-        return key.replaceFirst("^R_|^O_|^I_", "").replaceFirst("_M\\$|_S\\$", "");
+        return key.replaceFirst("^R_|^O_|^I_", "").replaceFirst("_[MNR][TVS]\\$", "");
     }
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
-            "O_COMMUNICATION_ENABLED_S"
+            "O_COMMUNICATION_ENABLED_RT"
     })
     public void transmitter_slow(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_COMMUNICATION_ENABLED_S":
+            case "O_COMMUNICATION_ENABLED_RT":
                 entry.setBoolean(get_enabled());
                 break;
         }

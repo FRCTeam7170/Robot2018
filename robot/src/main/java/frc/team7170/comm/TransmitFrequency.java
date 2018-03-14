@@ -10,7 +10,6 @@ package frc.team7170.comm;
  */
 public enum TransmitFrequency {
     STATIC              (-1),
-    AFTER_REMOTE_UPDATE (-1),  // TODO, OR HAVE CALLBACK SYSTEM IN PLACE TO INDICATE SUCCESS/FAILURE IN CHANGING ENTRY VALUE
     VOLATILE            (0),
     SLOW                (500),
     MODERATE            (250),

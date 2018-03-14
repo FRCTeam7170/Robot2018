@@ -107,14 +107,13 @@ public class Arm extends Module implements Communicator {
         return true;
     }
 
-    public void retract() {
-        Pneumatics.get_instance().set_solenoids(false);
+    public boolean retract() {
+        return Pneumatics.get_instance().set_solenoids(false);
     }
 
     public boolean try_toggle() {
         if (Pneumatics.get_instance().get_solenoids()) {
-            retract();
-            return true;
+            return retract();
         }
         return try_extend();
     }
@@ -136,7 +135,7 @@ public class Arm extends Module implements Communicator {
     }
 
     public void endE_analog(double speed) {
-        if (!get_enabled() || has_job()) {
+        if (!get_enabled()) {
             return;
         }
         spark_left_endE.set(speed);
@@ -160,7 +159,7 @@ public class Arm extends Module implements Communicator {
     }
 
     public void arm_analog(double speed) {
-        if (!get_enabled() || has_job()) {
+        if (!get_enabled()) {
             return;
         }
         spark_left_arm.set(speed);
@@ -202,67 +201,67 @@ public class Arm extends Module implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
-            "O_PWM_ARM_LEFT_MOTOR_S",
-            "O_PWM_ARM_RIGHT_MOTOR_S",
-            "O_PWM_ENDE_LEFT_MOTOR_S",
-            "O_PWM_ENDE_RIGHT_MOTOR_S",
-            "O_AIO_ARM_POT_S",
-            "O_ARM_POT_SCALE_M",
-            "O_ARM_POT_OFFSET_M",
-            "O_ARM_SPEED_M",
-            "O_ENDE_SPEED_M",
-            "O_ENDE_REVERSE_LEFT_M",
-            "O_ENDE_REVERSE_RIGHT_M",
-            "O_ARM_POT_KILL_VAL_LOWER_INNER_M",
-            "O_ARM_POT_KILL_VAL_UPPER_INNER_M",
-            "O_ARM_POT_KILL_VAL_LOWER_OUTER_M",
-            "O_ARM_POT_KILL_VAL_UPPER_OUTER_M"
+            "O_PWM_ARM_LEFT_MOTOR_NS",
+            "O_PWM_ARM_RIGHT_MOTOR_NS",
+            "O_PWM_ENDE_LEFT_MOTOR_NS",
+            "O_PWM_ENDE_RIGHT_MOTOR_NS",
+            "O_AIO_ARM_POT_NS",
+            "O_ARM_POT_SCALE_MS",
+            "O_ARM_POT_OFFSET_MS",
+            "O_ARM_SPEED_MS",
+            "O_ENDE_SPEED_MS",
+            "O_ENDE_REVERSE_LEFT_MS",
+            "O_ENDE_REVERSE_RIGHT_MS",
+            "O_ARM_POT_KILL_VAL_LOWER_INNER_MS",
+            "O_ARM_POT_KILL_VAL_UPPER_INNER_MS",
+            "O_ARM_POT_KILL_VAL_LOWER_OUTER_MS",
+            "O_ARM_POT_KILL_VAL_UPPER_OUTER_MS"
     })
     public void transmitter_static(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_PWM_ARM_LEFT_MOTOR_S":
+            case "O_PWM_ARM_LEFT_MOTOR_NS":
                 entry.setDouble(RobotMap.PWM.arm_left_motor);
                 break;
-            case "O_PWM_ARM_RIGHT_MOTOR_S":
+            case "O_PWM_ARM_RIGHT_MOTOR_NS":
                 entry.setDouble(RobotMap.PWM.arm_right_motor);
                 break;
-            case "O_PWM_ENDE_LEFT_MOTOR_S":
+            case "O_PWM_ENDE_LEFT_MOTOR_NS":
                 entry.setDouble(RobotMap.PWM.endE_left_motor);
                 break;
-            case "O_PWM_ENDE_RIGHT_MOTOR_S":
+            case "O_PWM_ENDE_RIGHT_MOTOR_NS":
                 entry.setDouble(RobotMap.PWM.endE_right_motor);
                 break;
-            case "O_AIO_ARM_POT_S":
+            case "O_AIO_ARM_POT_NS":
                 entry.setDouble(RobotMap.AIO.arm_pot);
                 break;
-            case "O_ARM_POT_SCALE_M":
+            case "O_ARM_POT_SCALE_MS":
                 entry.setDouble(RobotMap.Arm.pot_scale);
                 break;
-            case "O_ARM_POT_OFFSET_M":
+            case "O_ARM_POT_OFFSET_MS":
                 entry.setDouble(RobotMap.Arm.pot_offset);
                 break;
-            case "O_ARM_SPEED_M":
+            case "O_ARM_SPEED_MS":
                 entry.setDouble(RobotMap.Arm.arm_speed);
                 break;
-            case "O_ENDE_SPEED_M":
+            case "O_ENDE_SPEED_MS":
                 entry.setDouble(RobotMap.Arm.endE_speed);
                 break;
-            case "O_ENDE_REVERSE_LEFT_M":
+            case "O_ENDE_REVERSE_LEFT_MS":
                 entry.setBoolean(RobotMap.Arm.reverse_endE_left);
                 break;
-            case "O_ENDE_REVERSE_RIGHT_M":
+            case "O_ENDE_REVERSE_RIGHT_MS":
                 entry.setBoolean(RobotMap.Arm.reverse_endE_right);
                 break;
-            case "O_ARM_POT_KILL_VAL_LOWER_INNER_M":
+            case "O_ARM_POT_KILL_VAL_LOWER_INNER_MS":
                 entry.setDouble(RobotMap.Arm.pot_value_kill_lower_inner);
                 break;
-            case "O_ARM_POT_KILL_VAL_UPPER_INNER_M":
+            case "O_ARM_POT_KILL_VAL_UPPER_INNER_MS":
                 entry.setDouble(RobotMap.Arm.pot_value_kill_upper_inner);
                 break;
-            case "O_ARM_POT_KILL_VAL_LOWER_OUTER_M":
+            case "O_ARM_POT_KILL_VAL_LOWER_OUTER_MS":
                 entry.setDouble(RobotMap.Arm.pot_value_kill_lower_outer);
                 break;
-            case "O_ARM_POT_KILL_VAL_UPPER_OUTER_M":
+            case "O_ARM_POT_KILL_VAL_UPPER_OUTER_MS":
                 entry.setDouble(RobotMap.Arm.pot_value_kill_upper_outer);
                 break;
         }
@@ -270,11 +269,11 @@ public class Arm extends Module implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
-            "O_ARM_ENABLED_S"
+            "O_ARM_ENABLED_RT"
     })
     public void transmitter_slow(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_ARM_ENABLED_S":
+            case "O_ARM_ENABLED_RT":
                 entry.setBoolean(get_enabled());
                 break;
         }
@@ -282,19 +281,19 @@ public class Arm extends Module implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
-            "O_ARM_POT_VAL_S",
-            "O_ARM_CURR_SPEED_S",
-            "O_ENDE_CURR_SPEED_S"
+            "O_ARM_POT_VAL_NT",
+            "O_ARM_CURR_SPEED_NT",
+            "O_ENDE_CURR_SPEED_NT"
     })
     public void transmitter_fast(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_ARM_POT_VAL_S":
+            case "O_ARM_POT_VAL_NT":
                 entry.setDouble(get_pot_val());
                 break;
-            case "O_ARM_CURR_SPEED_S":
+            case "O_ARM_CURR_SPEED_NT":
                 entry.setDouble(get_arm_speed());
                 break;
-            case "O_ENDE_CURR_SPEED_S":
+            case "O_ENDE_CURR_SPEED_NT":
                 entry.setDouble(get_endE_speed());
                 break;
         }

@@ -129,11 +129,11 @@ public class Auto implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
-            "O_AUTO_DELAY_M"
+            "O_AUTO_DELAY_MS"
     })
     public void transmitter_static(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_AUTO_DELAY_M":
+            case "O_AUTO_DELAY_MS":
                 entry.setDouble(delay_on_start);
                 break;
         }
