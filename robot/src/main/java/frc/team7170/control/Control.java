@@ -51,14 +51,14 @@ public class Control implements Communicator {
     private final Joystick _gamepad = new Joystick(RobotMap.Controllers.gamepad);
 
     /**
-     * A map of action-button/axis pairs so we can easily switch bindings without having to change code in multiple different classes
-     */
-    private KeyMap keymap = DefaultGamepadBindings.get_instance();
-
-    /**
      * Set of all actions that have had warnings logged about being unbound already to prevent console spam.
      */
     private HashSet<Action> warned = new HashSet<>();
+
+    /**
+     * A map of action-button/axis pairs so we can easily switch bindings without having to change code in multiple different classes
+     */
+    private KeyMap keymap = null;
 
 
     // Here we provide an easy way to reference buttons/axes by doing something like:
@@ -218,7 +218,7 @@ public class Control implements Communicator {
             LOGGER.warning("Attempted to set keymap to null.");
             return;
         }
-        LOGGER.info("Switching KeyMap from " + keymap.getClass().getName() + " to " + km.getClass().getName() + ".");
+        LOGGER.info("Switching KeyMap from " + (keymap != null ? keymap.getClass().getName() : "undefined") + " to " + km.getClass().getName() + ".");
         warned.clear();
         keymap = km;
     }

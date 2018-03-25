@@ -32,7 +32,6 @@ public class Arm extends Module implements Communicator {
 
         spark_left_endE.setInverted(RobotMap.Arm.reverse_endE_left);
         spark_right_endE.setInverted(RobotMap.Arm.reverse_endE_right);
-        // TODO: MAKE RECEIVERS/TRANSMITTERS FOR THESE
         spark_left_arm.setInverted(RobotMap.Arm.reverse_arm_left);
         spark_right_arm.setInverted(RobotMap.Arm.reverse_arm_right);
 
@@ -49,12 +48,9 @@ public class Arm extends Module implements Communicator {
 
     @Override
     protected void update() {
-        // TODO: Option to not always default to extend when out of danger zone (commented out for now)
         if (Pneumatics.get_instance().get_solenoids() && in_inner_thresh()) {
             Pneumatics.get_instance().set_solenoids(false);
-        } /* else if (!Pneumatics.get_instance().get_solenoids() && !in_outer_thresh()) {
-            Pneumatics.get_instance().set_solenoids(true);
-        }*/
+        }
     }
 
     @Override
@@ -165,8 +161,8 @@ public class Arm extends Module implements Communicator {
         if (!get_enabled()) {
             return;
         }
-        spark_left_arm.set(speed);
-        spark_right_arm.set(speed);
+        spark_left_arm.set(RobotMap.Arm.arm_speed_multiplier*speed);
+        spark_right_arm.set(RobotMap.Arm.arm_speed_multiplier*speed);
     }
 
     public double get_arm_speed() {
@@ -184,6 +180,8 @@ public class Arm extends Module implements Communicator {
         Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base));
         // Extend the arm after getting to the base position
         Dispatcher.get_instance().add_job(new JRunnable(() -> Pneumatics.get_instance().set_solenoids(true), this));
+        // TODO: TEMP
+        Dispatcher.get_instance().add_job(new JHoldArm());
     }
 
     public void go_to_switch_position() {
@@ -215,6 +213,8 @@ public class Arm extends Module implements Communicator {
             "O_ENDE_SPEED_MS",
             "O_ENDE_REVERSE_LEFT_MS",
             "O_ENDE_REVERSE_RIGHT_MS",
+            "O_ARM_REVERSE_LEFT_MS",
+            "O_ARM_REVERSE_RIGHT_MS",
             "O_ARM_POT_KILL_VAL_LOWER_INNER_MS",
             "O_ARM_POT_KILL_VAL_UPPER_INNER_MS",
             "O_ARM_POT_KILL_VAL_LOWER_OUTER_MS",
@@ -254,6 +254,12 @@ public class Arm extends Module implements Communicator {
                 break;
             case "O_ENDE_REVERSE_RIGHT_MS":
                 entry.setBoolean(RobotMap.Arm.reverse_endE_right);
+                break;
+            case "O_ARM_REVERSE_LEFT_MS":
+                entry.setBoolean(RobotMap.Arm.reverse_arm_left);
+                break;
+            case "O_ARM_REVERSE_RIGHT_MS":
+                entry.setBoolean(RobotMap.Arm.reverse_arm_right);
                 break;
             case "O_ARM_POT_KILL_VAL_LOWER_INNER_MS":
                 entry.setDouble(RobotMap.Arm.pot_value_kill_lower_inner);
@@ -310,6 +316,8 @@ public class Arm extends Module implements Communicator {
             "I_ENDE_SPEED",
             "I_ENDE_REVERSE_LEFT",
             "I_ENDE_REVERSE_RIGHT",
+            "I_ARM_REVERSE_LEFT",
+            "I_ARM_REVERSE_RIGHT",
             "I_ARM_POT_KILL_VAL_LOWER_INNER",
             "I_ARM_POT_KILL_VAL_UPPER_INNER",
             "I_ARM_POT_KILL_VAL_LOWER_OUTER",
@@ -363,6 +371,22 @@ public class Arm extends Module implements Communicator {
                 if (event.value.isBoolean()) {
                     RobotMap.Arm.reverse_endE_right = event.value.getBoolean();
                     spark_right_endE.setInverted(RobotMap.Arm.reverse_endE_right);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a boolean!");
+                }
+                break;
+            case "I_ARM_REVERSE_LEFT":
+                if (event.value.isBoolean()) {
+                    RobotMap.Arm.reverse_arm_left = event.value.getBoolean();
+                    spark_left_arm.setInverted(RobotMap.Arm.reverse_arm_left);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a boolean!");
+                }
+                break;
+            case "I_ARM_REVERSE_RIGHT":
+                if (event.value.isBoolean()) {
+                    RobotMap.Arm.reverse_arm_right = event.value.getBoolean();
+                    spark_right_arm.setInverted(RobotMap.Arm.reverse_arm_right);
                 } else {
                     LOGGER.severe(event.name+" entry updated but it is not a boolean!");
                 }

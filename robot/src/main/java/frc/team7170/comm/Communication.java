@@ -313,20 +313,22 @@ public class Communication extends Module implements Communicator {
      * @return The rectified key.
      */
     public static String rectify_key(String root, String prefix, String suffix) {
-        assert false;
-        if (!prefix.matches("^[OIR]\\$") || !suffix.matches("^[MNR]?[TVS]\\$|^\\$")) {
+        /*
+        if (!prefix.matches("^[OIR]\\$") || (!suffix.matches("^[MNR]?[TVS]\\$") && !suffix.isEmpty())) {
             throw new IllegalArgumentException("Invalid prefix ("+prefix+") or suffix("+suffix+").");
         }
         if (!root.startsWith(prefix+"_")) {
             root = prefix + "_" + root;
         }
-        if (!suffix.matches("[MNR]")) {
+        if (!suffix.matches("[MNR]") && !suffix.isEmpty()) {
             suffix = "N" + suffix;  // Default to non mutable
         }
         if (!root.endsWith("_"+suffix)) {
             root = root + "_" + suffix;
         }
         return root;
+        */
+        return ";";
     }
 
     /**

@@ -11,8 +11,14 @@ import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.JRunnable;
 import frc.team7170.jobs.Job;
 import frc.team7170.subsystems.arm.Arm;
+import frc.team7170.subsystems.arm.JHoldArm;
+import frc.team7170.subsystems.arm.JMoveArm;
 import frc.team7170.subsystems.drive.Drive;
+import frc.team7170.subsystems.drive.JStraight;
+import frc.team7170.subsystems.drive.JTurn;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.logging.Logger;
 
 
@@ -26,26 +32,51 @@ public class Auto implements Communicator {
     }
     private Auto() {
         LOGGER.info("Initializing communication system.");
+        /*
+        // Drive to switch
+        switch_left.add(new JStraight(3.3, 0.75, 0.25, 0.0, 0.4, 0.6, false, false));
+        // Turn to face swuitch from side
+        switch_left.add(new JTurn(90, 0.50, 0.25, 0.0, 0.4, 0.6, false, false));
+        switch_left.add(new JMoveArm(45));
+        // Hold arm and shoot cube
+        HashSet<Job> meshed_jobs = new HashSet<>();
+        meshed_jobs.add(new JHoldArm(1000));
+        meshed_jobs.add(new JRunnable(() -> Arm.get_instance().endE_push(), () -> {}, () -> Arm.get_instance().endE_kill(), 1000, Arm.get_instance(), Drive.get_instance()));
+        switch_left.add(Job.mesh(meshed_jobs, true));
+        // Arm should fall back into position after 1 second
+
+
+        // Drive to switch
+        switch_right.add(new JStraight(3.3, 0.75, 0.25, 0.0, 0.4, 0.6, false, false));
+        // Turn to face swuitch from side
+        switch_right.add(new JTurn(-90, 0.50, 0.25, 0.0, 0.4, 0.6, false, false));
+        switch_right.add(new JMoveArm(45));
+        // Hold arm and shoot cube
+        meshed_jobs.clear();
+        meshed_jobs.add(new JHoldArm(1000));
+        meshed_jobs.add(new JRunnable(() -> Arm.get_instance().endE_push(), () -> {}, () -> Arm.get_instance().endE_kill(), 1000, Arm.get_instance(), Drive.get_instance()));
+        switch_right.add(Job.mesh(meshed_jobs, true));
+        // Arm should fall back into position after 1 second
+
+
+        // Drive to switch
+        switch_mid_1.add(new JStraight(3.0, 0.75, 0.25, 0.0, 0.4, 0.6, false, false));
+        switch_mid_1.add(new JMoveArm(45));
+        // Hold arm and shoot cube
+        meshed_jobs.clear();
+        meshed_jobs.add(new JHoldArm(1000));
+        meshed_jobs.add(new JRunnable(() -> Arm.get_instance().endE_push(), () -> {}, () -> Arm.get_instance().endE_kill(), 1000, Arm.get_instance(), Drive.get_instance()));
+        switch_mid_1.add(Job.mesh(meshed_jobs, true));
+        // Arm should fall back into position after 1 second
+        */
     }
 
     private int delay_on_start = 0;  // Milliseconds
 
-    // Straight to scale and start raising arm, turn 45ish right, shoot
-    private ArrayList<Job> A1_1 = new ArrayList<>();
-    // Straight to switch, raise arm and 90 right, shoot
-    private ArrayList<Job> A1_2 = new ArrayList<>();
-    // Straight to switch-scale gap, then 90 right, then straight to switch, then 45ish right and raise arm, shoot
-    private ArrayList<Job> A1_3 = new ArrayList<>();
-    // Turn 45ish left , straight to switch, turn 45ish right and raise arm, shoot
-    private ArrayList<Job> A2_1 = new ArrayList<>();
-    // Turn 45ish right, straight to switch, turn 45ish left and raise arm, shoot
-    private ArrayList<Job> A2_2 = new ArrayList<>();
-    // Straight to scale and start raising arm, turn 45ish left, shoot
-    private ArrayList<Job> A3_1 = new ArrayList<>();
-    // Straight to switch, raise arm and 90 left, shoot
-    private ArrayList<Job> A3_2 = new ArrayList<>();
-    // Straight to switch-scale gap, then 90 left, then straight to switch, then 45ish left and raise arm, shoot
-    private ArrayList<Job> A3_3 = new ArrayList<>();
+    private ArrayList<Job> switch_left = new ArrayList<>();
+    private ArrayList<Job> switch_mid_1 = new ArrayList<>();
+    private ArrayList<Job> switch_mid_2 = new ArrayList<>();
+    private ArrayList<Job> switch_right = new ArrayList<>();
 
     private boolean resolved = false;
 
@@ -65,19 +96,20 @@ public class Auto implements Communicator {
         }
         ArrayList<Job> auto = new ArrayList<>();
         auto.add(new JRunnable(delay_on_start, Drive.get_instance(), Arm.get_instance()));
+        // Arm.get_instance().go_to_base_position();  // This should allow driving while we move the arm.
         gsm = gsm.substring(0, 2);
         switch (loc) {
             case 1:
                 switch (gsm) {
                     case "LL":
                     case "RL":
-                        auto.addAll(A1_1);
+                        auto.addAll(switch_left);
                         break;
                     case "LR":
-                        auto.addAll(A1_2);
+                        auto.addAll(switch_left);
                         break;
                     case "RR":
-                        auto.addAll(A1_3);
+                        auto.addAll(switch_left);
                         break;
                 }
                 break;
@@ -85,11 +117,11 @@ public class Auto implements Communicator {
                 switch (gsm) {
                     case "LL":
                     case "LR":
-                        auto.addAll(A2_1);
+                        auto.addAll(switch_left);
                         break;
                     case "RL":
                     case "RR":
-                        auto.addAll(A2_2);
+                        auto.addAll(switch_left);
                         break;
                 }
                 break;
@@ -97,13 +129,13 @@ public class Auto implements Communicator {
                 switch (gsm) {
                     case "LR":
                     case "RR":
-                        auto.addAll(A3_1);
+                        auto.addAll(switch_left);
                         break;
                     case "RL":
-                        auto.addAll(A3_2);
+                        auto.addAll(switch_left);
                         break;
                     case "LL":
-                        auto.addAll(A3_3);
+                        auto.addAll(switch_left);
                         break;
                 }
                 break;
@@ -125,10 +157,13 @@ public class Auto implements Communicator {
             }
             LOGGER.info("Autonomous not resolved in initialization. Attempting to resolve...Success.");
         }
-        // TODO: TEMP
+        // TODO: 2G threshold may not be good
         double decel = Math.sqrt(Math.pow(Drive.get_instance().get_accel_X(), 2) + Math.pow(Drive.get_instance().get_accel_Y(), 2));
         if (decel >= 19.6) {  // 2 g's of deceleration
-            Dispatcher.get_instance().cancel_all();
+            LOGGER.warning("2G Deceleration threshold reached from an assumed collision. Cancelling autonomous.");
+            Dispatcher.get_instance().cancel_all();  // Fail safe in case robot forcefully crashes during auto
+            Arm.get_instance().set_enabled(false);
+            Drive.get_instance().set_enabled(false);
         }
     }
 

@@ -14,6 +14,7 @@ import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.util.CalcUtil;
 import frc.team7170.jobs.Dispatcher;
+import frc.team7170.util.DebugUtil;
 
 
 /**
@@ -65,7 +66,8 @@ public class Drive extends Module implements Communicator {
     private double rob_L = 0, rob_R = 0;
 
     @Override
-    protected void update() {}
+    protected void update() {
+    }
 
     @Override
     protected void enabled() {
@@ -92,18 +94,22 @@ public class Drive extends Module implements Communicator {
      * @param right RIght motor speed on joystick.
      */
     private void smooth_current(double left, double right) {
-        double dL = left - rob_L;
-        double dR = right - rob_R;
-        if (Math.abs(left) < RobotMap.DriveSmooth.logic_threshold_L && dL > 0 &&
+        double dL = Math.abs(left) - Math.abs(rob_L);
+        double dR = Math.abs(right) - Math.abs(rob_R);
+        if (Math.abs(left) <= RobotMap.DriveSmooth.logic_threshold_L && dL > 0 &&
                 dL > RobotMap.DriveSmooth.tolerance_L) {
             rob_L += RobotMap.DriveSmooth.jump_L;
         } else {
+            System.out.println("BYPASSED LEFT");
+            // DebugUtil.assert_(dL <= 0, "dL > 0 and still bypassed");
             rob_L = left;
         }
-        if (Math.abs(right) < RobotMap.DriveSmooth.logic_threshold_R && dR > 0 &&
+        if (Math.abs(right) <= RobotMap.DriveSmooth.logic_threshold_R && dR > 0 &&
                 dR > RobotMap.DriveSmooth.tolerance_R) {
             rob_R += RobotMap.DriveSmooth.jump_R;
         } else {
+            System.out.println("BYPASSED RIGHT");
+            // DebugUtil.assert_(dR <= 0, "dR > 0 and still bypassed");
             rob_R = right;
         }
     }
@@ -170,6 +176,7 @@ public class Drive extends Module implements Communicator {
         if (smooth) {
             smooth_current(left, right);
         } else {
+            // System.out.println("NOT USING SMOOTH");
             rob_L = left;
             rob_R = right;
         }

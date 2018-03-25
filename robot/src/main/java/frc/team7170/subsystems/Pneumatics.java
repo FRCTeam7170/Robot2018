@@ -31,14 +31,15 @@ public class Pneumatics extends Module implements Communicator {
     }
     private Pneumatics() {
         LOGGER.info("Initializing pneumatics system.");
-
+        compressor_start();
+        set_solenoids(false);
         Dispatcher.get_instance().register_module(this);
         register_comm();
     }
 
     private Compressor compressor = new Compressor(RobotMap.CAN.PCM);
-    private Solenoid arm_left = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.left_solenoid);
-    private Solenoid arm_right = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.right_solenoid);
+    private Solenoid solenoid_extend = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.extend);
+    private Solenoid solenoid_retract = new Solenoid(RobotMap.CAN.PCM, RobotMap.PCM.retract);
 
     @Override
     protected void update() {}
@@ -52,8 +53,8 @@ public class Pneumatics extends Module implements Communicator {
     protected void disabled() {
         LOGGER.info("Pneumatics disabled.");
         // Retract the arms, but the compressor is allowed to continue functioning.
-        arm_left.set(false);
-        arm_right.set(false);
+        solenoid_extend.set(false);
+        solenoid_retract.set(true);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class Pneumatics extends Module implements Communicator {
     }
 
     public boolean get_solenoids() {
-        return arm_left.get();  // Doesn't matter which
+        return solenoid_extend.get();
     }
 
     /**
@@ -77,8 +78,8 @@ public class Pneumatics extends Module implements Communicator {
         if (!get_enabled()) {
             return false;
         }
-        arm_left.set(on);
-        arm_right.set(on);
+        solenoid_extend.set(on);
+        solenoid_retract.set(!on);
         return true;
     }
 
@@ -122,10 +123,10 @@ public class Pneumatics extends Module implements Communicator {
                 entry.setDouble(RobotMap.CAN.PCM);
                 break;
             case "O_PCM_SOLENOID_LEFT_NS":
-                entry.setDouble(RobotMap.PCM.left_solenoid);
+                entry.setDouble(RobotMap.PCM.extend);
                 break;
             case "O_PCM_SOLENOID_RIGHT_NS":
-                entry.setDouble(RobotMap.PCM.right_solenoid);
+                entry.setDouble(RobotMap.PCM.retract);
                 break;
         }
     }

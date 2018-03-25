@@ -9,12 +9,12 @@ package frc.team7170.robot;
 public class RobotMap {
 
     public static class DriveSmooth {
-        public static double logic_threshold_L = 0.5;
-        public static double logic_threshold_R = 0.5;
-        public static double tolerance_L = 0.1;
-        public static double tolerance_R = 0.1;
-        public static double jump_L = 0.07;
-        public static double jump_R = 0.07;
+        public static double logic_threshold_L = 1.0;
+        public static double logic_threshold_R = 1.0;
+        public static double tolerance_L = 0;
+        public static double tolerance_R = 0;
+        public static double jump_L = 0.000000000001;
+        public static double jump_R = 0.000000000001;
     }
 
     public static class Camera {
@@ -25,13 +25,13 @@ public class RobotMap {
         public static int resolution_w = 1280;  // Max = 1280 for MS LC HD3000
         public static int resolution_h = 720;  // Max = 720 for MS LC HD3000
         public static int fps = 30;  // Max = 30 for MS LC HD3000
-        public static double brightness = 1;  // [0, 1]
+        public static double brightness = 0.5;  // [0, 1]
     }
 
     public static class CAN {
         public static final int front_left_motor = 11;
-        public static final int front_right_motor = 12;
-        public static final int back_left_motor = 13;
+        public static final int front_right_motor = 13;
+        public static final int back_left_motor = 12;
         public static final int back_right_motor = 14;
         public static final int PCM = 15;
     }
@@ -46,8 +46,8 @@ public class RobotMap {
     }
 
     public static class PCM {
-        public static final int left_solenoid = 0;
-        public static final int right_solenoid = 1;
+        public static final int extend = 7;
+        public static final int retract = 4;
     }
 
     public static class Controllers {
@@ -63,7 +63,7 @@ public class RobotMap {
     }
 
     public static class AIO {
-        public static final int arm_pot = 0;
+        public static final int arm_pot = 3;
     }
 
     public static class RobotDims {
@@ -85,25 +85,26 @@ public class RobotMap {
     }
 
     public static class Arm {
-        public static double pot_scale = 300.0;  // Max rotation of arm
+        public static double pot_scale = -300.0;  // Max rotation of arm
         public static double pot_offset = 0.0;  // Offset off of perfectly vertical
         public static double endE_speed = 0.75;
-        public static double arm_speed = 1.0;
+        public static double arm_speed = 0.60;
+        public static double arm_speed_multiplier = 0.40;
         public static boolean reverse_endE_left = true;
         public static boolean reverse_endE_right = false;
         public static boolean reverse_arm_left = true;
-        public static boolean reverse_arm_right = false;
+        public static boolean reverse_arm_right = true;
         public static double pot_value_kill_lower_inner = 90.0;   // TODO
         public static double pot_value_kill_upper_inner = 120.0;  // TODO
         public static double pot_value_kill_lower_outer = 80.0;   // TODO
         public static double pot_value_kill_upper_outer = 130.0;  // TODO
         public static double pot_value_base_conflict = 0.0;       // TODO
-        public static double pot_value_home = 0.0;     // TODO
-        public static double pot_value_base = 0.0;     // TODO
+        public static double pot_value_home = 15.2;     // TODO
+        public static double pot_value_base = 30.0;     // TODO
         public static double pot_value_switch = 0.0;   // TODO
         public static double pot_value_scale = 0.0;    // TODO
         public static double pot_value_reverse = 0.0;  // TODO
-        public static double move_arm_pot_tolerance = 1.0;  // degrees
+        public static double move_arm_pot_tolerance = 5.0;  // degrees
     }
 
     public static class Communication {

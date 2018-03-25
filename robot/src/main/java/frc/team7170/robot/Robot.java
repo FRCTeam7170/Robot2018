@@ -1,7 +1,6 @@
 package frc.team7170.robot;
 
 import java.util.logging.Logger;
-
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -15,13 +14,17 @@ import frc.team7170.control.Action;
 import frc.team7170.control.Control;
 import frc.team7170.control.HIDAxisAccessor;
 import frc.team7170.control.HIDButtonAccessor;
+import frc.team7170.control.keymaps.JoelBindings;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.JRunnable;
 import frc.team7170.jobs.Module;
 import frc.team7170.subsystems.arm.Arm;
+import frc.team7170.subsystems.arm.JHoldArm;
+import frc.team7170.subsystems.arm.JMoveArm;
 import frc.team7170.subsystems.drive.Acceleration;
 import frc.team7170.subsystems.drive.Drive;
 import frc.team7170.subsystems.drive.JStraight;
+import frc.team7170.subsystems.drive.JTurn;
 import frc.team7170.util.CalcUtil;
 import frc.team7170.util.DebugUtil;
 
@@ -45,15 +48,15 @@ public class Robot extends IterativeRobot implements Communicator {
             // Some of these may be unnecessary due to the fact that some modules cross reference each other
             // Nonetheless, they're all listed for completeness sake
             Class.forName("frc.team7170.jobs.Dispatcher");
-            Class.forName("frc.team7170.comm.Communication");
-            Class.forName("frc.team7170.comm.MiscSender");
+            //Class.forName("frc.team7170.comm.Communication");
+            //Class.forName("frc.team7170.comm.MiscSender");
             Class.forName("frc.team7170.control.Control");
-            Class.forName("frc.team7170.control.keymaps.DefaultJoystickBindings");
-            Class.forName("frc.team7170.control.keymaps.DefaultGamepadBindings");
+            //Class.forName("frc.team7170.control.keymaps.DefaultJoystickBindings");
+            //Class.forName("frc.team7170.control.keymaps.DefaultGamepadBindings");
             Class.forName("frc.team7170.subsystems.drive.Drive");
             Class.forName("frc.team7170.subsystems.arm.Arm");
             Class.forName("frc.team7170.subsystems.Pneumatics");
-            Class.forName("frc.team7170.robot.Auto");
+            //Class.forName("frc.team7170.robot.Auto");
         } catch (ClassNotFoundException e) {
             // Shouldn't happen -- using constant strings for class paths
             throw new RuntimeException("Exception while loading classes.");
@@ -70,10 +73,16 @@ public class Robot extends IterativeRobot implements Communicator {
         load_classes();
         register_comm();
         LOGGER.info("Starting camera capture.");
-        camera = CameraServer.getInstance().startAutomaticCapture();
-        camera.setResolution(RobotMap.Camera.resolution_w, RobotMap.Camera.resolution_h);
-        camera.setFPS(RobotMap.Camera.fps);
-        camera.setBrightness((int)(100*RobotMap.Camera.brightness));
+        try {
+            camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setResolution(RobotMap.Camera.resolution_w, RobotMap.Camera.resolution_h);
+            camera.setFPS(RobotMap.Camera.fps);
+            camera.setBrightness((int) (100 * RobotMap.Camera.brightness));
+        } catch (Throwable e) {
+            LOGGER.severe("Camera init failed.");
+        }
+        LOGGER.info("Setting keymap.");
+        Control.get_instance().set_keymap(JoelBindings.get_instance());
         LOGGER.info("Initialization done.");
     }
 
@@ -88,14 +97,18 @@ public class Robot extends IterativeRobot implements Communicator {
 
     public void autonomousInit() {
         LOGGER.info("ROBOT IN AUTONOMOUS");
-        /* TODO: TEMP
+        /* TODO: TEMP -- AUTO DISABLED
         if (Auto.get_instance().resolve_auto()) {
             LOGGER.info("Resolving autonomous...Success.");
         } else {
             LOGGER.severe("Resolving autonomous...Failed.");
         }
         */
-        Dispatcher.get_instance().add_job(new JStraight(3.05, 0.75, 0.25, 0.0, 0.4, 0.6, false, false));
+        // Dispatcher.get_instance().add_job(new JStraight(3.3, 0.75, 0.25, 0.0, 0.4, 0.6, false, false));
+        // Dispatcher.get_instance().add_job(new JTurn(180, 0.5, 0.25, 0.0, 0.4, 0.6, false, false));
+        // Dispatcher.get_instance().add_job(new JMoveArm(30));
+        // Dispatcher.get_instance().add_job(new JHoldArm());
+        Arm.get_instance().go_to_base_position();
         Drive.get_instance().set_enabled(true);
         Arm.get_instance().set_enabled(true);
     }
@@ -141,14 +154,14 @@ public class Robot extends IterativeRobot implements Communicator {
         Acceleration accel = new Acceleration(0.85, 0.25, 0.1, 0.4, 0.8, false, false, false);
         System.out.println("Running acceleration algorithm with 1000 steps with following params: maxout=0.85, transin=0.25, transout=0.1, stopaccel=0.4, startdecel=0.8, constaccel, constdecel, not reversed");
         for (int i = 0; i < 1; i += 0.001) {
-            System.out.print(accel.get(i));
+            System.out.print(accel.get(i)+" ");
         }
         System.out.println();
 
         accel = new Acceleration(0.99, 0.17, 0.22, 0.3, 0.9, true, true, true);
         System.out.println("Running acceleration algorithm with 1000 steps with following params: maxout=0.99, transin=0.17, transout=0.22, stopaccel=0.3, startdecel=0.9, linaccel, lindecel, reversed");
         for (int i = 0; i < 1; i += 0.001) {
-            System.out.print(accel.get(i));
+            System.out.print(accel.get(i)+" ");
         }
         System.out.println();
 
@@ -163,11 +176,15 @@ public class Robot extends IterativeRobot implements Communicator {
     }
 
 
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+        System.out.println(Arm.get_instance().get_pot_val());
+    }
 
 
     public void autonomousPeriodic() {
-        Auto.get_instance().run_auto();
+        // TODO: TEMP -- AUTO RUN DISABLED
+        // Auto.get_instance().run_auto();
+        System.out.println(Arm.get_instance().get_pot_val());
     }
 
 
@@ -175,10 +192,14 @@ public class Robot extends IterativeRobot implements Communicator {
         // Poll drive controls
         HIDAxisAccessor y_axis = Control.get_instance().action2axis(Action.A_DRIVE_Y);
         HIDAxisAccessor z_axis = Control.get_instance().action2axis(Action.A_DRIVE_Z);
-        if (y_axis != null && z_axis != null) {
-            Drive.get_instance().set_arcade(y_axis.get(), z_axis.get(),
-                    // TODO: TEMP -- testing smooth algorithm when B12 on joystick is pressed
-                    Control.get_instance().joystick.Buttons.B12.get(), true);
+        HIDAxisAccessor l_axis = Control.get_instance().action2axis(Action.A_DRIVE_L);
+        HIDAxisAccessor r_axis = Control.get_instance().action2axis(Action.A_DRIVE_R);
+        if (l_axis != null && r_axis != null) {
+            Drive.get_instance().set_tank(-l_axis.get(), -r_axis.get(), false, true);
+        } else if (y_axis != null && z_axis != null) {
+            Drive.get_instance().set_arcade(-y_axis.get(), z_axis.get(), false, true);
+        } else {
+            Drive.get_instance().set_tank(Drive.get_instance().get_L(), Drive.get_instance().get_R(), false, true);
         }
         // Poll endE controls
         HIDAxisAccessor endE_axis = Control.get_instance().action2axis(Action.A_ENDE_ANALOG);
@@ -187,19 +208,26 @@ public class Robot extends IterativeRobot implements Communicator {
         } else {
             HIDButtonAccessor endE_push_btn = Control.get_instance().action2button(Action.B_ENDE_PUSH);
             HIDButtonAccessor endE_suck_btn = Control.get_instance().action2button(Action.B_ENDE_SUCK);
-            HIDButtonAccessor endE_off_btn = Control.get_instance().action2button(Action.B_ENDE_OFF);
-            if (endE_push_btn != null && endE_push_btn.get_pressed()) {
+            if (endE_push_btn != null && endE_push_btn.get()) {
                 Arm.get_instance().endE_push();
-            } else if (endE_suck_btn != null && endE_suck_btn.get_pressed()) {
+            } else if (endE_suck_btn != null && endE_suck_btn.get()) {
                 Arm.get_instance().endE_suck();
-            } else if (endE_off_btn != null && endE_off_btn.get_pressed()) {
+            } else {
                 Arm.get_instance().endE_kill();
             }
         }
         // Poll arm rotate controls
         HIDAxisAccessor arm_axis = Control.get_instance().action2axis(Action.A_ARM_ANALOG);
+        HIDAxisAccessor arm_axis_up = Control.get_instance().action2axis(Action.A_ARM_ANALOG_UP);
+        HIDAxisAccessor arm_axis_down = Control.get_instance().action2axis(Action.A_ARM_ANALOG_DOWN);
         if (arm_axis != null) {
             Arm.get_instance().arm_analog(arm_axis.get());
+        } else if (arm_axis_up != null && arm_axis_down != null) {
+            if (!CalcUtil.in_threshold(arm_axis_up.get(), 0, 0.05)) {
+                Arm.get_instance().arm_analog(arm_axis_up.get());
+            } else {
+                Arm.get_instance().arm_analog(-arm_axis_down.get());
+            }
         } else {
             HIDButtonAccessor arm_up = Control.get_instance().action2button(Action.B_ARM_UP);
             HIDButtonAccessor arm_down = Control.get_instance().action2button(Action.B_ARM_DOWN);

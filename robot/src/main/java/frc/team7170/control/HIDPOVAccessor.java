@@ -47,4 +47,9 @@ public class HIDPOVAccessor extends HIDButtonAccessor {
         }
         return !get();
     }
+
+    @Override
+    public String toString() {
+        return joy.getName()+".POV"+port;
+    }
 }

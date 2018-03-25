@@ -27,35 +27,35 @@ public class MiscSender implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
-            "O_DIMENSION_WHEEL_WIDTH_S",
-            "O_DIMENSION_WHEEL_RADIUS_S",
-            "O_DIMENSION_WHEEL_TO_WHEEL_S",
-            "O_DIMENSION_WHEEL_SPACING_S",
-            "O_DIMENSION_WIDTH_S",
-            "O_DIMENSION_LENGTH_S",
-            "O_DIMENSION_HEIGHT_S"
+            "O_DIMENSION_WHEEL_WIDTH_NS",
+            "O_DIMENSION_WHEEL_RADIUS_NS",
+            "O_DIMENSION_WHEEL_TO_WHEEL_NS",
+            "O_DIMENSION_WHEEL_SPACING_NS",
+            "O_DIMENSION_WIDTH_NS",
+            "O_DIMENSION_LENGTH_NS",
+            "O_DIMENSION_HEIGHT_NS"
     })
     public void transmitter_static(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_DIMENSION_WHEEL_WIDTH_S":
+            case "O_DIMENSION_WHEEL_WIDTH_NS":
                 entry.setDouble(RobotMap.RobotDims.wheel_width);
                 break;
-            case "O_DIMENSION_WHEEL_RADIUS_S":
+            case "O_DIMENSION_WHEEL_RADIUS_NS":
                 entry.setDouble(RobotMap.RobotDims.wheel_radius);
                 break;
-            case "O_DIMENSION_WHEEL_TO_WHEEL_S":
+            case "O_DIMENSION_WHEEL_TO_WHEEL_NS":
                 entry.setDouble(RobotMap.RobotDims.wheel_to_wheel);
                 break;
-            case "O_DIMENSION_WHEEL_SPACING_S":
+            case "O_DIMENSION_WHEEL_SPACING_NS":
                 entry.setDouble(RobotMap.RobotDims.wheel_spacing);
                 break;
-            case "O_DIMENSION_WIDTH_S":
+            case "O_DIMENSION_WIDTH_NS":
                 entry.setDouble(RobotMap.RobotDims.robot_width);
                 break;
-            case "O_DIMENSION_LENGTH_S":
+            case "O_DIMENSION_LENGTH_NS":
                 entry.setDouble(RobotMap.RobotDims.robot_length);
                 break;
-            case "O_DIMENSION_HEIGHT_S":
+            case "O_DIMENSION_HEIGHT_NS":
                 entry.setDouble(RobotMap.RobotDims.robot_height);
                 break;
         }
@@ -63,20 +63,20 @@ public class MiscSender implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
-            "O_ROBOT_ENABLED_S",
-            "O_ROBOT_MODE_S",
-            "O_DS_ATTACHED_S",
-            "O_FMS_ATTACHED_S",
-            "O_ALLIANCE_COLOUR_S",
-            "O_ALLIANCE_LOCATION_S",
-            "O_GAME_SPECIFIC_MESSAGE_S"
+            "O_ROBOT_ENABLED_NT",
+            "O_ROBOT_MODE_NT",
+            "O_DS_ATTACHED_NT",
+            "O_FMS_ATTACHED_NT",
+            "O_ALLIANCE_COLOUR_NT",
+            "O_ALLIANCE_LOCATION_NT",
+            "O_GAME_SPECIFIC_MESSAGE_NT"
     })
     public void transmitter_slow(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_ROBOT_ENABLED_S":
+            case "O_ROBOT_ENABLED_NT":
                 entry.setBoolean(DriverStation.getInstance().isEnabled());
                 break;
-            case "O_ROBOT_MODE_S":
+            case "O_ROBOT_MODE_NT":
                 if (DriverStation.getInstance().isAutonomous()) {
                     entry.setDouble(0.0);
                 } else if (DriverStation.getInstance().isOperatorControl()) {
@@ -87,13 +87,13 @@ public class MiscSender implements Communicator {
                     LOGGER.warning("No valid robot state determined.");
                 }
                 break;
-            case "O_DS_ATTACHED_S":
+            case "O_DS_ATTACHED_NT":
                 entry.setBoolean(DriverStation.getInstance().isDSAttached());
                 break;
-            case "O_FMS_ATTACHED_S":
+            case "O_FMS_ATTACHED_NT":
                 entry.setBoolean(DriverStation.getInstance().isFMSAttached());
                 break;
-            case "O_ALLIANCE_COLOUR_S":
+            case "O_ALLIANCE_COLOUR_NT":
                 switch (DriverStation.getInstance().getAlliance()) {
                     case Red:
                         entry.setDouble(1.0);
@@ -106,10 +106,10 @@ public class MiscSender implements Communicator {
                         break;
                 }
                 break;
-            case "O_ALLIANCE_LOCATION_S":
+            case "O_ALLIANCE_LOCATION_NT":
                 entry.setDouble(DriverStation.getInstance().getLocation());
                 break;
-            case "O_GAME_SPECIFIC_MESSAGE_S":
+            case "O_GAME_SPECIFIC_MESSAGE_NT":
                 entry.setString(DriverStation.getInstance().getGameSpecificMessage());
                 break;
         }
@@ -117,15 +117,15 @@ public class MiscSender implements Communicator {
 
     @SuppressWarnings("unused")
     @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
-            "O_MATCH_TIME_S",
-            "O_BROWNED_OUT_S"
+            "O_MATCH_TIME_NT",
+            "O_BROWNED_OUT_NT"
     })
     public void transmitter_fast(NetworkTableEntry entry) {
         switch (entry.getName()) {
-            case "O_MATCH_TIME_S":
+            case "O_MATCH_TIME_NT":
                 entry.setDouble(DriverStation.getInstance().getMatchTime());
                 break;
-            case "O_BROWNED_OUT_S":
+            case "O_BROWNED_OUT_NT":
                 entry.setBoolean(RobotController.isBrownedOut());
                 break;
         }
