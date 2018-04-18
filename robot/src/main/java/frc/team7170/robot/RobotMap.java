@@ -89,7 +89,7 @@ public class RobotMap {
         public static double pot_offset = 0.0;  // Offset off of perfectly vertical
         public static double endE_speed = 0.75;
         public static double arm_speed = 0.60;
-        public static double arm_speed_multiplier = 0.40;
+        public static double arm_speed_multiplier = 0.50;
         public static boolean reverse_endE_left = true;
         public static boolean reverse_endE_right = false;
         public static boolean reverse_arm_left = true;

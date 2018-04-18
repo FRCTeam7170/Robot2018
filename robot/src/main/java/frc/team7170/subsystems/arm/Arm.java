@@ -99,9 +99,11 @@ public class Arm extends Module implements Communicator {
     }
 
     public boolean try_extend() {
+        /*
         if (Pneumatics.get_instance().get_solenoids() || base_conflicting_extend() || in_inner_thresh()) {
             return false;
         }
+        */
         Pneumatics.get_instance().set_solenoids(true);
         return true;
     }

@@ -14,6 +14,7 @@ import frc.team7170.control.Action;
 import frc.team7170.control.Control;
 import frc.team7170.control.HIDAxisAccessor;
 import frc.team7170.control.HIDButtonAccessor;
+import frc.team7170.control.keymaps.DefaultGamepadBindings;
 import frc.team7170.control.keymaps.JoelBindings;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.JRunnable;
@@ -82,7 +83,7 @@ public class Robot extends IterativeRobot implements Communicator {
             LOGGER.severe("Camera init failed.");
         }
         LOGGER.info("Setting keymap.");
-        Control.get_instance().set_keymap(JoelBindings.get_instance());
+        Control.get_instance().set_keymap(DefaultGamepadBindings.get_instance());
         LOGGER.info("Initialization done.");
     }
 
