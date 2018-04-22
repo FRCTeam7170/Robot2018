@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 /**
  * This class controls dispatching {@link Job}s to {@link Module}s and ensures that no module will be assigned more than one
  * job to avoid motor conflicts, etcetera. This class also manages the initialization and updating of each module and job.
+ * TODO Fix spaghetti, i.e. ALL the code involving checking if a job should run etc. should be here, not also in Job and Module
  *
  * Quick guidelines:
  * Call register_module(Module) in the constructor of each module.
@@ -30,9 +31,9 @@ public class Dispatcher implements Communicator {
         register_comm();
     }
 
-    private ArrayList<Job> queued_jobs = new ArrayList<>();
-    private HashSet<Job> running_jobs = new HashSet<>();
-    private HashMap<Module, Boolean> modules = new HashMap<>();  // Module-Boolean pairs where the boolean represents if the module is locked.
+    private final ArrayList<Job> queued_jobs = new ArrayList<>();
+    private final HashSet<Job> running_jobs = new HashSet<>();
+    private final HashMap<Module, Boolean> modules = new HashMap<>();  // Module-Boolean pairs where the boolean represents if the module is locked.
 
     private boolean jobs_updated = false;  // State variable to indicate whether a running job has terminated and thus queued jobs should be queried (see run()).
 
@@ -77,7 +78,7 @@ public class Dispatcher implements Communicator {
         });
 
         // Update each job and remove it if it's finished
-        for (Job job: running_jobs) {
+        for (Job job : running_jobs) {
             if (job._update()) {  // returns true if the job is finished
                 jobs_updated = true;
                 free_module_locks(job);
@@ -86,7 +87,7 @@ public class Dispatcher implements Communicator {
 
         // Run new jobs if required module locks are free
         if (jobs_updated) {  // Only iterate through the queued jobs if a change to the running ones has occurred
-            for (Job job: queued_jobs) {
+            for (Job job : queued_jobs) {
                 if (can_run_job(job)) {  // If the necessary module locks are free, start the highest priority (dictated by order added to list) job
                     queued_jobs.remove(job);
                     start_job(job);
@@ -103,14 +104,14 @@ public class Dispatcher implements Communicator {
      */
     private void start_job(Job job) {
         // Loop through the job's requirements and claim its required modules
-        for (Module mod: job.get_requirements()) {
+        for (Module mod : job.get_requirements()) {
             if (!mod.claim_lock(job)) {
                 // If the dispatcher handles jobs & modules correctly, this should never happen.
                 throw new RuntimeException("Job " + job + " attempted to claim Module lock from " + mod + " but Job " + mod.get_current_job() + " owns the lock!");
             }
             modules.replace(mod, true);
         }
-        LOGGER.fine("Starting job: "+job.toString());
+        LOGGER.fine("Starting job: " + job.toString());
         running_jobs.add(job);
         job.start();
     }
@@ -149,8 +150,8 @@ public class Dispatcher implements Communicator {
      * @return Whether or not the cancellation was successful. This will always be true if override is true.
      */
     public boolean cancel_job(Job job, boolean override) {
-        LOGGER.fine("Cancelling job: "+job.toString());
         if (job.cancel(override)) {
+            LOGGER.fine("Cancelling job: "+job.toString());
             free_module_locks(job);
             return true;
         }

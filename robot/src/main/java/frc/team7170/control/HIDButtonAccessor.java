@@ -10,8 +10,6 @@ public class HIDButtonAccessor {
 
     final int port;
     final GenericHID joy;
-    boolean do_sim = false;
-    boolean sim = false;
 
     /**
      * @param port The port number on {@link HIDButtonAccessor#joy} to poll for the button state.
@@ -23,9 +21,6 @@ public class HIDButtonAccessor {
     }
 
     public boolean get() {
-        if (do_sim) {
-            return sim;
-        }
         return joy.getRawButton(port);
     }
 
@@ -33,9 +28,6 @@ public class HIDButtonAccessor {
      * Return if the button has been pressed since the last check.
      */
     public boolean get_pressed() {
-        if (do_sim) {
-            return sim;
-        }
         return joy.getRawButtonPressed(port);
     }
 
@@ -43,19 +35,7 @@ public class HIDButtonAccessor {
      * Return if the button has been released since the last check.
      */
     public boolean get_released() {
-        if (do_sim) {
-            return !sim;
-        }
-        return sim && joy.getRawButtonReleased(port);
-    }
-
-    public void simulate(boolean state) {
-        do_sim = true;
-        sim = state;
-    }
-
-    public void stop_simulate() {
-        do_sim = false;
+        return joy.getRawButtonReleased(port);
     }
 
     @Override

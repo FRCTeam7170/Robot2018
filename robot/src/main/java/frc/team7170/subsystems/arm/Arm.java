@@ -19,6 +19,7 @@ import frc.team7170.util.CalcUtil;
  * Module to handle all interactions with the arm of the robot. This includes the end effector wheel motors, the motors
  * that power the arm rotation, and the pneumatic arms.
  */
+@Deprecated  // Using separate modules ArmRotate and ArmEndE now to make dispatching jobs to them easier (they are effectively independent systems)
 public class Arm extends Module implements Communicator {
 
     private final static Logger LOGGER = Logger.getLogger(Arm.class.getName());
@@ -99,11 +100,9 @@ public class Arm extends Module implements Communicator {
     }
 
     public boolean try_extend() {
-        /*
         if (Pneumatics.get_instance().get_solenoids() || base_conflicting_extend() || in_inner_thresh()) {
             return false;
         }
-        */
         Pneumatics.get_instance().set_solenoids(true);
         return true;
     }
@@ -182,8 +181,6 @@ public class Arm extends Module implements Communicator {
         Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base));
         // Extend the arm after getting to the base position
         Dispatcher.get_instance().add_job(new JRunnable(() -> Pneumatics.get_instance().set_solenoids(true), this));
-        // TODO: TEMP
-        Dispatcher.get_instance().add_job(new JHoldArm());
     }
 
     public void go_to_switch_position() {

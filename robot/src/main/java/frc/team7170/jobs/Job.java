@@ -181,7 +181,7 @@ public abstract class Job {
         end();  // Simply call end() by default.
     }
 
-    // Enforce subclasses to implement meaningful string representations
+    // Enforce subclasses to implement meaningful(ish) string representations
     @Override
     public abstract String toString();
 

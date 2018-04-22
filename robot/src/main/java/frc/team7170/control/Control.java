@@ -21,9 +21,9 @@ import frc.team7170.robot.RobotMap;
 /**
  * The control system is simply the system responsible for managing human input from the joysticks.
  *
- * This class provides a whole suite of convenience bindings for both the Logitech ED Extreme Pro joystick and the
+ * This class provides a whole suite of convenience bindings for both the Logitech 3D Extreme Pro joystick and the
  * Logitech Gamepad F310. This makes referencing buttons/axes on the devices much easier with something like
- * {@code joystick.Buttons.TRIGGER.get()} as opposed to {@code joystick.getButton(1)}, which isn't as explicit
+ * {@code joystick.buttons.TRIGGER.get()} as opposed to {@code joystick.getButton(1)}, which isn't as explicit
  * and requires an id number.
  *
  * Each POV direction of the devices can be treated as a button mutually exclusive with each other POV
@@ -62,7 +62,7 @@ public class Control implements Communicator {
 
 
     // Here we provide an easy way to reference buttons/axes by doing something like:
-    //     joystick.Buttons.TRIGGER.get()
+    //     joystick.buttons.TRIGGER.get()
     // More verbose, but also more explicit than something like joystick.getButton(1)
 
     public class _POV {
@@ -126,8 +126,8 @@ public class Control implements Communicator {
     }
 
     public class _Joystick {
-        public final _JoystickButtons Buttons = new _JoystickButtons();  // Singleton
-        public final _JoystickAxes Axes = new _JoystickAxes();  // Singleton
+        public final _JoystickButtons buttons = new _JoystickButtons();  // Singleton
+        public final _JoystickAxes axes = new _JoystickAxes();  // Singleton
         public final _POV POV = new _POV(_joystick);
 
         _Joystick() {}
@@ -162,8 +162,8 @@ public class Control implements Communicator {
     }
 
     public class _Gamepad {
-        public final _GamepadButtons Buttons = new _GamepadButtons();  // Singleton
-        public final _GamepadAxes Axes = new _GamepadAxes();  // Singleton
+        public final _GamepadButtons buttons = new _GamepadButtons();  // Singleton
+        public final _GamepadAxes axes = new _GamepadAxes();  // Singleton
         public final _POV POV = new _POV(_gamepad);
 
         _Gamepad() {}

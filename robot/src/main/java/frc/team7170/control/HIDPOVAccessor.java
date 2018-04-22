@@ -26,15 +26,13 @@ public class HIDPOVAccessor extends HIDButtonAccessor {
 
     @Override
     public boolean get() {
-        if (do_sim) {
-            return sim;
-        }
         return joy.getPOV() == port;
     }
 
     @Override
     public boolean get_pressed() {
         if (!warned) {
+            warned = true;
             LOGGER.warning("get_pressed() and get_released() functionality not implemented for POV buttons. Relaying call to get().");
         }
         return get();
@@ -43,6 +41,7 @@ public class HIDPOVAccessor extends HIDButtonAccessor {
     @Override
     public boolean get_released() {
         if (!warned) {
+            warned = true;
             LOGGER.warning("get_pressed() and get_released() functionality not implemented for POV buttons. Relaying call to get().");
         }
         return !get();

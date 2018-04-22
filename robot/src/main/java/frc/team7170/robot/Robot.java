@@ -19,9 +19,7 @@ import frc.team7170.control.keymaps.JoelBindings;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.JRunnable;
 import frc.team7170.jobs.Module;
-import frc.team7170.subsystems.arm.Arm;
-import frc.team7170.subsystems.arm.JHoldArm;
-import frc.team7170.subsystems.arm.JMoveArm;
+import frc.team7170.subsystems.arm.*;
 import frc.team7170.subsystems.drive.Acceleration;
 import frc.team7170.subsystems.drive.Drive;
 import frc.team7170.subsystems.drive.JStraight;
@@ -52,8 +50,9 @@ public class Robot extends IterativeRobot implements Communicator {
             //Class.forName("frc.team7170.comm.Communication");
             //Class.forName("frc.team7170.comm.MiscSender");
             Class.forName("frc.team7170.control.Control");
-            //Class.forName("frc.team7170.control.keymaps.DefaultJoystickBindings");
-            //Class.forName("frc.team7170.control.keymaps.DefaultGamepadBindings");
+            Class.forName("frc.team7170.control.keymaps.DefaultJoystickBindings");
+            Class.forName("frc.team7170.control.keymaps.DefaultGamepadBindings");
+            Class.forName("frc.team7170.control.keymaps.JoelBindings");
             Class.forName("frc.team7170.subsystems.drive.Drive");
             Class.forName("frc.team7170.subsystems.arm.Arm");
             Class.forName("frc.team7170.subsystems.Pneumatics");
@@ -92,7 +91,8 @@ public class Robot extends IterativeRobot implements Communicator {
         LOGGER.info("ROBOT IN DISABLED");
         Dispatcher.get_instance().cancel_all();
         Drive.get_instance().set_enabled(false);
-        Arm.get_instance().set_enabled(false);
+        ArmRotate.get_instance().set_enabled(false);
+        ArmEndE.get_instance().set_enabled(false);
     }
 
 
@@ -109,35 +109,38 @@ public class Robot extends IterativeRobot implements Communicator {
         // Dispatcher.get_instance().add_job(new JTurn(180, 0.5, 0.25, 0.0, 0.4, 0.6, false, false));
         // Dispatcher.get_instance().add_job(new JMoveArm(30));
         // Dispatcher.get_instance().add_job(new JHoldArm());
-        Arm.get_instance().go_to_base_position();
+        // Arm.get_instance().go_to_base_position();
         Drive.get_instance().set_enabled(true);
-        Arm.get_instance().set_enabled(true);
+        ArmRotate.get_instance().set_enabled(true);
+        ArmEndE.get_instance().set_enabled(true);
     }
 
 
     public void teleopInit() {
         LOGGER.info("ROBOT IN TELEOP");
         Drive.get_instance().set_enabled(true);
-        Arm.get_instance().set_enabled(true);
+        ArmRotate.get_instance().set_enabled(true);
+        ArmEndE.get_instance().set_enabled(true);
     }
 
 
     public void testInit() {
         LOGGER.info("ROBOT IN TEST");
         Drive.get_instance().set_enabled(true);
-        Arm.get_instance().set_enabled(true);
+        ArmRotate.get_instance().set_enabled(true);
+        ArmEndE.get_instance().set_enabled(true);
 
         Dispatcher.get_instance().add_job(new JRunnable(
                 () -> System.out.println("Test job running for 5 seconds. Blocking Arm and Drive."),
                 () -> {},
                 () -> System.out.println("Done blocking Arm and Drive."),
-                5000, Drive.get_instance(), Arm.get_instance()
+                5000, Drive.get_instance(), ArmRotate.get_instance(), ArmEndE.get_instance()
         ));
         Dispatcher.get_instance().add_job(new JRunnable(
                 () -> System.out.println("Test job running for 4 seconds. Blocking Arm."),
                 () -> {},
                 () -> System.out.println("Done blocking Arm."),
-                4000, Arm.get_instance()
+                4000, ArmRotate.get_instance(), ArmEndE.get_instance()
         ));
         Dispatcher.get_instance().add_job(new JRunnable(
                 () -> System.out.println("Test job running for 2 seconds. Blocking Drive."),
@@ -177,18 +180,16 @@ public class Robot extends IterativeRobot implements Communicator {
     }
 
 
-    public void disabledPeriodic() {
-        System.out.println(Arm.get_instance().get_pot_val());
-    }
+    public void disabledPeriodic() {}
 
 
     public void autonomousPeriodic() {
         // TODO: TEMP -- AUTO RUN DISABLED
         // Auto.get_instance().run_auto();
-        System.out.println(Arm.get_instance().get_pot_val());
     }
 
-
+    // TODO: TEMP
+    private JHoldArm holdarmj = null;
     public void teleopPeriodic() {
         // Poll drive controls
         HIDAxisAccessor y_axis = Control.get_instance().action2axis(Action.A_DRIVE_Y);
@@ -222,12 +223,45 @@ public class Robot extends IterativeRobot implements Communicator {
         HIDAxisAccessor arm_axis_up = Control.get_instance().action2axis(Action.A_ARM_ANALOG_UP);
         HIDAxisAccessor arm_axis_down = Control.get_instance().action2axis(Action.A_ARM_ANALOG_DOWN);
         if (arm_axis != null) {
-            Arm.get_instance().arm_analog(arm_axis.get());
+            if (CalcUtil.in_threshold(arm_axis.get(), 0, 0.05)) {
+                if (holdarmj == null) {
+                    holdarmj = new JHoldArm();
+                    Dispatcher.get_instance().add_job(holdarmj);
+                }
+            } else {
+                if (holdarmj != null) {
+                    Dispatcher.get_instance().cancel_all();
+                    holdarmj = null;
+                }
+                Arm.get_instance().arm_analog(arm_axis.get());
+            }
         } else if (arm_axis_up != null && arm_axis_down != null) {
             if (!CalcUtil.in_threshold(arm_axis_up.get(), 0, 0.05)) {
-                Arm.get_instance().arm_analog(arm_axis_up.get());
+                if (CalcUtil.in_threshold(arm_axis_up.get(), 0, 0.05)) {
+                    if (holdarmj == null) {
+                        holdarmj = new JHoldArm();
+                        Dispatcher.get_instance().add_job(holdarmj);
+                    }
+                } else {
+                    if (holdarmj != null) {
+                        Dispatcher.get_instance().cancel_all();
+                        holdarmj = null;
+                    }
+                    Arm.get_instance().arm_analog(arm_axis_up.get());
+                }
             } else {
-                Arm.get_instance().arm_analog(-arm_axis_down.get());
+                if (CalcUtil.in_threshold(arm_axis_down.get(), 0, 0.05)) {
+                    if (holdarmj == null) {
+                        holdarmj = new JHoldArm();
+                        Dispatcher.get_instance().add_job(holdarmj);
+                    }
+                } else {
+                    if (holdarmj != null) {
+                        Dispatcher.get_instance().cancel_all();
+                        holdarmj = null;
+                    }
+                    Arm.get_instance().arm_analog(-arm_axis_down.get());
+                }
             }
         } else {
             HIDButtonAccessor arm_up = Control.get_instance().action2button(Action.B_ARM_UP);
@@ -250,6 +284,11 @@ public class Robot extends IterativeRobot implements Communicator {
             Arm.get_instance().retract();
         } else if (toggle_btn != null && toggle_btn.get_pressed()) {
             Arm.get_instance().try_toggle();
+        }
+        HIDButtonAccessor base_pos_btn = Control.get_instance().action2button(Action.B_ARM_BASE);
+        if (base_pos_btn.get_pressed()) {
+            Dispatcher.get_instance().cancel_job(holdarmj, true);
+            Arm.get_instance().go_to_base_position();
         }
     }
 

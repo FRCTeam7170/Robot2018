@@ -10,9 +10,7 @@ import frc.team7170.comm.Transmitter;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.JRunnable;
 import frc.team7170.jobs.Job;
-import frc.team7170.subsystems.arm.Arm;
-import frc.team7170.subsystems.arm.JHoldArm;
-import frc.team7170.subsystems.arm.JMoveArm;
+import frc.team7170.subsystems.arm.*;
 import frc.team7170.subsystems.drive.Drive;
 import frc.team7170.subsystems.drive.JStraight;
 import frc.team7170.subsystems.drive.JTurn;
@@ -31,7 +29,7 @@ public class Auto implements Communicator {
         return instance;
     }
     private Auto() {
-        LOGGER.info("Initializing communication system.");
+        LOGGER.info("Initializing autonomous system.");
         /*
         // Drive to switch
         switch_left.add(new JStraight(3.3, 0.75, 0.25, 0.0, 0.4, 0.6, false, false));
@@ -95,7 +93,7 @@ public class Auto implements Communicator {
             return false;
         }
         ArrayList<Job> auto = new ArrayList<>();
-        auto.add(new JRunnable(delay_on_start, Drive.get_instance(), Arm.get_instance()));
+        auto.add(new JRunnable(delay_on_start, Drive.get_instance(), ArmRotate.get_instance(), ArmEndE.get_instance()));
         // Arm.get_instance().go_to_base_position();  // This should allow driving while we move the arm.
         gsm = gsm.substring(0, 2);
         switch (loc) {
@@ -158,11 +156,13 @@ public class Auto implements Communicator {
             LOGGER.info("Autonomous not resolved in initialization. Attempting to resolve...Success.");
         }
         // TODO: 2G threshold may not be good
+        // Vector acceleration
         double decel = Math.sqrt(Math.pow(Drive.get_instance().get_accel_X(), 2) + Math.pow(Drive.get_instance().get_accel_Y(), 2));
         if (decel >= 19.6) {  // 2 g's of deceleration
             LOGGER.warning("2G Deceleration threshold reached from an assumed collision. Cancelling autonomous.");
             Dispatcher.get_instance().cancel_all();  // Fail safe in case robot forcefully crashes during auto
-            Arm.get_instance().set_enabled(false);
+            ArmRotate.get_instance().set_enabled(false);
+            ArmEndE.get_instance().set_enabled(false);
             Drive.get_instance().set_enabled(false);
         }
     }

@@ -7,7 +7,6 @@ import frc.team7170.comm.Transmitter;
 import frc.team7170.control.Control;
 import frc.team7170.control.Action;
 import frc.team7170.robot.RobotMap;
-import frc.team7170.subsystems.drive.Acceleration;
 
 
 public class JoelBindings extends KeyMap implements Communicator {
@@ -17,14 +16,14 @@ public class JoelBindings extends KeyMap implements Communicator {
         return instance;
     }
     private JoelBindings() {
-        axes.put(Action.A_DRIVE_L, Control.get_instance().gamepad.Axes.LY);
-        axes.put(Action.A_DRIVE_R, Control.get_instance().gamepad.Axes.RY);
-        axes.put(Action.A_ARM_ANALOG_DOWN, Control.get_instance().gamepad.Axes.LT);
-        axes.put(Action.A_ARM_ANALOG_UP, Control.get_instance().gamepad.Axes.RT);
-        buttons.put(Action.B_ENDE_PUSH, Control.get_instance().gamepad.Buttons.RB);
-        buttons.put(Action.B_ENDE_SUCK, Control.get_instance().gamepad.Buttons.LB);
-        buttons.put(Action.B_TRY_ARM_EXTEND, Control.get_instance().gamepad.Buttons.A);
-        buttons.put(Action.B_ARM_RETRACT, Control.get_instance().gamepad.Buttons.B);
+        axes.put(Action.A_DRIVE_L, Control.get_instance().gamepad.axes.LY);
+        axes.put(Action.A_DRIVE_R, Control.get_instance().gamepad.axes.RY);
+        axes.put(Action.A_ARM_ANALOG_DOWN, Control.get_instance().gamepad.axes.LT);
+        axes.put(Action.A_ARM_ANALOG_UP, Control.get_instance().gamepad.axes.RT);
+        buttons.put(Action.B_ENDE_PUSH, Control.get_instance().gamepad.buttons.RB);
+        buttons.put(Action.B_ENDE_SUCK, Control.get_instance().gamepad.buttons.LB);
+        buttons.put(Action.B_TRY_ARM_EXTEND, Control.get_instance().gamepad.buttons.A);
+        buttons.put(Action.B_ARM_RETRACT, Control.get_instance().gamepad.buttons.B);
 
         POV = Control.get_instance().gamepad.POV;
 

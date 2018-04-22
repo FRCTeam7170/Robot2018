@@ -307,13 +307,13 @@ public class Communication extends Module implements Communicator {
 
     /**
      * Fix a key to follow the naming scheme described in this class's docstring.
+     * TODO This (rectify_key) doesn't work
      * @param root The key to fix.
      * @param prefix The key's prefix. One of "O", "I", or "R".
      * @param suffix THe key's suffix. A combination of "M", "N", or "R" AND "T", "V", or "S" (in that order).
      * @return The rectified key.
      */
     public static String rectify_key(String root, String prefix, String suffix) {
-        /*
         if (!prefix.matches("^[OIR]\\$") || (!suffix.matches("^[MNR]?[TVS]\\$") && !suffix.isEmpty())) {
             throw new IllegalArgumentException("Invalid prefix ("+prefix+") or suffix("+suffix+").");
         }
@@ -327,8 +327,6 @@ public class Communication extends Module implements Communicator {
             root = root + "_" + suffix;
         }
         return root;
-        */
-        return ";";
     }
 
     /**

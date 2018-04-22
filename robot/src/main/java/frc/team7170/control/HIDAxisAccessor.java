@@ -12,8 +12,6 @@ public class HIDAxisAccessor {
     private final GenericHID joy;
     private double scale = 1.0;
     private double offset = 0.0;
-    private double default_scale = 1.0;
-    private double default_offset = 0.0;
 
     /**
      * @param port The port number on {@link HIDAxisAccessor#joy} to poll for the axis value.
@@ -26,8 +24,8 @@ public class HIDAxisAccessor {
     HIDAxisAccessor(int port, GenericHID joy, double scale, double offset) {
         this.port = port;
         this.joy = joy;
-        default_scale = this.scale = scale;
-        default_offset = this.offset = offset;
+        this.scale = scale;
+        this.offset = offset;
     }
 
     public double get() {
@@ -40,11 +38,6 @@ public class HIDAxisAccessor {
 
     public void set_offset(double offset) {
         this.offset = offset;
-    }
-
-    public void reset() {
-        this.scale = default_scale;
-        this.offset = default_offset;
     }
 
     @Override

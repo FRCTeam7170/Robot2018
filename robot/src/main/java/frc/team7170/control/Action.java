@@ -24,7 +24,8 @@ public enum Action {
     A_ARM_ANALOG,
     A_ARM_ANALOG_UP,
     A_ARM_ANALOG_DOWN,
-    // TODO: Preset scale/switch positions for arm
+    B_ARM_SWITCH,
+    B_ARM_BASE,
 
     B_ENDE_SUCK,
     B_ENDE_PUSH,

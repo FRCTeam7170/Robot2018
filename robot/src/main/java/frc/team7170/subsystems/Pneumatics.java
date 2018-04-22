@@ -17,9 +17,9 @@ import frc.team7170.robot.RobotMap;
 
 /**
  * This class handles all pneumatics on the robot, but does not actually do any sort of logic to determine when the arm
- * should be extended, for example. Such code is all contained in {@link frc.team7170.subsystems.arm.Arm}.
+ * should be extended, for example. Such code is all contained in {@link frc.team7170.subsystems.arm.ArmRotate}.
  *
- * @see frc.team7170.subsystems.arm.Arm
+ * @see frc.team7170.subsystems.arm.ArmRotate
  */
 public class Pneumatics extends Module implements Communicator {
 
@@ -70,7 +70,7 @@ public class Pneumatics extends Module implements Communicator {
      * Sets both solenoids to the given value. Note that because of this level of abstraction it is impossible to turn
      * one solenoid off and the other on, which could be dangerous.
      * This should almost never be used by custom code. Use the methods for arm extension and retraction in
-     * {@link frc.team7170.subsystems.arm.Arm}, which has safeties to prevent the arm going outside of the robot
+     * {@link frc.team7170.subsystems.arm.ArmRotate}, which has safeties to prevent the arm going outside of the robot
      * perimeter.
      * @param on Whether to turn the solenoids on or off.
      */

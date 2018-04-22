@@ -16,11 +16,11 @@ public class DefaultJoystickBindings extends KeyMap implements Communicator {
         return instance;
     }
     private DefaultJoystickBindings() {
-        axes.put(Action.A_DRIVE_Y, Control.get_instance().joystick.Axes.Y);
-        axes.put(Action.A_DRIVE_Z, Control.get_instance().joystick.Axes.X);
-        buttons.put(Action.B_ENDE_PUSH, Control.get_instance().joystick.Buttons.TRIGGER);
-        buttons.put(Action.B_ENDE_SUCK, Control.get_instance().joystick.Buttons.B3);
-        buttons.put(Action.B_TRY_ARM_TOGGLE, Control.get_instance().joystick.Buttons.THUMB);
+        axes.put(Action.A_DRIVE_Y, Control.get_instance().joystick.axes.Y);
+        axes.put(Action.A_DRIVE_Z, Control.get_instance().joystick.axes.X);
+        buttons.put(Action.B_ENDE_PUSH, Control.get_instance().joystick.buttons.TRIGGER);
+        buttons.put(Action.B_ENDE_SUCK, Control.get_instance().joystick.buttons.B3);
+        buttons.put(Action.B_TRY_ARM_TOGGLE, Control.get_instance().joystick.buttons.THUMB);
         buttons.put(Action.B_ARM_UP, Control.get_instance().joystick.POV.TOP);
         buttons.put(Action.B_ARM_DOWN, Control.get_instance().joystick.POV.BOTTOM);
 

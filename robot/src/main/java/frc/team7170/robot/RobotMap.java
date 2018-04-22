@@ -86,7 +86,7 @@ public class RobotMap {
 
     public static class Arm {
         public static double pot_scale = -300.0;  // Max rotation of arm
-        public static double pot_offset = 0.0;  // Offset off of perfectly vertical
+        public static double pot_offset = 300.0;  // Offset off of perfectly vertical
         public static double endE_speed = 0.75;
         public static double arm_speed = 0.60;
         public static double arm_speed_multiplier = 0.50;
@@ -94,17 +94,17 @@ public class RobotMap {
         public static boolean reverse_endE_right = false;
         public static boolean reverse_arm_left = true;
         public static boolean reverse_arm_right = true;
-        public static double pot_value_kill_lower_inner = 90.0;   // TODO
+        public static double pot_value_kill_lower_inner = 10.0;   // TODO
         public static double pot_value_kill_upper_inner = 120.0;  // TODO
-        public static double pot_value_kill_lower_outer = 80.0;   // TODO
-        public static double pot_value_kill_upper_outer = 130.0;  // TODO
+        public static double pot_value_kill_lower_outer = 8.0;   // TODO
+        public static double pot_value_kill_upper_outer = 123.0;  // TODO
         public static double pot_value_base_conflict = 0.0;       // TODO
-        public static double pot_value_home = 15.2;     // TODO
-        public static double pot_value_base = 30.0;     // TODO
-        public static double pot_value_switch = 0.0;   // TODO
+        public static double pot_value_home = 0.0;     // TODO
+        public static double pot_value_base = 7.0;     // TODO
+        public static double pot_value_switch = 60.0;   // TODO
         public static double pot_value_scale = 0.0;    // TODO
         public static double pot_value_reverse = 0.0;  // TODO
-        public static double move_arm_pot_tolerance = 5.0;  // degrees
+        public static double move_arm_pot_tolerance = 1.0;  // degrees
     }
 
     public static class Communication {

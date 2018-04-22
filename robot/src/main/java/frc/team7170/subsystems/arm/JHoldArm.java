@@ -14,8 +14,8 @@ public class JHoldArm extends Job {
     }
 
     public JHoldArm(int stall_ms) {
-        this.degree = Arm.get_instance().get_pot_val();
-        requires(Arm.get_instance());
+        this.degree = ArmRotate.get_instance().get_pot_val();
+        requires(ArmRotate.get_instance());
         this.stall_ms = stall_ms;
     }
 
@@ -26,12 +26,12 @@ public class JHoldArm extends Job {
 
     @Override
     protected void update() {
-        if (Arm.get_instance().get_pot_val() > degree) {
-            Arm.get_instance().arm_down();
-        } else if (Arm.get_instance().get_pot_val() < degree) {
-            Arm.get_instance().arm_up();
+        if (ArmRotate.get_instance().get_pot_val() > degree) {
+            ArmRotate.get_instance().arm_analog(-0.5);
+        } else if (ArmRotate.get_instance().get_pot_val() < degree) {
+            ArmRotate.get_instance().arm_analog(0.5);
         } else {
-            Arm.get_instance().arm_kill();
+            ArmRotate.get_instance().arm_kill();
         }
     }
 
@@ -50,7 +50,7 @@ public class JHoldArm extends Job {
 
     @Override
     protected void end() {
-        Arm.get_instance().arm_kill();
+        ArmRotate.get_instance().arm_kill();
     }
 
     @Override

@@ -16,10 +16,15 @@ public class DefaultGamepadBindings extends KeyMap implements Communicator {
         return instance;
     }
     private DefaultGamepadBindings() {
-        axes.put(Action.A_DRIVE_Y, Control.get_instance().gamepad.Axes.LY);
-        axes.put(Action.A_DRIVE_Z, Control.get_instance().gamepad.Axes.LX);
-        axes.put(Action.A_ARM_ANALOG, Control.get_instance().gamepad.Axes.RY);
-        // buttons.put(Action.B_TRY_ARM_TOGGLE, Control.get_instance().gamepad.Buttons.A);
+        axes.put(Action.A_DRIVE_Y, Control.get_instance().gamepad.axes.RY);
+        axes.put(Action.A_DRIVE_Z, Control.get_instance().gamepad.axes.RX);
+        axes.put(Action.A_ARM_ANALOG_DOWN, Control.get_instance().gamepad.axes.LT);
+        axes.put(Action.A_ARM_ANALOG_UP, Control.get_instance().gamepad.axes.RT);
+        buttons.put(Action.B_ENDE_PUSH, Control.get_instance().gamepad.buttons.RB);
+        buttons.put(Action.B_ENDE_SUCK, Control.get_instance().gamepad.buttons.LB);
+        buttons.put(Action.B_TRY_ARM_EXTEND, Control.get_instance().gamepad.buttons.A);
+        buttons.put(Action.B_ARM_RETRACT, Control.get_instance().gamepad.buttons.B);
+        buttons.put(Action.B_ARM_BASE, Control.get_instance().gamepad.buttons.X);
 
         POV = Control.get_instance().gamepad.POV;
 
