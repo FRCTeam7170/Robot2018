@@ -1,6 +1,5 @@
 package frc.team7170.robot;
 
-import java.util.logging.Logger;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -10,22 +9,19 @@ import frc.team7170.comm.Communicator;
 import frc.team7170.comm.Receiver;
 import frc.team7170.comm.TransmitFrequency;
 import frc.team7170.comm.Transmitter;
-import frc.team7170.control.Action;
 import frc.team7170.control.Control;
-import frc.team7170.control.HIDAxisAccessor;
-import frc.team7170.control.HIDButtonAccessor;
 import frc.team7170.control.keymaps.DefaultGamepadBindings;
-import frc.team7170.control.keymaps.JoelBindings;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.JRunnable;
 import frc.team7170.jobs.Module;
-import frc.team7170.subsystems.arm.*;
+import frc.team7170.subsystems.arm.ArmEndE;
+import frc.team7170.subsystems.arm.ArmRotate;
 import frc.team7170.subsystems.drive.Acceleration;
 import frc.team7170.subsystems.drive.Drive;
-import frc.team7170.subsystems.drive.JStraight;
-import frc.team7170.subsystems.drive.JTurn;
 import frc.team7170.util.CalcUtil;
 import frc.team7170.util.DebugUtil;
+
+import java.util.logging.Logger;
 
 
 public class Robot extends IterativeRobot implements Communicator {
@@ -54,7 +50,8 @@ public class Robot extends IterativeRobot implements Communicator {
             Class.forName("frc.team7170.control.keymaps.DefaultGamepadBindings");
             Class.forName("frc.team7170.control.keymaps.JoelBindings");
             Class.forName("frc.team7170.subsystems.drive.Drive");
-            Class.forName("frc.team7170.subsystems.arm.Arm");
+            Class.forName("frc.team7170.subsystems.arm.ArmRotate");
+            Class.forName("frc.team7170.subsystems.arm.ArmEndE");
             Class.forName("frc.team7170.subsystems.Pneumatics");
             //Class.forName("frc.team7170.robot.Auto");
         } catch (ClassNotFoundException e) {
@@ -188,108 +185,11 @@ public class Robot extends IterativeRobot implements Communicator {
         // Auto.get_instance().run_auto();
     }
 
-    // TODO: TEMP
-    private JHoldArm holdarmj = null;
+
     public void teleopPeriodic() {
-        // Poll drive controls
-        HIDAxisAccessor y_axis = Control.get_instance().action2axis(Action.A_DRIVE_Y);
-        HIDAxisAccessor z_axis = Control.get_instance().action2axis(Action.A_DRIVE_Z);
-        HIDAxisAccessor l_axis = Control.get_instance().action2axis(Action.A_DRIVE_L);
-        HIDAxisAccessor r_axis = Control.get_instance().action2axis(Action.A_DRIVE_R);
-        if (l_axis != null && r_axis != null) {
-            Drive.get_instance().set_tank(-l_axis.get(), -r_axis.get(), false, true);
-        } else if (y_axis != null && z_axis != null) {
-            Drive.get_instance().set_arcade(-y_axis.get(), z_axis.get(), false, true);
-        } else {
-            Drive.get_instance().set_tank(Drive.get_instance().get_L(), Drive.get_instance().get_R(), false, true);
-        }
-        // Poll endE controls
-        HIDAxisAccessor endE_axis = Control.get_instance().action2axis(Action.A_ENDE_ANALOG);
-        if (endE_axis != null) {
-            Arm.get_instance().endE_analog(endE_axis.get());
-        } else {
-            HIDButtonAccessor endE_push_btn = Control.get_instance().action2button(Action.B_ENDE_PUSH);
-            HIDButtonAccessor endE_suck_btn = Control.get_instance().action2button(Action.B_ENDE_SUCK);
-            if (endE_push_btn != null && endE_push_btn.get()) {
-                Arm.get_instance().endE_push();
-            } else if (endE_suck_btn != null && endE_suck_btn.get()) {
-                Arm.get_instance().endE_suck();
-            } else {
-                Arm.get_instance().endE_kill();
-            }
-        }
-        // Poll arm rotate controls
-        HIDAxisAccessor arm_axis = Control.get_instance().action2axis(Action.A_ARM_ANALOG);
-        HIDAxisAccessor arm_axis_up = Control.get_instance().action2axis(Action.A_ARM_ANALOG_UP);
-        HIDAxisAccessor arm_axis_down = Control.get_instance().action2axis(Action.A_ARM_ANALOG_DOWN);
-        if (arm_axis != null) {
-            if (CalcUtil.in_threshold(arm_axis.get(), 0, 0.05)) {
-                if (holdarmj == null) {
-                    holdarmj = new JHoldArm();
-                    Dispatcher.get_instance().add_job(holdarmj);
-                }
-            } else {
-                if (holdarmj != null) {
-                    Dispatcher.get_instance().cancel_all();
-                    holdarmj = null;
-                }
-                Arm.get_instance().arm_analog(arm_axis.get());
-            }
-        } else if (arm_axis_up != null && arm_axis_down != null) {
-            if (!CalcUtil.in_threshold(arm_axis_up.get(), 0, 0.05)) {
-                if (CalcUtil.in_threshold(arm_axis_up.get(), 0, 0.05)) {
-                    if (holdarmj == null) {
-                        holdarmj = new JHoldArm();
-                        Dispatcher.get_instance().add_job(holdarmj);
-                    }
-                } else {
-                    if (holdarmj != null) {
-                        Dispatcher.get_instance().cancel_all();
-                        holdarmj = null;
-                    }
-                    Arm.get_instance().arm_analog(arm_axis_up.get());
-                }
-            } else {
-                if (CalcUtil.in_threshold(arm_axis_down.get(), 0, 0.05)) {
-                    if (holdarmj == null) {
-                        holdarmj = new JHoldArm();
-                        Dispatcher.get_instance().add_job(holdarmj);
-                    }
-                } else {
-                    if (holdarmj != null) {
-                        Dispatcher.get_instance().cancel_all();
-                        holdarmj = null;
-                    }
-                    Arm.get_instance().arm_analog(-arm_axis_down.get());
-                }
-            }
-        } else {
-            HIDButtonAccessor arm_up = Control.get_instance().action2button(Action.B_ARM_UP);
-            HIDButtonAccessor arm_down = Control.get_instance().action2button(Action.B_ARM_DOWN);
-            if (arm_up != null && arm_up.get()) {
-                Arm.get_instance().arm_up();
-            } else if (arm_down != null && arm_down.get()) {
-                Arm.get_instance().arm_down();
-            } else {
-                Arm.get_instance().arm_kill();
-            }
-        }
-        // Poll arm extension controls
-        HIDButtonAccessor extend_btn = Control.get_instance().action2button(Action.B_TRY_ARM_EXTEND);
-        HIDButtonAccessor retract_btn = Control.get_instance().action2button(Action.B_ARM_RETRACT);
-        HIDButtonAccessor toggle_btn = Control.get_instance().action2button(Action.B_TRY_ARM_TOGGLE);
-        if (extend_btn != null && extend_btn.get_pressed()) {
-            Arm.get_instance().try_extend();
-        } else if (retract_btn != null && retract_btn.get_pressed()) {
-            Arm.get_instance().retract();
-        } else if (toggle_btn != null && toggle_btn.get_pressed()) {
-            Arm.get_instance().try_toggle();
-        }
-        HIDButtonAccessor base_pos_btn = Control.get_instance().action2button(Action.B_ARM_BASE);
-        if (base_pos_btn.get_pressed()) {
-            Dispatcher.get_instance().cancel_job(holdarmj, true);
-            Arm.get_instance().go_to_base_position();
-        }
+        Drive.get_instance().poll_controls();
+        ArmEndE.get_instance().poll_controls();
+        ArmRotate.get_instance().poll_controls();
     }
 
 

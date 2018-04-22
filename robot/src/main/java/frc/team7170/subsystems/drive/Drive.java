@@ -1,6 +1,5 @@
 package frc.team7170.subsystems.drive;
 
-import java.util.logging.Logger;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -10,11 +9,15 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.team7170.comm.*;
+import frc.team7170.control.Action;
+import frc.team7170.control.Control;
+import frc.team7170.control.HIDAxisAccessor;
+import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.util.CalcUtil;
-import frc.team7170.jobs.Dispatcher;
-import frc.team7170.util.DebugUtil;
+
+import java.util.logging.Logger;
 
 
 /**
@@ -283,6 +286,21 @@ public class Drive extends Module implements Communicator {
 
     public boolean get_Renc_stopped() {
         return right_enc.getStopped();
+    }
+
+    public void poll_controls() {
+        HIDAxisAccessor y_axis = Control.get_instance().action2axis(Action.A_DRIVE_Y);
+        HIDAxisAccessor z_axis = Control.get_instance().action2axis(Action.A_DRIVE_Z);
+        HIDAxisAccessor l_axis = Control.get_instance().action2axis(Action.A_DRIVE_L);
+        HIDAxisAccessor r_axis = Control.get_instance().action2axis(Action.A_DRIVE_R);
+        if (l_axis != null && r_axis != null) {
+            Drive.get_instance().set_tank(-l_axis.get(), -r_axis.get(), false, true);
+        } else if (y_axis != null && z_axis != null) {
+            Drive.get_instance().set_arcade(-y_axis.get(), z_axis.get(), false, true);
+        } else {
+            LOGGER.warning("Current KeyMap has no drive controls! Setting drive to (0, 0).");
+            Drive.get_instance().set_tank(0, 0, false, true);
+        }
     }
 
     // TODO: Accessors for CAN data on motors, ex: current output

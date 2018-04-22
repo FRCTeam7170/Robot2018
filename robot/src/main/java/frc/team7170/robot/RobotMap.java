@@ -105,6 +105,7 @@ public class RobotMap {
         public static double pot_value_scale = 0.0;    // TODO
         public static double pot_value_reverse = 0.0;  // TODO
         public static double move_arm_pot_tolerance = 1.0;  // degrees
+        public static double arm_analog_ignore_thresh = 0.05;  // ignore joystick input if below this value
     }
 
     public static class Communication {

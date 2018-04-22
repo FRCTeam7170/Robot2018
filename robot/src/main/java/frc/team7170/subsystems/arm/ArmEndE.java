@@ -1,6 +1,10 @@
 package frc.team7170.subsystems.arm;
 
 import edu.wpi.first.wpilibj.Spark;
+import frc.team7170.control.Action;
+import frc.team7170.control.Control;
+import frc.team7170.control.HIDAxisAccessor;
+import frc.team7170.control.HIDButtonAccessor;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
@@ -67,4 +71,20 @@ public class ArmEndE extends Module {
         return spark_left_endE.get();  // Doesn't matter which
     }
 
+    public void poll_controls() {
+        HIDAxisAccessor endE_axis = Control.get_instance().action2axis(Action.A_ENDE_ANALOG);
+        if (endE_axis != null) {
+            endE_analog(endE_axis.get());
+        } else {
+            HIDButtonAccessor endE_push_btn = Control.get_instance().action2button(Action.B_ENDE_PUSH);
+            HIDButtonAccessor endE_suck_btn = Control.get_instance().action2button(Action.B_ENDE_SUCK);
+            if (endE_push_btn != null && endE_push_btn.get()) {
+                endE_push();
+            } else if (endE_suck_btn != null && endE_suck_btn.get()) {
+                endE_suck();
+            } else {
+                endE_kill();
+            }
+        }
+    }
 }

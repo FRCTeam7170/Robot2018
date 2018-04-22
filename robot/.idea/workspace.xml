@@ -2,34 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="71859124-b18f-4f7e-b827-480a039f3252" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmEndE.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmRotate.java" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileContent/fileContent.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileContent/fileContent.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/comm/Communication.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/comm/Communication.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/control/Action.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/control/Action.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/control/Control.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/control/Control.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/control/HIDAxisAccessor.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/control/HIDAxisAccessor.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/control/HIDButtonAccessor.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/control/HIDButtonAccessor.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/control/HIDPOVAccessor.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/control/HIDPOVAccessor.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/DefaultGamepadBindings.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/DefaultGamepadBindings.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/DefaultJoystickBindings.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/DefaultJoystickBindings.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/JoelBindings.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/JoelBindings.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Dispatcher.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Dispatcher.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Job.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Job.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Lock.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/robot/Auto.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/robot/Auto.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/robot/Robot.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/robot/Robot.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/robot/RobotMap.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/robot/RobotMap.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/Pneumatics.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/Pneumatics.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/Arm.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/Arm.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JHoldArm.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JHoldArm.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JMoveArm.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JMoveArm.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmEndE.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmEndE.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmRotate.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmRotate.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/drive/Drive.java" afterPath="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/drive/Drive.java" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -181,11 +159,9 @@
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/comm/MiscSender.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Lock.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Module.java" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/drive/Drive.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/DefaultJoystickBindings.java" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/Learning" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/DefaultGamepadBindings.java" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/robot/RobotMap.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/comm/Communication.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/control/Action.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/control/Control.java" />
@@ -195,14 +171,16 @@
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Dispatcher.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/jobs/Job.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmExtend.java" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmEndE.java" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmRotate.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/Arm.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JHoldArm.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JMoveArm.java" />
-        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/robot/Robot.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/Pneumatics.java" />
         <option value="$PROJECT_DIR$/src/main/java/frc/team7170/robot/Auto.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/drive/Drive.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmEndE.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/robot/RobotMap.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmRotate.java" />
+        <option value="$PROJECT_DIR$/src/main/java/frc/team7170/robot/Robot.java" />
       </list>
     </option>
   </component>
@@ -517,7 +495,7 @@
       <workItem from="1522106687208" duration="2355000" />
       <workItem from="1523393178979" duration="568000" />
       <workItem from="1524090625390" duration="8833000" />
-      <workItem from="1524414614321" duration="4340000" />
+      <workItem from="1524414614321" duration="6759000" />
     </task>
     <task id="LOCAL-00001" summary="All changes made while at competition.">
       <created>1521947680435</created>
@@ -526,11 +504,18 @@
       <option name="project" value="LOCAL" />
       <updated>1521947680435</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Separated Arm module code into two subsystems.">
+      <created>1524419102987</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1524419102987</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="330759000" />
+    <option name="totallyTimeSpent" value="333178000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -542,7 +527,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="815" extended-state="0" />
+    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32889965" sideWeight="0.5028612" order="7" side_tool="true" content_ui="tabs" />
@@ -647,7 +632,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="All changes made while at competition." />
-    <option name="LAST_COMMIT_MESSAGE" value="All changes made while at competition." />
+    <MESSAGE value="Separated Arm module code into two subsystems." />
+    <option name="LAST_COMMIT_MESSAGE" value="Separated Arm module code into two subsystems." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -773,14 +759,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
           <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/robot/RobotMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1530">
-          <caret line="102" column="47" lean-forward="false" selection-start-line="102" selection-start-column="47" selection-end-line="102" selection-end-column="47" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -938,22 +916,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JHoldArm.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="50" column="13" lean-forward="true" selection-start-line="50" selection-start-column="13" selection-end-line="50" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JMoveArm.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="12">
-          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/drive/Acceleration.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-555">
@@ -975,25 +937,6 @@
         <state relative-caret-position="-130">
           <caret line="10" column="13" lean-forward="false" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/drive/Drive.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5676">
-          <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/robot/Robot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1755">
-          <caret line="142" column="70" lean-forward="false" selection-start-line="142" selection-start-column="70" selection-end-line="142" selection-end-column="70" />
-          <folding>
-            <element signature="e#13699#13700#0" expanded="true" />
-            <element signature="e#13731#13732#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1029,10 +972,70 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/DefaultGamepadBindings.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="25" column="84" lean-forward="true" selection-start-line="25" selection-start-column="84" selection-end-line="25" selection-end-column="84" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/drive/Drive.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="348">
+          <caret line="300" column="90" lean-forward="false" selection-start-line="300" selection-start-column="90" selection-end-line="300" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmEndE.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="84" column="20" lean-forward="true" selection-start-line="84" selection-start-column="20" selection-end-line="84" selection-end-column="20" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1137#1138#0" expanded="true" />
+            <element signature="e#1193#1194#0" expanded="true" />
+            <element signature="e#1443#1444#0" expanded="true" />
+            <element signature="e#1495#1496#0" expanded="true" />
+            <element signature="e#1526#1527#0" expanded="true" />
+            <element signature="e#1579#1580#0" expanded="true" />
+            <element signature="e#1610#1611#0" expanded="true" />
+            <element signature="e#1640#1641#0" expanded="true" />
+            <element signature="e#1862#1863#0" expanded="true" />
+            <element signature="e#1931#1932#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/robot/RobotMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="107" column="107" lean-forward="false" selection-start-line="107" selection-start-column="107" selection-end-line="107" selection-end-column="107" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JMoveArm.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/JHoldArm.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="50" column="13" lean-forward="true" selection-start-line="50" selection-start-column="13" selection-end-line="50" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/Arm.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="21" column="35" lean-forward="true" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
+        <state relative-caret-position="155">
+          <caret line="24" column="11" lean-forward="false" selection-start-line="24" selection-start-column="11" selection-end-line="24" selection-end-column="11" />
           <folding>
             <element signature="e#2687#2688#0" expanded="true" />
             <element signature="e#2722#2723#0" expanded="true" />
@@ -1060,53 +1063,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmEndE.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/robot/Robot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="945">
-          <caret line="67" column="5" lean-forward="false" selection-start-line="67" selection-start-column="5" selection-end-line="67" selection-end-column="5" />
+        <state relative-caret-position="435">
+          <caret line="56" column="67" lean-forward="true" selection-start-line="56" selection-start-column="67" selection-end-line="56" selection-end-column="67" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#972#973#0" expanded="true" />
-            <element signature="e#1028#1029#0" expanded="true" />
-            <element signature="e#1278#1279#0" expanded="true" />
-            <element signature="e#1330#1331#0" expanded="true" />
-            <element signature="e#1361#1362#0" expanded="true" />
-            <element signature="e#1414#1415#0" expanded="true" />
-            <element signature="e#1445#1446#0" expanded="true" />
-            <element signature="e#1475#1476#0" expanded="true" />
-            <element signature="e#1697#1698#0" expanded="true" />
-            <element signature="e#1766#1767#0" expanded="true" />
+            <element signature="e#8722#8723#0" expanded="true" />
+            <element signature="e#8754#8755#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/subsystems/arm/ArmRotate.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1635">
-          <caret line="115" column="12" lean-forward="false" selection-start-line="115" selection-start-column="12" selection-end-line="115" selection-end-column="12" />
+        <state relative-caret-position="2430">
+          <caret line="168" column="19" lean-forward="false" selection-start-line="168" selection-start-column="19" selection-end-line="168" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2926#2927#0" expanded="true" />
-            <element signature="e#2995#2996#0" expanded="true" />
-            <element signature="e#3197#3198#0" expanded="true" />
-            <element signature="e#3229#3230#0" expanded="true" />
-            <element signature="e#3257#3258#0" expanded="true" />
-            <element signature="e#3307#3308#0" expanded="true" />
-            <element signature="e#3337#3338#0" expanded="true" />
-            <element signature="e#3388#3389#0" expanded="true" />
-            <element signature="e#3418#3419#0" expanded="true" />
-            <element signature="e#3447#3448#0" expanded="true" />
-            <element signature="e#3733#3734#0" expanded="true" />
-            <element signature="e#3801#3802#0" expanded="true" />
+            <element signature="e#3156#3157#0" expanded="true" />
+            <element signature="e#3225#3226#0" expanded="true" />
+            <element signature="e#3427#3428#0" expanded="true" />
+            <element signature="e#3459#3460#0" expanded="true" />
+            <element signature="e#3487#3488#0" expanded="true" />
+            <element signature="e#3537#3538#0" expanded="true" />
+            <element signature="e#3567#3568#0" expanded="true" />
+            <element signature="e#3618#3619#0" expanded="true" />
+            <element signature="e#3648#3649#0" expanded="true" />
+            <element signature="e#3677#3678#0" expanded="true" />
+            <element signature="e#3963#3964#0" expanded="true" />
+            <element signature="e#4031#4032#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/frc/team7170/control/keymaps/DefaultGamepadBindings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="25" column="84" lean-forward="true" selection-start-line="25" selection-start-column="84" selection-end-line="25" selection-end-column="84" />
-          <folding />
         </state>
       </provider>
     </entry>

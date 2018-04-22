@@ -2,11 +2,17 @@ package frc.team7170.subsystems.arm;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Spark;
+import frc.team7170.control.Action;
+import frc.team7170.control.Control;
+import frc.team7170.control.HIDAxisAccessor;
+import frc.team7170.control.HIDButtonAccessor;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.JRunnable;
+import frc.team7170.jobs.Job;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.subsystems.Pneumatics;
+import frc.team7170.util.CalcUtil;
 
 import java.util.logging.Logger;
 
@@ -130,27 +136,110 @@ public class ArmRotate extends Module {
     }
 
     public void go_to_home_position() {
+        stop_hold_arm();
         Pneumatics.get_instance().set_solenoids(false);
         Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_home));
+        hold_arm();
     }
 
     public void go_to_base_position() {
+        stop_hold_arm();
         Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base));
         // Extend the arm after getting to the base position
         Dispatcher.get_instance().add_job(new JRunnable(() -> Pneumatics.get_instance().set_solenoids(true), this));
+        hold_arm();
     }
 
     public void go_to_switch_position() {
+        stop_hold_arm();
         Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_switch));
+        hold_arm();
     }
 
     public void go_to_scale_position() {
+        stop_hold_arm();
         Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_scale));
+        hold_arm();
     }
 
     public void go_to_reverse_position() {
+        stop_hold_arm();
         Pneumatics.get_instance().set_solenoids(false);
         Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_reverse));
+        hold_arm();
     }
 
+    private Job teleop_hold_arm;
+
+    private void hold_arm() {
+        if (teleop_hold_arm == null) {
+            teleop_hold_arm = new JHoldArm();
+            Dispatcher.get_instance().add_job(teleop_hold_arm);
+        }
+    }
+
+    private void stop_hold_arm() {
+        if (teleop_hold_arm != null) {
+            Dispatcher.get_instance().cancel_job(teleop_hold_arm, true);
+            teleop_hold_arm = null;
+        }
+    }
+
+    public void poll_controls() {
+        // Poll extension controls
+        HIDButtonAccessor extend_btn = Control.get_instance().action2button(Action.B_TRY_ARM_EXTEND);
+        HIDButtonAccessor retract_btn = Control.get_instance().action2button(Action.B_ARM_RETRACT);
+        HIDButtonAccessor toggle_btn = Control.get_instance().action2button(Action.B_TRY_ARM_TOGGLE);
+        if (extend_btn != null && extend_btn.get_pressed()) {
+            try_extend();
+        } else if (retract_btn != null && retract_btn.get_pressed()) {
+            retract();
+        } else if (toggle_btn != null && toggle_btn.get_pressed()) {
+            try_toggle();
+        }
+
+        // Poll rotate controls
+        HIDAxisAccessor arm_axis = Control.get_instance().action2axis(Action.A_ARM_ANALOG);
+        if (arm_axis != null) {
+            if (CalcUtil.in_threshold(arm_axis.get(), 0, RobotMap.Arm.arm_analog_ignore_thresh)) {
+                hold_arm();
+            } else {
+                stop_hold_arm();
+                arm_analog(arm_axis.get());
+            }
+        } else {
+            HIDAxisAccessor arm_axis_up = Control.get_instance().action2axis(Action.A_ARM_ANALOG_UP);
+            HIDAxisAccessor arm_axis_down = Control.get_instance().action2axis(Action.A_ARM_ANALOG_DOWN);
+            if (arm_axis_up != null && arm_axis_down != null) {
+                if (!CalcUtil.in_threshold(arm_axis_up.get(), 0, RobotMap.Arm.arm_analog_ignore_thresh)) {
+                    stop_hold_arm();
+                    arm_analog(arm_axis_up.get());
+                } else if (!CalcUtil.in_threshold(arm_axis_down.get(), 0, RobotMap.Arm.arm_analog_ignore_thresh)) {
+                    stop_hold_arm();
+                    arm_analog(-arm_axis_down.get());
+                } else {
+                    hold_arm();
+                }
+            } else {
+                HIDButtonAccessor arm_up = Control.get_instance().action2button(Action.B_ARM_UP);
+                HIDButtonAccessor arm_down = Control.get_instance().action2button(Action.B_ARM_DOWN);
+                if (arm_up != null && arm_up.get()) {
+                    stop_hold_arm();
+                    arm_up();
+                } else if (arm_down != null && arm_down.get()) {
+                    stop_hold_arm();
+                    arm_down();
+                } else {
+                    hold_arm();
+                }
+
+            }
+        }
+
+        // Poll preset positions
+        HIDButtonAccessor base_pos_btn = Control.get_instance().action2button(Action.B_ARM_BASE);
+        if (base_pos_btn != null && base_pos_btn.get_pressed()) {
+            go_to_base_position();
+        }
+    }
 }
