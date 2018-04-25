@@ -41,7 +41,7 @@ public class Dispatcher implements Communicator {
      * Must be called by each class that inherits from Module, most likely in the constructor (therefore each module should be a singleton).
      * @param mod The module to register
      */
-    public void register_module(Module mod) {
+    public synchronized void register_module(Module mod) {
         modules.putIfAbsent(mod, false);
     }
 
@@ -50,7 +50,7 @@ public class Dispatcher implements Communicator {
      * when the module locks are freed. Note that the priority of the jobs is the order they are added in.
      * @param job The job to run/queue
      */
-    public void add_job(Job job) {
+    public synchronized void add_job(Job job) {
         if (can_run_job(job)) {
             start_job(job);
         } else {
@@ -62,7 +62,7 @@ public class Dispatcher implements Communicator {
      * Updates every registered {@link Module}, updates running {@link Job}, and runs queued jobs if module locks are free.
      * This should be called regularly in the robot main loop.
      */
-    public void run() {
+    public synchronized void run() {
         // Update each module and run defaults if locks are free
         modules.forEach((Module mod, Boolean locked) -> {
             mod._update();
@@ -102,7 +102,7 @@ public class Dispatcher implements Communicator {
      * Called internally to claim {@link Module} locks, populate the running_jobs list, and start a {@link Job}.
      * @param job The job to start
      */
-    private void start_job(Job job) {
+    private synchronized void start_job(Job job) {
         // Loop through the job's requirements and claim its required modules
         for (Module mod : job.get_requirements()) {
             if (!mod.claim_lock(job)) {
@@ -121,7 +121,7 @@ public class Dispatcher implements Communicator {
      * we only free {@link Module} locks and remove the job from the running_jobs set.
      * @param job The job to free locks from.
      */
-    private void free_module_locks(Job job) {
+    private synchronized void free_module_locks(Job job) {
         running_jobs.remove(job);
         for (Module mod: job.get_requirements()) {
             mod.free_lock();
@@ -134,7 +134,7 @@ public class Dispatcher implements Communicator {
      * @param job The job to check for conflicts on.
      * @return Whether or not the job can be ran.
      */
-    private boolean can_run_job(Job job) {
+    private synchronized boolean can_run_job(Job job) {
         for (Module mod: job.get_requirements()) {
             if (modules.get(mod)) {
                 return false;
@@ -149,7 +149,7 @@ public class Dispatcher implements Communicator {
      * @param override Whether or not to override the job's interruptable attribute.
      * @return Whether or not the cancellation was successful. This will always be true if override is true.
      */
-    public boolean cancel_job(Job job, boolean override) {
+    public synchronized boolean cancel_job(Job job, boolean override) {
         if (job.cancel(override)) {
             LOGGER.fine("Cancelling job: "+job.toString());
             free_module_locks(job);
@@ -161,7 +161,7 @@ public class Dispatcher implements Communicator {
     /**
      * Forcefully {@link Job#cancel(boolean)} every job.
      */
-    public void cancel_all() {
+    public synchronized void cancel_all() {
         LOGGER.fine("Cancelling all jobs.");
         queued_jobs.clear();  // Clear the queued jobs.
         for (Job job: running_jobs) {  // Clear the running jobs.

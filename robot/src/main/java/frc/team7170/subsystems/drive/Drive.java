@@ -293,10 +293,13 @@ public class Drive extends Module implements Communicator {
         HIDAxisAccessor z_axis = Control.get_instance().action2axis(Action.A_DRIVE_Z);
         HIDAxisAccessor l_axis = Control.get_instance().action2axis(Action.A_DRIVE_L);
         HIDAxisAccessor r_axis = Control.get_instance().action2axis(Action.A_DRIVE_R);
+        HIDAxisAccessor throttle = Control.get_instance().action2axis(Action.A_THROTTLE_CONTROL);
         if (l_axis != null && r_axis != null) {
-            Drive.get_instance().set_tank(-l_axis.get(), -r_axis.get(), false, true);
+            Drive.get_instance().set_tank(-l_axis.get()*(throttle != null ? throttle.get() : 1),
+                    -r_axis.get()*(throttle != null ? throttle.get() : 1), false, true);
         } else if (y_axis != null && z_axis != null) {
-            Drive.get_instance().set_arcade(-y_axis.get(), z_axis.get(), false, true);
+            Drive.get_instance().set_arcade(-y_axis.get()*(throttle != null ? throttle.get() : 1),
+                    z_axis.get()*(throttle != null ? throttle.get() : 1), false, true);
         } else {
             LOGGER.warning("Current KeyMap has no drive controls! Setting drive to (0, 0).");
             Drive.get_instance().set_tank(0, 0, false, true);

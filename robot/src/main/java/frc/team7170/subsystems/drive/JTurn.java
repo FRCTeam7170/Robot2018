@@ -41,8 +41,9 @@ public class JTurn extends Job {
 
     @Override
     protected boolean is_finished() {
-        return CalcUtil.in_threshold((Math.abs(drive.get_Lenc()) + Math.abs(drive.get_Renc()))/2,
-                predicted_final_enc, RobotMap.Maneuvers.turn_angle_tolerance);
+        //return CalcUtil.in_threshold((Math.abs(drive.get_Lenc()) + Math.abs(drive.get_Renc()))/2,
+        //        predicted_final_enc, RobotMap.Maneuvers.turn_angle_tolerance);
+        return (Math.abs(drive.get_Lenc()) + Math.abs(drive.get_Renc()))/2/predicted_final_enc >= 1;
     }
 
     @Override

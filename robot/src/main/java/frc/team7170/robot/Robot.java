@@ -11,16 +11,20 @@ import frc.team7170.comm.TransmitFrequency;
 import frc.team7170.comm.Transmitter;
 import frc.team7170.control.Control;
 import frc.team7170.control.keymaps.DefaultGamepadBindings;
+import frc.team7170.control.keymaps.DefaultJoystickBindings;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.JRunnable;
 import frc.team7170.jobs.Module;
 import frc.team7170.subsystems.arm.ArmEndE;
 import frc.team7170.subsystems.arm.ArmRotate;
+import frc.team7170.subsystems.arm.JMoveArm;
 import frc.team7170.subsystems.drive.Acceleration;
 import frc.team7170.subsystems.drive.Drive;
+import frc.team7170.subsystems.drive.JTurn;
 import frc.team7170.util.CalcUtil;
 import frc.team7170.util.DebugUtil;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 
@@ -79,7 +83,7 @@ public class Robot extends IterativeRobot implements Communicator {
             LOGGER.severe("Camera init failed.");
         }
         LOGGER.info("Setting keymap.");
-        Control.get_instance().set_keymap(DefaultGamepadBindings.get_instance());
+        Control.get_instance().set_keymap(DefaultJoystickBindings.get_instance());
         LOGGER.info("Initialization done.");
     }
 
@@ -102,11 +106,10 @@ public class Robot extends IterativeRobot implements Communicator {
             LOGGER.severe("Resolving autonomous...Failed.");
         }
         */
-        // Dispatcher.get_instance().add_job(new JStraight(3.3, 0.75, 0.25, 0.0, 0.4, 0.6, false, false));
-        // Dispatcher.get_instance().add_job(new JTurn(180, 0.5, 0.25, 0.0, 0.4, 0.6, false, false));
-        // Dispatcher.get_instance().add_job(new JMoveArm(30));
-        // Dispatcher.get_instance().add_job(new JHoldArm());
-        // Arm.get_instance().go_to_base_position();
+        Dispatcher.get_instance().add_job(new JTurn(360, 0.50, 0.2, 0.15, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JRunnable(() -> Drive.get_instance().brake(), Drive.get_instance()));
+        Dispatcher.get_instance().add_job(new JMoveArm(90));
+        Dispatcher.get_instance().add_job(new JMoveArm(0));
         Drive.get_instance().set_enabled(true);
         ArmRotate.get_instance().set_enabled(true);
         ArmEndE.get_instance().set_enabled(true);
@@ -172,8 +175,22 @@ public class Robot extends IterativeRobot implements Communicator {
 
     //----------Inherited periodic functions----------//
 
+    // TODO: Temp
+    private ArrayList<Double> potvals = new ArrayList<>(100);
+    private int pvcnt = 0;
     public void robotPeriodic() {
         Dispatcher.get_instance().run();
+        potvals.add(ArmRotate.get_instance().get_pot_val());
+        pvcnt++;
+        if (pvcnt == 100) {
+            double sum = 0;
+            for (Double d : potvals) {
+                sum += d;
+            }
+            System.out.println(sum / 100);
+            potvals.clear();
+            pvcnt = 0;
+        }
     }
 
 

@@ -22,8 +22,8 @@ public class RobotMap {
         public static double speed_Y = 0.02;
         public static double speed_X_45 = 0.02;
         public static double speed_Y_45 = 0.02;
-        public static int resolution_w = 1280;  // Max = 1280 for MS LC HD3000
-        public static int resolution_h = 720;  // Max = 720 for MS LC HD3000
+        public static int resolution_w = 640;  // Max = 1280 for MS LC HD3000
+        public static int resolution_h = 480;  // Max = 720 for MS LC HD3000
         public static int fps = 30;  // Max = 30 for MS LC HD3000
         public static double brightness = 0.5;  // [0, 1]
     }
@@ -98,14 +98,14 @@ public class RobotMap {
         public static double pot_value_kill_upper_inner = 120.0;  // TODO
         public static double pot_value_kill_lower_outer = 8.0;   // TODO
         public static double pot_value_kill_upper_outer = 123.0;  // TODO
-        public static double pot_value_base_conflict = 0.0;       // TODO
+        public static double pot_value_base_conflict = 3.0;       // TODO
         public static double pot_value_home = 0.0;     // TODO
         public static double pot_value_base = 7.0;     // TODO
         public static double pot_value_switch = 60.0;   // TODO
         public static double pot_value_scale = 0.0;    // TODO
         public static double pot_value_reverse = 0.0;  // TODO
         public static double move_arm_pot_tolerance = 1.0;  // degrees
-        public static double arm_analog_ignore_thresh = 0.05;  // ignore joystick input if below this value
+        public static double arm_analog_ignore_thresh = 0.2;  // ignore joystick input if below this value
     }
 
     public static class Communication {

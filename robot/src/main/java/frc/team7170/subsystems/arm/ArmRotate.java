@@ -40,7 +40,7 @@ public class ArmRotate extends Module {
 
     @Override
     protected void update() {
-        if (Pneumatics.get_instance().get_solenoids() && in_inner_thresh()) {
+        if (Pneumatics.get_instance().get_solenoids() && (in_inner_thresh() || base_conflicting_extend())) {
             Pneumatics.get_instance().set_solenoids(false);
         }
     }
