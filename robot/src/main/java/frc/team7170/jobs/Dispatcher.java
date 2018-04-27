@@ -78,21 +78,42 @@ public class Dispatcher implements Communicator {
         });
 
         // Update each job and remove it if it's finished
+        Iterator<Job> iter = running_jobs.iterator();
+        while(iter.hasNext()) {
+            Job job = iter.next();
+            if (job._update()) {  // returns true if the job is finished
+                jobs_updated = true;
+                free_module_locks(job);
+                iter.remove();
+            }
+        }
+        /*
         for (Job job : running_jobs) {
             if (job._update()) {  // returns true if the job is finished
                 jobs_updated = true;
                 free_module_locks(job);
             }
         }
+        */
 
         // Run new jobs if required module locks are free
         if (jobs_updated) {  // Only iterate through the queued jobs if a change to the running ones has occurred
+            iter = queued_jobs.iterator();
+            while (iter.hasNext()) {
+                Job job = iter.next();
+                if (can_run_job(job)) {  // If the necessary module locks are free, start the highest priority (dictated by order added to list) job
+                    start_job(job);
+                    iter.remove();
+                }
+            }
+            /*
             for (Job job : queued_jobs) {
                 if (can_run_job(job)) {  // If the necessary module locks are free, start the highest priority (dictated by order added to list) job
                     queued_jobs.remove(job);
                     start_job(job);
                 }
             }
+            */
         }
 
         jobs_updated = false;  // Reset the jobs_updated so we continue to iterate through the queued_jobs only if a running job has terminated
@@ -122,7 +143,7 @@ public class Dispatcher implements Communicator {
      * @param job The job to free locks from.
      */
     private synchronized void free_module_locks(Job job) {
-        running_jobs.remove(job);
+        // running_jobs.remove(job);
         for (Module mod: job.get_requirements()) {
             mod.free_lock();
             modules.replace(mod, false);
@@ -153,6 +174,7 @@ public class Dispatcher implements Communicator {
         if (job.cancel(override)) {
             LOGGER.fine("Cancelling job: "+job.toString());
             free_module_locks(job);
+            running_jobs.remove(job);
             return true;
         }
         return false;
@@ -164,10 +186,19 @@ public class Dispatcher implements Communicator {
     public synchronized void cancel_all() {
         LOGGER.fine("Cancelling all jobs.");
         queued_jobs.clear();  // Clear the queued jobs.
+        Iterator<Job> iter = running_jobs.iterator();
+        while (iter.hasNext()) {
+            Job job = iter.next();
+            free_module_locks(job);
+            job.cancel(true);
+            iter.remove();
+        }
+        /*
         for (Job job: running_jobs) {  // Clear the running jobs.
             free_module_locks(job);
             job.cancel(true);
         }
+        */
     }
 
     @SuppressWarnings("unused")

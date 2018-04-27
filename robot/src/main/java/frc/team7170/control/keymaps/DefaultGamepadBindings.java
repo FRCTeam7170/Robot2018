@@ -25,6 +25,7 @@ public class DefaultGamepadBindings extends KeyMap implements Communicator {
         buttons.put(Action.B_TRY_ARM_EXTEND, Control.get_instance().gamepad.buttons.A);
         buttons.put(Action.B_ARM_RETRACT, Control.get_instance().gamepad.buttons.B);
         buttons.put(Action.B_ARM_BASE, Control.get_instance().gamepad.buttons.X);
+        buttons.put(Action.B_TOGGLE_SPEED, Control.get_instance().gamepad.buttons.RJOYIN);
 
         POV = Control.get_instance().gamepad.POV;
 

@@ -83,7 +83,7 @@ public class Robot extends IterativeRobot implements Communicator {
             LOGGER.severe("Camera init failed.");
         }
         LOGGER.info("Setting keymap.");
-        Control.get_instance().set_keymap(DefaultJoystickBindings.get_instance());
+        Control.get_instance().set_keymap(DefaultGamepadBindings.get_instance());
         LOGGER.info("Initialization done.");
     }
 
@@ -176,18 +176,18 @@ public class Robot extends IterativeRobot implements Communicator {
     //----------Inherited periodic functions----------//
 
     // TODO: Temp
-    private ArrayList<Double> potvals = new ArrayList<>(100);
+    private ArrayList<Double> potvals = new ArrayList<>(25);
     private int pvcnt = 0;
     public void robotPeriodic() {
         Dispatcher.get_instance().run();
         potvals.add(ArmRotate.get_instance().get_pot_val());
         pvcnt++;
-        if (pvcnt == 100) {
+        if (pvcnt == 25) {
             double sum = 0;
             for (Double d : potvals) {
                 sum += d;
             }
-            System.out.println(sum / 100);
+            System.out.println(sum / 25);
             potvals.clear();
             pvcnt = 0;
         }

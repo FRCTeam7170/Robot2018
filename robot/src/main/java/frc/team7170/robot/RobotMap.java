@@ -17,6 +17,11 @@ public class RobotMap {
         public static double jump_R = 0.000000000001;
     }
 
+    public static class Drive {
+        public static double rabbit_speed = 1.0;
+        public static double tortoise_speed = 0.6;
+    }
+
     public static class Camera {
         public static double speed_X = 0.02;
         public static double speed_Y = 0.02;
@@ -86,7 +91,7 @@ public class RobotMap {
 
     public static class Arm {
         public static double pot_scale = -300.0;  // Max rotation of arm
-        public static double pot_offset = 300.0;  // Offset off of perfectly vertical
+        public static double pot_offset = 268.9;  // Offset off of perfectly vertical
         public static double endE_speed = 0.75;
         public static double arm_speed = 0.60;
         public static double arm_speed_multiplier = 0.50;
@@ -94,13 +99,13 @@ public class RobotMap {
         public static boolean reverse_endE_right = false;
         public static boolean reverse_arm_left = true;
         public static boolean reverse_arm_right = true;
-        public static double pot_value_kill_lower_inner = 10.0;   // TODO
-        public static double pot_value_kill_upper_inner = 120.0;  // TODO
-        public static double pot_value_kill_lower_outer = 8.0;   // TODO
-        public static double pot_value_kill_upper_outer = 123.0;  // TODO
-        public static double pot_value_base_conflict = 3.0;       // TODO
+        public static double pot_value_kill_lower_inner = 23.0;   // TODO
+        public static double pot_value_kill_upper_inner = 93.0;  // TODO
+        public static double pot_value_kill_lower_outer = 20.0;   // TODO
+        public static double pot_value_kill_upper_outer = 96.0;  // TODO
+        public static double pot_value_base_conflict = 10.0;       // TODO
         public static double pot_value_home = 0.0;     // TODO
-        public static double pot_value_base = 7.0;     // TODO
+        public static double pot_value_base = 18.0;     // TODO
         public static double pot_value_switch = 60.0;   // TODO
         public static double pot_value_scale = 0.0;    // TODO
         public static double pot_value_reverse = 0.0;  // TODO

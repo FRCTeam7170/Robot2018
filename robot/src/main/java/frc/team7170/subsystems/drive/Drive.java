@@ -12,6 +12,7 @@ import frc.team7170.comm.*;
 import frc.team7170.control.Action;
 import frc.team7170.control.Control;
 import frc.team7170.control.HIDAxisAccessor;
+import frc.team7170.control.HIDButtonAccessor;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
@@ -288,6 +289,8 @@ public class Drive extends Module implements Communicator {
         return right_enc.getStopped();
     }
 
+    private double speed_factor = RobotMap.Drive.rabbit_speed;
+
     public void poll_controls() {
         HIDAxisAccessor y_axis = Control.get_instance().action2axis(Action.A_DRIVE_Y);
         HIDAxisAccessor z_axis = Control.get_instance().action2axis(Action.A_DRIVE_Z);
@@ -295,14 +298,33 @@ public class Drive extends Module implements Communicator {
         HIDAxisAccessor r_axis = Control.get_instance().action2axis(Action.A_DRIVE_R);
         HIDAxisAccessor throttle = Control.get_instance().action2axis(Action.A_THROTTLE_CONTROL);
         if (l_axis != null && r_axis != null) {
-            Drive.get_instance().set_tank(-l_axis.get()*(throttle != null ? throttle.get() : 1),
-                    -r_axis.get()*(throttle != null ? throttle.get() : 1), false, true);
+            Drive.get_instance().set_tank(-l_axis.get()*(throttle != null ? throttle.get() : 1)*speed_factor,
+                    -r_axis.get()*(throttle != null ? throttle.get() : 1)*speed_factor,
+                    false, true);
         } else if (y_axis != null && z_axis != null) {
-            Drive.get_instance().set_arcade(-y_axis.get()*(throttle != null ? throttle.get() : 1),
-                    z_axis.get()*(throttle != null ? throttle.get() : 1), false, true);
+            Drive.get_instance().set_arcade(-y_axis.get()*(throttle != null ? throttle.get() : 1)*speed_factor,
+                    z_axis.get()*(throttle != null ? throttle.get() : 1)*speed_factor,
+                    false, true);
         } else {
             LOGGER.warning("Current KeyMap has no drive controls! Setting drive to (0, 0).");
             Drive.get_instance().set_tank(0, 0, false, true);
+        }
+        // Speed control
+        HIDButtonAccessor toggle_speed = Control.get_instance().action2button(Action.B_TOGGLE_SPEED);
+        if (toggle_speed != null && toggle_speed.get_pressed()) {
+            if (speed_factor == RobotMap.Drive.rabbit_speed) {
+                speed_factor = RobotMap.Drive.tortoise_speed;
+            } else {
+                speed_factor = RobotMap.Drive.rabbit_speed;
+            }
+        } else {
+            HIDButtonAccessor tortoise_speed = Control.get_instance().action2button(Action.B_TORTOISE_SPEED);
+            HIDButtonAccessor rabbit_speed = Control.get_instance().action2button(Action.B_RABBIT_SPEED);
+            if (tortoise_speed != null && tortoise_speed.get_pressed()) {
+                speed_factor = RobotMap.Drive.tortoise_speed;
+            } else if (rabbit_speed != null && rabbit_speed.get_pressed()) {
+                speed_factor = RobotMap.Drive.rabbit_speed;
+            }
         }
     }
 

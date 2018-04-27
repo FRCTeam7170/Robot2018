@@ -18,6 +18,9 @@ public enum Action {
     A_DRIVE_L,
     A_DRIVE_R,
     A_THROTTLE_CONTROL,
+    B_RABBIT_SPEED,
+    B_TORTOISE_SPEED,
+    B_TOGGLE_SPEED,
 
     B_ARM_UP,
     B_ARM_DOWN,
