@@ -9,13 +9,13 @@ import frc.team7170.control.Action;
 import frc.team7170.robot.RobotMap;
 
 
-public class DefaultGamepadBindings extends KeyMap implements Communicator {
+public class GamepadBindings1 extends KeyMap implements Communicator {
 
-    private static KeyMap instance = new DefaultGamepadBindings();  // Singleton
+    private static KeyMap instance = new GamepadBindings1();  // Singleton
     public static KeyMap get_instance() {
         return instance;
     }
-    private DefaultGamepadBindings() {
+    private GamepadBindings1() {
         axes.put(Action.A_DRIVE_Y, Control.get_instance().gamepad.axes.RY);
         axes.put(Action.A_DRIVE_Z, Control.get_instance().gamepad.axes.RX);
         axes.put(Action.A_ARM_ANALOG_DOWN, Control.get_instance().gamepad.axes.LT);

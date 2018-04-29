@@ -91,26 +91,27 @@ public class RobotMap {
 
     public static class Arm {
         public static double pot_scale = -300.0;  // Max rotation of arm
-        public static double pot_offset = 268.9;  // Offset off of perfectly vertical
+        public static double pot_offset = 271.4;  // Offset off of perfectly vertical
         public static double endE_speed = 0.75;
-        public static double arm_speed = 0.60;
+        public static double arm_speed = 0.70;
         public static double arm_speed_multiplier = 0.50;
         public static boolean reverse_endE_left = true;
         public static boolean reverse_endE_right = false;
         public static boolean reverse_arm_left = true;
         public static boolean reverse_arm_right = true;
-        public static double pot_value_kill_lower_inner = 23.0;   // TODO
-        public static double pot_value_kill_upper_inner = 93.0;  // TODO
-        public static double pot_value_kill_lower_outer = 20.0;   // TODO
-        public static double pot_value_kill_upper_outer = 96.0;  // TODO
-        public static double pot_value_base_conflict = 10.0;       // TODO
+        public static double pot_value_kill_lower_inner = 23.0;
+        public static double pot_value_kill_upper_inner = 93.0;
+        public static double pot_value_kill_lower_outer = 20.0;
+        public static double pot_value_kill_upper_outer = 96.0;
+        public static double pot_value_base_conflict = 10.0;
         public static double pot_value_home = 0.0;     // TODO
-        public static double pot_value_base = 18.0;     // TODO
-        public static double pot_value_switch = 60.0;   // TODO
+        public static double pot_value_base = 18.0;
+        public static double pot_value_switch = 0.0;   // TODO
         public static double pot_value_scale = 0.0;    // TODO
         public static double pot_value_reverse = 0.0;  // TODO
         public static double move_arm_pot_tolerance = 1.0;  // degrees
         public static double arm_analog_ignore_thresh = 0.2;  // ignore joystick input if below this value
+        public static double endE_analog_ignore_thresh = 0.1;  // ignore joystick input if below this value
     }
 
     public static class Communication {

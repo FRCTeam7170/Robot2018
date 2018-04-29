@@ -12,8 +12,6 @@ import frc.team7170.comm.Communicator;
 import frc.team7170.comm.RPCCaller;
 import frc.team7170.comm.TransmitFrequency;
 import frc.team7170.comm.Transmitter;
-import frc.team7170.control.keymaps.DefaultGamepadBindings;
-import frc.team7170.control.keymaps.DefaultJoystickBindings;
 import frc.team7170.control.keymaps.KeyMap;
 import frc.team7170.robot.RobotMap;
 

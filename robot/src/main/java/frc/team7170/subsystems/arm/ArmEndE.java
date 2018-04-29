@@ -8,6 +8,7 @@ import frc.team7170.control.HIDButtonAccessor;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
+import frc.team7170.util.CalcUtil;
 
 import java.util.logging.Logger;
 
@@ -71,19 +72,36 @@ public class ArmEndE extends Module {
         return spark_left_endE.get();  // Doesn't matter which
     }
 
+    /**
+     * Poll the controls involved with this system for when the robot is in teleop mode.
+     * Note the "tiered" layout (i.e. the order the buttons/axes are checked): all the various input sources for a
+     * certain system have a precedence.
+     */
     public void poll_controls() {
         HIDAxisAccessor endE_axis = Control.get_instance().action2axis(Action.A_ENDE_ANALOG);
         if (endE_axis != null) {
             endE_analog(endE_axis.get());
         } else {
-            HIDButtonAccessor endE_push_btn = Control.get_instance().action2button(Action.B_ENDE_PUSH);
-            HIDButtonAccessor endE_suck_btn = Control.get_instance().action2button(Action.B_ENDE_SUCK);
-            if (endE_push_btn != null && endE_push_btn.get()) {
-                endE_push();
-            } else if (endE_suck_btn != null && endE_suck_btn.get()) {
-                endE_suck();
+            HIDAxisAccessor endE_axis_push = Control.get_instance().action2axis(Action.A_ENDE_ANALOG_PUSH);
+            HIDAxisAccessor endE_axis_suck = Control.get_instance().action2axis(Action.A_ENDE_ANALOG_SUCK);
+            if (endE_axis_push != null && endE_axis_suck != null) {
+                if (!CalcUtil.in_threshold(endE_axis_push.get(), 0, RobotMap.Arm.endE_analog_ignore_thresh)) {
+                    endE_analog(endE_axis_push.get());
+                } else if (!CalcUtil.in_threshold(endE_axis_suck.get(), 0, RobotMap.Arm.endE_analog_ignore_thresh)) {
+                    endE_analog(endE_axis_suck.get());
+                } else {
+                    endE_kill();
+                }
             } else {
-                endE_kill();
+                HIDButtonAccessor endE_push_btn = Control.get_instance().action2button(Action.B_ENDE_PUSH);
+                HIDButtonAccessor endE_suck_btn = Control.get_instance().action2button(Action.B_ENDE_SUCK);
+                if (endE_push_btn != null && endE_push_btn.get()) {
+                    endE_push();
+                } else if (endE_suck_btn != null && endE_suck_btn.get()) {
+                    endE_suck();
+                } else {
+                    endE_kill();
+                }
             }
         }
     }

@@ -8,7 +8,6 @@ import frc.team7170.control.HIDAxisAccessor;
 import frc.team7170.control.HIDButtonAccessor;
 import frc.team7170.jobs.Dispatcher;
 import frc.team7170.jobs.JRunnable;
-import frc.team7170.jobs.Job;
 import frc.team7170.jobs.Module;
 import frc.team7170.robot.RobotMap;
 import frc.team7170.subsystems.Pneumatics;
@@ -40,6 +39,7 @@ public class ArmRotate extends Module {
 
     @Override
     protected void update() {
+        // Make sure the arm never breaks the 16 in. perimeter plane.
         if (Pneumatics.get_instance().get_solenoids() && in_inner_thresh()) {
             Pneumatics.get_instance().set_solenoids(false);
         }
@@ -88,6 +88,10 @@ public class ArmRotate extends Module {
         return pot.get() < RobotMap.Arm.pot_value_base_conflict;
     }
 
+    /**
+     * Attempt to extend the arm. Fails if the arm will collide with the base or go out of perimeter.
+     * @return If the extend was successful.
+     */
     public boolean try_extend() {
         if (Pneumatics.get_instance().get_solenoids() || base_conflicting_extend() || in_inner_thresh()) {
             return false;
@@ -96,10 +100,19 @@ public class ArmRotate extends Module {
         return true;
     }
 
+    /**
+     * Retract the arm.
+     * @return If the retract was successful.
+     */
     public boolean retract() {
         return Pneumatics.get_instance().set_solenoids(false);
     }
 
+    /**
+     * Attempt to toggle the arm. Will always succeed if the arm is currently extended (unless the robot is disabled);
+     * fails if the arm is retracted and the arm will collide with the base or break the perimeter plane.
+     * @return If the toggle was successful.
+     */
     public boolean try_toggle() {
         if (Pneumatics.get_instance().get_solenoids()) {
             return retract();
@@ -107,22 +120,38 @@ public class ArmRotate extends Module {
         return try_extend();
     }
 
+    /**
+     * @return The current arm potentiometer reading as degrees off of the starting (limp) position.
+     */
     public double get_pot_val() {
         return pot.get();
     }
 
+    /**
+     * Move the arm up at a set speed. Note that the multiplier in RobotMap is applied here.
+     */
     public void arm_up() {
         arm_analog(RobotMap.Arm.arm_speed);
     }
 
+    /**
+     * Move the arm down at a set speed. Note that the multiplier in RobotMap is applied here.
+     */
     public void arm_down() {
         arm_analog(-RobotMap.Arm.arm_speed);
     }
 
+    /**
+     * Turn the arm rotation off.
+     */
     public void arm_kill() {
         arm_analog(0);
     }
 
+    /**
+     * Set the arm rotate motors to a given speed. Note a multiplier is applied lest the arm moves too jerkily.
+     * @param speed The speed to set in [0,1].
+     */
     public void arm_analog(double speed) {
         if (!get_enabled()) {
             return;
@@ -131,46 +160,71 @@ public class ArmRotate extends Module {
         spark_right_arm.set(RobotMap.Arm.arm_speed_multiplier*speed);
     }
 
+    /**
+     * @return The arm's current speed.
+     */
     public double get_arm_speed() {
-        return spark_left_arm.get();  // Doesn't matter which
+        return spark_left_arm.get();  // Doesn't matter which side
     }
 
+    /**
+     * Move the arm to the "home" position (position the robot starts in).
+     */
     public void go_to_home_position() {
         stop_hold_arm();
         Pneumatics.get_instance().set_solenoids(false);
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_home));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_home, 0.6, 0.5, 0, 0.3, 0.7, false, false));
         hold_arm();
     }
 
+    /**
+     * Move the arm to the "base" position (position used when sucking up cubes).
+     */
     public void go_to_base_position() {
         stop_hold_arm();
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base, 0.6, 0.5, 0, 0.3, 0.7, false, false));
         // Extend the arm after getting to the base position
         Dispatcher.get_instance().add_job(new JRunnable(() -> Pneumatics.get_instance().set_solenoids(true), this));
         hold_arm();
     }
 
+    /**
+     * Move the arm to the switch position (position used when shooting cubes into the switch).
+     */
     public void go_to_switch_position() {
         stop_hold_arm();
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_switch));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_switch, 0.6, 0.5, 0, 0.3, 0.7, false, false));
         hold_arm();
     }
 
+    /**
+     * Move the arm to the scale position (position used when shooting cubes into the scale).
+     */
     public void go_to_scale_position() {
         stop_hold_arm();
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_scale));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_scale, 0.6, 0.5, 0, 0.3, 0.7, false, false));
         hold_arm();
     }
 
+    /**
+     * Move the arm to the "reverse" position (position used to shoot cubes into the switch backwards).
+     */
     public void go_to_reverse_position() {
         stop_hold_arm();
         Pneumatics.get_instance().set_solenoids(false);
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_reverse));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_reverse, 0.6, 0.5, 0, 0.3, 0.7, false, false));
         hold_arm();
     }
 
-    private Job teleop_hold_arm;
+    /**
+     * Holds the {@link JHoldArm} that is ran during teleop essentially whenever no arm input is provided.
+     */
+    private JHoldArm teleop_hold_arm;
 
+    /**
+     * Instantiate a new {@link JHoldArm} if the current one no longer exists (i.e. if the arm was moved since the
+     * instantiation of the last job).
+     */
     private void hold_arm() {
         if (teleop_hold_arm == null) {
             teleop_hold_arm = new JHoldArm();
@@ -178,6 +232,9 @@ public class ArmRotate extends Module {
         }
     }
 
+    /**
+     * Cancel the current {@link JHoldArm} to allow for manual arm motor input or otherwise.
+     */
     private void stop_hold_arm() {
         if (teleop_hold_arm != null) {
             Dispatcher.get_instance().cancel_job(teleop_hold_arm, true);
@@ -185,6 +242,11 @@ public class ArmRotate extends Module {
         }
     }
 
+    /**
+     * Poll the controls involved with this system for when the robot is in teleop mode.
+     * Note the "tiered" layout (i.e. the order the buttons/axes are checked): all the various input sources for a
+     * certain system have a precedence.
+     */
     public void poll_controls() {
         // Poll extension controls
         HIDButtonAccessor extend_btn = Control.get_instance().action2button(Action.B_TRY_ARM_EXTEND);
@@ -196,6 +258,8 @@ public class ArmRotate extends Module {
             retract();
         } else if (toggle_btn != null && toggle_btn.get_pressed()) {
             try_toggle();
+        } else {
+            LOGGER.warning("Current KeyMap has no arm extension controls!");
         }
 
         // Poll rotate controls

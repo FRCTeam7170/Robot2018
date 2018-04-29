@@ -27,12 +27,13 @@ public enum Action {
     A_ARM_ANALOG,
     A_ARM_ANALOG_UP,
     A_ARM_ANALOG_DOWN,
-    B_ARM_SWITCH,
     B_ARM_BASE,
 
     B_ENDE_SUCK,
     B_ENDE_PUSH,
     A_ENDE_ANALOG,
+    A_ENDE_ANALOG_PUSH,
+    A_ENDE_ANALOG_SUCK,
 
     B_ARM_RETRACT,
     B_TRY_ARM_EXTEND,

@@ -1,5 +1,6 @@
 package frc.team7170.jobs;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.team7170.comm.Communicator;
 import frc.team7170.comm.TransmitFrequency;
@@ -50,7 +51,8 @@ public class Dispatcher implements Communicator {
      * when the module locks are freed. Note that the priority of the jobs is the order they are added in.
      * @param job The job to run/queue
      */
-    public synchronized void add_job(Job job) {
+    public synchronized void add_job(Job job, Module ...mods) {
+        job.requires(mods);  // TODO: temp
         if (can_run_job(job)) {
             start_job(job);
         } else {
@@ -66,6 +68,7 @@ public class Dispatcher implements Communicator {
         // Update each module and run defaults if locks are free
         modules.forEach((Module mod, Boolean locked) -> {
             mod._update();
+            /*
             if (mod.get_current_job() == null && mod.get_default_job() != null) {
                 // Start the default job without claiming the lock so new jobs with this module as a requirement can override it
                 running_jobs.add(mod.get_default_job());
@@ -75,11 +78,11 @@ public class Dispatcher implements Communicator {
                 // Doing this every iteration isn't ideal, but this call should be pretty cheap and I can't think of a better method without a lot of work
                 running_jobs.remove(mod.get_default_job());
             }
+            */
         });
 
         // Update each job and remove it if it's finished
-        Iterator<Job> iter = running_jobs.iterator();
-        while(iter.hasNext()) {
+        for (Iterator<Job> iter = running_jobs.iterator(); iter.hasNext();) {
             Job job = iter.next();
             if (job._update()) {  // returns true if the job is finished
                 jobs_updated = true;
@@ -98,8 +101,7 @@ public class Dispatcher implements Communicator {
 
         // Run new jobs if required module locks are free
         if (jobs_updated) {  // Only iterate through the queued jobs if a change to the running ones has occurred
-            iter = queued_jobs.iterator();
-            while (iter.hasNext()) {
+            for (ListIterator<Job> iter = queued_jobs.listIterator(); iter.hasNext();) {
                 Job job = iter.next();
                 if (can_run_job(job)) {  // If the necessary module locks are free, start the highest priority (dictated by order added to list) job
                     start_job(job);
@@ -186,8 +188,7 @@ public class Dispatcher implements Communicator {
     public synchronized void cancel_all() {
         LOGGER.fine("Cancelling all jobs.");
         queued_jobs.clear();  // Clear the queued jobs.
-        Iterator<Job> iter = running_jobs.iterator();
-        while (iter.hasNext()) {
+        for (Iterator<Job> iter = running_jobs.iterator(); iter.hasNext();) {
             Job job = iter.next();
             free_module_locks(job);
             job.cancel(true);

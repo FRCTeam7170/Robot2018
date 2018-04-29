@@ -5,6 +5,7 @@ import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.RpcAnswer;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -65,13 +66,10 @@ public class Drive extends Module implements Communicator {
     private Encoder right_enc = new Encoder(RobotMap.DIO.encoder_right_A, RobotMap.DIO.encoder_right_B);
 
     private BuiltInAccelerometer accelerometer = new BuiltInAccelerometer();
+    private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
     // These hold the L and R speeds actually sent to the speed controllers
     private double rob_L = 0, rob_R = 0;
-
-    @Override
-    protected void update() {
-    }
 
     @Override
     protected void enabled() {
@@ -92,12 +90,14 @@ public class Drive extends Module implements Communicator {
     }
 
     /**
+     * TODO: This currently doesn't work!
      * Optional algorithm to reduce jerk (change in acceleration) during teleop manual control period. This method
      * alters the rob_L and rob_R motor speeds in-place.
      * @param left Left motor speed on joystick.
      * @param right RIght motor speed on joystick.
      */
     private void smooth_current(double left, double right) {
+        LOGGER.warning("Attempting to use smooth current algorithm for driving but it is broken!");
         double dL = Math.abs(left) - Math.abs(rob_L);
         double dR = Math.abs(right) - Math.abs(rob_R);
         if (Math.abs(left) <= RobotMap.DriveSmooth.logic_threshold_L && dL > 0 &&
@@ -231,6 +231,18 @@ public class Drive extends Module implements Communicator {
         right_enc.reset();
     }
 
+    /**
+     * Reset the gyro such that the current direction is considered zero.
+     */
+    public void reset_gyro() {
+        LOGGER.fine("Zeroing gyro.");
+        gyro.reset();
+    }
+
+    public double get_gyro() {
+        return gyro.getAngle();
+    }
+
 
     // Accelerometer accessors
 
@@ -289,9 +301,21 @@ public class Drive extends Module implements Communicator {
         return right_enc.getStopped();
     }
 
+
+    /**
+     * A binary speed multiplier applied to the motor speed axes inputs. Either {@link RobotMap.Drive#rabbit_speed} or
+     * {@link RobotMap.Drive#tortoise_speed}.
+     * Note this multiplier
+     */
     private double speed_factor = RobotMap.Drive.rabbit_speed;
 
+    /**
+     * Poll the controls involved with this system for when the robot is in teleop mode.
+     * Note the "tiered" layout (i.e. the order the buttons/axes are checked): all the various input sources for a
+     * certain system have a precedence.
+     */
     public void poll_controls() {
+        // Poll drive controls
         HIDAxisAccessor y_axis = Control.get_instance().action2axis(Action.A_DRIVE_Y);
         HIDAxisAccessor z_axis = Control.get_instance().action2axis(Action.A_DRIVE_Z);
         HIDAxisAccessor l_axis = Control.get_instance().action2axis(Action.A_DRIVE_L);
@@ -309,22 +333,21 @@ public class Drive extends Module implements Communicator {
             LOGGER.warning("Current KeyMap has no drive controls! Setting drive to (0, 0).");
             Drive.get_instance().set_tank(0, 0, false, true);
         }
-        // Speed control
+
+        // Poll speed (rabbit/tortoise) control
         HIDButtonAccessor toggle_speed = Control.get_instance().action2button(Action.B_TOGGLE_SPEED);
+        HIDButtonAccessor tortoise_speed = Control.get_instance().action2button(Action.B_TORTOISE_SPEED);
+        HIDButtonAccessor rabbit_speed = Control.get_instance().action2button(Action.B_RABBIT_SPEED);
         if (toggle_speed != null && toggle_speed.get_pressed()) {
             if (speed_factor == RobotMap.Drive.rabbit_speed) {
                 speed_factor = RobotMap.Drive.tortoise_speed;
             } else {
                 speed_factor = RobotMap.Drive.rabbit_speed;
             }
-        } else {
-            HIDButtonAccessor tortoise_speed = Control.get_instance().action2button(Action.B_TORTOISE_SPEED);
-            HIDButtonAccessor rabbit_speed = Control.get_instance().action2button(Action.B_RABBIT_SPEED);
-            if (tortoise_speed != null && tortoise_speed.get_pressed()) {
-                speed_factor = RobotMap.Drive.tortoise_speed;
-            } else if (rabbit_speed != null && rabbit_speed.get_pressed()) {
-                speed_factor = RobotMap.Drive.rabbit_speed;
-            }
+        } else if (tortoise_speed != null && tortoise_speed.get_pressed()) {
+            speed_factor = RobotMap.Drive.tortoise_speed;
+        } else if (rabbit_speed != null && rabbit_speed.get_pressed()) {
+            speed_factor = RobotMap.Drive.rabbit_speed;
         }
     }
 
