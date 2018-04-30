@@ -99,13 +99,13 @@ public class RobotMap {
         public static boolean reverse_endE_right = false;
         public static boolean reverse_arm_left = true;
         public static boolean reverse_arm_right = true;
-        public static double pot_value_kill_lower_inner = 23.0;
+        public static double pot_value_kill_lower_inner = 25.0;
         public static double pot_value_kill_upper_inner = 93.0;
-        public static double pot_value_kill_lower_outer = 20.0;
+        public static double pot_value_kill_lower_outer = 22.0;
         public static double pot_value_kill_upper_outer = 96.0;
         public static double pot_value_base_conflict = 10.0;
         public static double pot_value_home = 0.0;     // TODO
-        public static double pot_value_base = 18.0;
+        public static double pot_value_base = 16.0;
         public static double pot_value_switch = 0.0;   // TODO
         public static double pot_value_scale = 0.0;    // TODO
         public static double pot_value_reverse = 0.0;  // TODO

@@ -173,7 +173,7 @@ public class ArmRotate extends Module {
     public void go_to_home_position() {
         stop_hold_arm();
         Pneumatics.get_instance().set_solenoids(false);
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_home, 0.6, 0.5, 0, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_home, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
         hold_arm();
     }
 
@@ -182,7 +182,7 @@ public class ArmRotate extends Module {
      */
     public void go_to_base_position() {
         stop_hold_arm();
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base, 0.6, 0.5, 0, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
         // Extend the arm after getting to the base position
         Dispatcher.get_instance().add_job(new JRunnable(() -> Pneumatics.get_instance().set_solenoids(true), this));
         hold_arm();
@@ -193,7 +193,7 @@ public class ArmRotate extends Module {
      */
     public void go_to_switch_position() {
         stop_hold_arm();
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_switch, 0.6, 0.5, 0, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_switch, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
         hold_arm();
     }
 
@@ -202,7 +202,7 @@ public class ArmRotate extends Module {
      */
     public void go_to_scale_position() {
         stop_hold_arm();
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_scale, 0.6, 0.5, 0, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_scale, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
         hold_arm();
     }
 
@@ -212,7 +212,7 @@ public class ArmRotate extends Module {
     public void go_to_reverse_position() {
         stop_hold_arm();
         Pneumatics.get_instance().set_solenoids(false);
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_reverse, 0.6, 0.5, 0, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_reverse, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
         hold_arm();
     }
 
@@ -258,8 +258,6 @@ public class ArmRotate extends Module {
             retract();
         } else if (toggle_btn != null && toggle_btn.get_pressed()) {
             try_toggle();
-        } else {
-            LOGGER.warning("Current KeyMap has no arm extension controls!");
         }
 
         // Poll rotate controls
@@ -306,4 +304,246 @@ public class ArmRotate extends Module {
             go_to_base_position();
         }
     }
+    /*
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.STATIC, value = {
+            "O_PWM_ARM_LEFT_MOTOR_NS",
+            "O_PWM_ARM_RIGHT_MOTOR_NS",
+            "O_PWM_ENDE_LEFT_MOTOR_NS",
+            "O_PWM_ENDE_RIGHT_MOTOR_NS",
+            "O_AIO_ARM_POT_NS",
+            "O_ARM_POT_SCALE_MS",
+            "O_ARM_POT_OFFSET_MS",
+            "O_ARM_SPEED_MS",
+            "O_ENDE_SPEED_MS",
+            "O_ENDE_REVERSE_LEFT_MS",
+            "O_ENDE_REVERSE_RIGHT_MS",
+            "O_ARM_REVERSE_LEFT_MS",
+            "O_ARM_REVERSE_RIGHT_MS",
+            "O_ARM_POT_KILL_VAL_LOWER_INNER_MS",
+            "O_ARM_POT_KILL_VAL_UPPER_INNER_MS",
+            "O_ARM_POT_KILL_VAL_LOWER_OUTER_MS",
+            "O_ARM_POT_KILL_VAL_UPPER_OUTER_MS"
+    })
+    public void transmitter_static(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_PWM_ARM_LEFT_MOTOR_NS":
+                entry.setDouble(RobotMap.PWM.arm_left_motor);
+                break;
+            case "O_PWM_ARM_RIGHT_MOTOR_NS":
+                entry.setDouble(RobotMap.PWM.arm_right_motor);
+                break;
+            case "O_PWM_ENDE_LEFT_MOTOR_NS":
+                entry.setDouble(RobotMap.PWM.endE_left_motor);
+                break;
+            case "O_PWM_ENDE_RIGHT_MOTOR_NS":
+                entry.setDouble(RobotMap.PWM.endE_right_motor);
+                break;
+            case "O_AIO_ARM_POT_NS":
+                entry.setDouble(RobotMap.AIO.arm_pot);
+                break;
+            case "O_ARM_POT_SCALE_MS":
+                entry.setDouble(RobotMap.Arm.pot_scale);
+                break;
+            case "O_ARM_POT_OFFSET_MS":
+                entry.setDouble(RobotMap.Arm.pot_offset);
+                break;
+            case "O_ARM_SPEED_MS":
+                entry.setDouble(RobotMap.Arm.arm_speed);
+                break;
+            case "O_ENDE_SPEED_MS":
+                entry.setDouble(RobotMap.Arm.endE_speed);
+                break;
+            case "O_ENDE_REVERSE_LEFT_MS":
+                entry.setBoolean(RobotMap.Arm.reverse_endE_left);
+                break;
+            case "O_ENDE_REVERSE_RIGHT_MS":
+                entry.setBoolean(RobotMap.Arm.reverse_endE_right);
+                break;
+            case "O_ARM_REVERSE_LEFT_MS":
+                entry.setBoolean(RobotMap.Arm.reverse_arm_left);
+                break;
+            case "O_ARM_REVERSE_RIGHT_MS":
+                entry.setBoolean(RobotMap.Arm.reverse_arm_right);
+                break;
+            case "O_ARM_POT_KILL_VAL_LOWER_INNER_MS":
+                entry.setDouble(RobotMap.Arm.pot_value_kill_lower_inner);
+                break;
+            case "O_ARM_POT_KILL_VAL_UPPER_INNER_MS":
+                entry.setDouble(RobotMap.Arm.pot_value_kill_upper_inner);
+                break;
+            case "O_ARM_POT_KILL_VAL_LOWER_OUTER_MS":
+                entry.setDouble(RobotMap.Arm.pot_value_kill_lower_outer);
+                break;
+            case "O_ARM_POT_KILL_VAL_UPPER_OUTER_MS":
+                entry.setDouble(RobotMap.Arm.pot_value_kill_upper_outer);
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.SLOW, value = {
+            "O_ARM_ENABLED_RT"
+    })
+    public void transmitter_slow(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_ARM_ENABLED_RT":
+                entry.setBoolean(get_enabled());
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Transmitter(poll_rate = TransmitFrequency.FAST, value = {
+            "O_ARM_POT_VAL_NT",
+            "O_ARM_CURR_SPEED_NT",
+            "O_ENDE_CURR_SPEED_NT"
+    })
+    public void transmitter_fast(NetworkTableEntry entry) {
+        switch (entry.getName()) {
+            case "O_ARM_POT_VAL_NT":
+                entry.setDouble(get_pot_val());
+                break;
+            case "O_ARM_CURR_SPEED_NT":
+                entry.setDouble(get_arm_speed());
+                break;
+            case "O_ENDE_CURR_SPEED_NT":
+                entry.setDouble(get_endE_speed());
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Receiver({
+            "I_ARM_POT_SCALE",
+            "I_ARM_POT_OFFSET",
+            "I_ARM_SPEED",
+            "I_ENDE_SPEED",
+            "I_ENDE_REVERSE_LEFT",
+            "I_ENDE_REVERSE_RIGHT",
+            "I_ARM_REVERSE_LEFT",
+            "I_ARM_REVERSE_RIGHT",
+            "I_ARM_POT_KILL_VAL_LOWER_INNER",
+            "I_ARM_POT_KILL_VAL_UPPER_INNER",
+            "I_ARM_POT_KILL_VAL_LOWER_OUTER",
+            "I_ARM_POT_KILL_VAL_UPPER_OUTER"
+    })
+    public void receiver(EntryNotification event) {
+        switch (event.name) {
+            case "I_ARM_POT_SCALE":
+                if (event.value.isDouble()) {
+                    RobotMap.Arm.pot_scale = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 360.0);
+                    // Pot must be reinitialized as there does not exist any sort of .setScale() method.
+                    pot.free();
+                    pot = new AnalogPotentiometer(RobotMap.AIO.arm_pot, RobotMap.Arm.pot_scale, RobotMap.Arm.pot_offset);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_ARM_POT_OFFSET":
+                if (event.value.isDouble()) {
+                    RobotMap.Arm.pot_offset = CalcUtil.apply_bounds(event.value.getDouble(), -360.0, 360.0);
+                    // Pot must be reinitialized as there does not exist any sort of .setOffset() method.
+                    pot.free();
+                    pot = new AnalogPotentiometer(RobotMap.AIO.arm_pot, RobotMap.Arm.pot_scale, RobotMap.Arm.pot_offset);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_ARM_SPEED":
+                if (event.value.isDouble()) {
+                    RobotMap.Arm.arm_speed = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1.0);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_ENDE_SPEED":
+                if (event.value.isDouble()) {
+                    RobotMap.Arm.endE_speed = CalcUtil.apply_bounds(event.value.getDouble(), 0.0, 1.0);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_ENDE_REVERSE_LEFT":
+                if (event.value.isBoolean()) {
+                    RobotMap.Arm.reverse_endE_left = event.value.getBoolean();
+                    spark_left_endE.setInverted(RobotMap.Arm.reverse_endE_left);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a boolean!");
+                }
+                break;
+            case "I_ENDE_REVERSE_RIGHT":
+                if (event.value.isBoolean()) {
+                    RobotMap.Arm.reverse_endE_right = event.value.getBoolean();
+                    spark_right_endE.setInverted(RobotMap.Arm.reverse_endE_right);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a boolean!");
+                }
+                break;
+            case "I_ARM_REVERSE_LEFT":
+                if (event.value.isBoolean()) {
+                    RobotMap.Arm.reverse_arm_left = event.value.getBoolean();
+                    spark_left_arm.setInverted(RobotMap.Arm.reverse_arm_left);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a boolean!");
+                }
+                break;
+            case "I_ARM_REVERSE_RIGHT":
+                if (event.value.isBoolean()) {
+                    RobotMap.Arm.reverse_arm_right = event.value.getBoolean();
+                    spark_right_arm.setInverted(RobotMap.Arm.reverse_arm_right);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a boolean!");
+                }
+                break;
+            case "I_ARM_POT_KILL_VAL_LOWER_INNER":
+                if (event.value.isDouble()) {
+                    RobotMap.Arm.pot_value_kill_lower_inner = CalcUtil.apply_bounds(event.value.getDouble(),
+                            RobotMap.Arm.pot_offset, RobotMap.Arm.pot_scale+RobotMap.Arm.pot_offset);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_ARM_POT_KILL_VAL_UPPER_INNER":
+                if (event.value.isDouble()) {
+                    RobotMap.Arm.pot_value_kill_upper_inner = CalcUtil.apply_bounds(event.value.getDouble(),
+                            RobotMap.Arm.pot_offset, RobotMap.Arm.pot_scale+RobotMap.Arm.pot_offset);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_ARM_POT_KILL_VAL_LOWER_OUTER":
+                if (event.value.isDouble()) {
+                    RobotMap.Arm.pot_value_kill_lower_outer = CalcUtil.apply_bounds(event.value.getDouble(),
+                            RobotMap.Arm.pot_offset, RobotMap.Arm.pot_scale+RobotMap.Arm.pot_offset);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+            case "I_ARM_POT_KILL_VAL_UPPER_OUTER":
+                if (event.value.isDouble()) {
+                    RobotMap.Arm.pot_value_kill_upper_outer = CalcUtil.apply_bounds(event.value.getDouble(),
+                            RobotMap.Arm.pot_offset, RobotMap.Arm.pot_scale+RobotMap.Arm.pot_offset);
+                } else {
+                    LOGGER.severe(event.name+" entry updated but it is not a double!");
+                }
+                break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @RPCCaller("R_ARM_ENABLE")
+    public void rpccaller_enable(RpcAnswer rpc) {
+        if (rpc.params.getBytes()[0] == 1) {
+            LOGGER.info("Arm enabled via RPC.");
+            set_enabled(true);
+            rpc.postResponse(new byte[] {1});  // Success
+        } else if (rpc.params.getBytes()[0] == 0) {
+            LOGGER.info("Arm disabled via RPC.");
+            set_enabled(false);
+            rpc.postResponse(new byte[] {1});  // Success
+        }
+        rpc.postResponse(new byte[] {0});  // Failure
+    }
+    */
 }

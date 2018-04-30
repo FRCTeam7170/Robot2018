@@ -2,8 +2,8 @@ package frc.team7170.jobs;
 
 
 /**
- * Convert given {@link Runnable} objects and stall time into a {@link Job} with the given requirements.
- * Can be used as just a delay, or just perform a simply task not warranting the need of an entire new Job type.
+ * Convert given {@link Runnable} objects and stall time into a {@link Job} with the given required {@link Module}s.
+ * Can be used as just a delay, or just perform a simple task not warranting the need of an entire new Job type.
  */
 public class JRunnable extends Job {
 

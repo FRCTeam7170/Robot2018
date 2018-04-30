@@ -38,7 +38,8 @@ public class JTurn extends Job {
         // Progress of maneuver is calculated by average encoder distance over projected distance.
         // drive.set_arcade(drive.get_Y(), accel.get((Math.abs(drive.get_Lenc()) + Math.abs(drive.get_Renc()))/2/predicted_final_enc),
         //         false, false);
-        // TODO: check how gyro output works
+        drive.set_arcade(0, (degrees >= 0 ? drive.get_gyro() : 360 - drive.get_gyro())/Math.abs(degrees),
+                false, false);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class JTurn extends Job {
         //return CalcUtil.in_threshold((Math.abs(drive.get_Lenc()) + Math.abs(drive.get_Renc()))/2,
         //        predicted_final_enc, RobotMap.Maneuvers.turn_angle_tolerance);
         //return (Math.abs(drive.get_Lenc()) + Math.abs(drive.get_Renc()))/2/predicted_final_enc >= 1;
-        return drive.get_gyro()/degrees >= 1;
+        return (degrees >= 0 ? drive.get_gyro() : 360 - drive.get_gyro())/Math.abs(degrees) >= 1;
     }
 
     @Override

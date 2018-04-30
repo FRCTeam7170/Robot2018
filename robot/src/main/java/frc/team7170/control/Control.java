@@ -118,12 +118,9 @@ public class Control implements Communicator {
         public final HIDAxisAccessor Y        = new HIDAxisAccessor(1, _joystick);
         public final HIDAxisAccessor Z        = new HIDAxisAccessor(2, _joystick);
         public final HIDAxisAccessor TWIST    = Z;
-        public final HIDAxisAccessor THROTTLE = new HIDAxisAccessor(3, _joystick);
+        public final HIDAxisAccessor THROTTLE = new HIDAxisAccessor(3, _joystick, -0.5, 0.5);
 
-        _JoystickAxes() {
-            THROTTLE.set_scale(-0.5);
-            THROTTLE.set_offset(0.5);
-        }
+        _JoystickAxes() {}
     }
 
     public class _Joystick {

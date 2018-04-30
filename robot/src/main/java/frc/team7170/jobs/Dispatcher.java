@@ -1,6 +1,5 @@
 package frc.team7170.jobs;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.team7170.comm.Communicator;
 import frc.team7170.comm.TransmitFrequency;
@@ -49,7 +48,7 @@ public class Dispatcher implements Communicator {
     /**
      * Run a {@link Job} if its required {@link Module}s are free. Otherwise queue the job and run it
      * when the module locks are freed. Note that the priority of the jobs is the order they are added in.
-     * @param job The job to run/queue
+     * @param job The job to run/queue.
      */
     public synchronized void add_job(Job job, Module ...mods) {
         job.requires(mods);  // TODO: temp
@@ -65,7 +64,7 @@ public class Dispatcher implements Communicator {
      * This should be called regularly in the robot main loop.
      */
     public synchronized void run() {
-        // Update each module and run defaults if locks are free
+        // Update each module
         modules.forEach((Module mod, Boolean locked) -> {
             mod._update();
             /*
@@ -90,14 +89,6 @@ public class Dispatcher implements Communicator {
                 iter.remove();
             }
         }
-        /*
-        for (Job job : running_jobs) {
-            if (job._update()) {  // returns true if the job is finished
-                jobs_updated = true;
-                free_module_locks(job);
-            }
-        }
-        */
 
         // Run new jobs if required module locks are free
         if (jobs_updated) {  // Only iterate through the queued jobs if a change to the running ones has occurred
@@ -108,14 +99,6 @@ public class Dispatcher implements Communicator {
                     iter.remove();
                 }
             }
-            /*
-            for (Job job : queued_jobs) {
-                if (can_run_job(job)) {  // If the necessary module locks are free, start the highest priority (dictated by order added to list) job
-                    queued_jobs.remove(job);
-                    start_job(job);
-                }
-            }
-            */
         }
 
         jobs_updated = false;  // Reset the jobs_updated so we continue to iterate through the queued_jobs only if a running job has terminated
@@ -123,13 +106,14 @@ public class Dispatcher implements Communicator {
 
     /**
      * Called internally to claim {@link Module} locks, populate the running_jobs list, and start a {@link Job}.
-     * @param job The job to start
+     * @param job The job to start.
      */
     private synchronized void start_job(Job job) {
         // Loop through the job's requirements and claim its required modules
         for (Module mod : job.get_requirements()) {
             if (!mod.claim_lock(job)) {
                 // If the dispatcher handles jobs & modules correctly, this should never happen.
+                // TODO: this is moderately gross.
                 throw new RuntimeException("Job " + job + " attempted to claim Module lock from " + mod + " but Job " + mod.get_current_job() + " owns the lock!");
             }
             modules.replace(mod, true);
@@ -141,11 +125,12 @@ public class Dispatcher implements Communicator {
 
     /**
      * Essentially the opposite of start_job(), except, because a peaceful termination of a {@link Job} ends itself,
-     * we only free {@link Module} locks and remove the job from the running_jobs set.
+     * we only free {@link Module} locks. The job must also be removed from the {@link Dispatcher#running_jobs} set
+     * (this is not done inside this function because if the running_jobs set is begin iterated over when this is
+     * called, a {@link ConcurrentModificationException} results.
      * @param job The job to free locks from.
      */
     private synchronized void free_module_locks(Job job) {
-        // running_jobs.remove(job);
         for (Module mod: job.get_requirements()) {
             mod.free_lock();
             modules.replace(mod, false);
@@ -194,12 +179,6 @@ public class Dispatcher implements Communicator {
             job.cancel(true);
             iter.remove();
         }
-        /*
-        for (Job job: running_jobs) {  // Clear the running jobs.
-            free_module_locks(job);
-            job.cancel(true);
-        }
-        */
     }
 
     @SuppressWarnings("unused")
