@@ -14,7 +14,6 @@ public class JHoldArm extends Job {
     }
 
     public JHoldArm(int stall_ms) {
-        this.degree = ArmRotate.get_instance().get_pot_val();
         requires(ArmRotate.get_instance());
         this.stall_ms = stall_ms;
     }
@@ -22,6 +21,7 @@ public class JHoldArm extends Job {
     @Override
     protected void init() {
         start_time = System.currentTimeMillis();
+        degree = ArmRotate.get_instance().get_pot_val();
     }
 
     @Override

@@ -86,7 +86,7 @@ public class ArmEndE extends Module {
             HIDAxisAccessor endE_axis_suck = Control.get_instance().action2axis(Action.A_ENDE_ANALOG_SUCK);
             if (endE_axis_push != null && endE_axis_suck != null) {
                 if (!CalcUtil.in_threshold(endE_axis_push.get(), 0, RobotMap.Arm.endE_analog_ignore_thresh)) {
-                    endE_analog(endE_axis_push.get());
+                    endE_analog(-endE_axis_push.get());
                 } else if (!CalcUtil.in_threshold(endE_axis_suck.get(), 0, RobotMap.Arm.endE_analog_ignore_thresh)) {
                     endE_analog(endE_axis_suck.get());
                 } else {

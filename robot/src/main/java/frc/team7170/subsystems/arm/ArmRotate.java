@@ -173,7 +173,7 @@ public class ArmRotate extends Module {
     public void go_to_home_position() {
         stop_hold_arm();
         Pneumatics.get_instance().set_solenoids(false);
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_home, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_home, 0.9, 0.7, 0.7, 0.2, 0.8, false, false));
         hold_arm();
     }
 
@@ -182,7 +182,7 @@ public class ArmRotate extends Module {
      */
     public void go_to_base_position() {
         stop_hold_arm();
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_base, 0.9, 0.7, 0.7, 0.2, 0.8, false, false));
         // Extend the arm after getting to the base position
         Dispatcher.get_instance().add_job(new JRunnable(() -> Pneumatics.get_instance().set_solenoids(true), this));
         hold_arm();
@@ -193,7 +193,7 @@ public class ArmRotate extends Module {
      */
     public void go_to_switch_position() {
         stop_hold_arm();
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_switch, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_switch, 0.9, 0.7, 0.7, 0.2, 0.8, false, false));
         hold_arm();
     }
 
@@ -202,7 +202,7 @@ public class ArmRotate extends Module {
      */
     public void go_to_scale_position() {
         stop_hold_arm();
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_scale, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_scale, 0.9, 0.7, 0.7, 0.2, 0.8, false, false));
         hold_arm();
     }
 
@@ -212,7 +212,7 @@ public class ArmRotate extends Module {
     public void go_to_reverse_position() {
         stop_hold_arm();
         Pneumatics.get_instance().set_solenoids(false);
-        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_reverse, 0.6, 0.5, 0.5, 0.3, 0.7, false, false));
+        Dispatcher.get_instance().add_job(new JMoveArm(RobotMap.Arm.pot_value_reverse, 0.9, 0.7, 0.7, 0.2, 0.8, false, false));
         hold_arm();
     }
 

@@ -105,7 +105,7 @@ public class RobotMap {
         public static double pot_value_kill_upper_outer = 96.0;
         public static double pot_value_base_conflict = 10.0;
         public static double pot_value_home = 0.0;     // TODO
-        public static double pot_value_base = 16.0;
+        public static double pot_value_base = 18.0;
         public static double pot_value_switch = 0.0;   // TODO
         public static double pot_value_scale = 0.0;    // TODO
         public static double pot_value_reverse = 0.0;  // TODO
