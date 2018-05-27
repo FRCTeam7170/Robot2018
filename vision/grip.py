@@ -1,7 +1,4 @@
 import cv2
-import numpy
-import math
-from enum import Enum
 
 
 class GripPipeline:
@@ -13,14 +10,13 @@ class GripPipeline:
         """initializes all values to presets or None if need to be set
         """
 
-        self.__cv_resize_dsize = (0, 0)
-        self.__cv_resize_fx = 0.25
-        self.__cv_resize_fy = 0.15
-        self.__cv_resize_interpolation = cv2.INTER_LINEAR
+        self.__resize_image_width = 640
+        self.__resize_image_height = 480
+        self.__resize_image_interpolation = cv2.INTER_CUBIC
 
-        self.cv_resize_output = None
+        self.resize_image_output = None
 
-        self.__hsv_threshold_input = self.cv_resize_output
+        self.__hsv_threshold_input = self.resize_image_output
         self.__hsv_threshold_hue = [0.0, 60.81494057724957]
         self.__hsv_threshold_saturation = [128.41726618705036, 255.0]
         self.__hsv_threshold_value = [128.41726618705036, 255.0]
@@ -53,9 +49,9 @@ class GripPipeline:
         self.__filter_contours_contours = self.find_contours_output
         self.__filter_contours_min_area = 1000.0
         self.__filter_contours_min_perimeter = 0.0
-        self.__filter_contours_min_width = 100.0
+        self.__filter_contours_min_width = 80.0
         self.__filter_contours_max_width = 1000.0
-        self.__filter_contours_min_height = 100.0
+        self.__filter_contours_min_height = 80.0
         self.__filter_contours_max_height = 1000.0
         self.__filter_contours_solidity = [74.64028776978418, 100.0]
         self.__filter_contours_max_vertices = 1000000.0
@@ -65,17 +61,16 @@ class GripPipeline:
 
         self.filter_contours_output = None
 
-
     def process(self, source0):
         """
         Runs the pipeline and sets all outputs to new values.
         """
-        # Step CV_resize0:
-        self.__cv_resize_src = source0
-        (self.cv_resize_output) = self.__cv_resize(self.__cv_resize_src, self.__cv_resize_dsize, self.__cv_resize_fx, self.__cv_resize_fy, self.__cv_resize_interpolation)
+        # Step Resize_Image0:
+        self.__resize_image_input = source0
+        (self.resize_image_output) = self.__resize_image(self.__resize_image_input, self.__resize_image_width, self.__resize_image_height, self.__resize_image_interpolation)
 
         # Step HSV_Threshold0:
-        self.__hsv_threshold_input = self.cv_resize_output
+        self.__hsv_threshold_input = self.resize_image_output
         (self.hsv_threshold_output) = self.__hsv_threshold(self.__hsv_threshold_input, self.__hsv_threshold_hue, self.__hsv_threshold_saturation, self.__hsv_threshold_value)
 
         # Step CV_dilate0:
@@ -94,20 +89,18 @@ class GripPipeline:
         self.__filter_contours_contours = self.find_contours_output
         (self.filter_contours_output) = self.__filter_contours(self.__filter_contours_contours, self.__filter_contours_min_area, self.__filter_contours_min_perimeter, self.__filter_contours_min_width, self.__filter_contours_max_width, self.__filter_contours_min_height, self.__filter_contours_max_height, self.__filter_contours_solidity, self.__filter_contours_max_vertices, self.__filter_contours_min_vertices, self.__filter_contours_min_ratio, self.__filter_contours_max_ratio)
 
-
     @staticmethod
-    def __cv_resize(src, d_size, fx, fy, interpolation):
-        """Resizes an Image.
+    def __resize_image(input, width, height, interpolation):
+        """Scales and image to an exact size.
         Args:
-            src: A numpy.ndarray.
-            d_size: Size to set the image.
-            fx: The scale factor for the x.
-            fy: The scale factor for the y.
-            interpolation: Opencv enum for the type of interpolation.
+            input: A numpy.ndarray.
+            Width: The desired width in pixels.
+            Height: The desired height in pixels.
+            interpolation: Opencv enum for the type fo interpolation.
         Returns:
-            A resized numpy.ndarray.
+            A numpy.ndarray of the new size.
         """
-        return cv2.resize(src, d_size, fx=fx, fy=fy, interpolation=interpolation)
+        return cv2.resize(input, ((int)(width), (int)(height)), 0, 0, interpolation)
 
     @staticmethod
     def __hsv_threshold(input, hue, sat, val):

@@ -8,7 +8,7 @@
       <property name="path[0]" value="/Users/Robert/Downloads/FRC2018CubePics/IMG_20180525_160438.jpg"/>
       <property name="path[12]" value="/Users/Robert/Downloads/FRC2018CubePics/IMG_20180525_160356.jpg"/>
       <property name="path[8]" value="/Users/Robert/Downloads/FRC2018CubePics/IMG_20180525_160409.jpg"/>
-      <property name="index" value="3"/>
+      <property name="index" value="4"/>
       <property name="numImages" value="13"/>
       <property name="path[5]" value="/Users/Robert/Downloads/FRC2018CubePics/IMG_20180525_160419.jpg"/>
       <property name="path[2]" value="/Users/Robert/Downloads/FRC2018CubePics/IMG_20180525_160428.jpg"/>
@@ -19,17 +19,16 @@
     </grip:MultiImageFile>
   </sources>
   <steps>
-    <grip:Step name="CV resize">
+    <grip:Step name="Resize Image">
       <grip:Input step="0" socket="0"/>
-      <grip:Input step="0" socket="1"/>
+      <grip:Input step="0" socket="1">
+        <value>640</value>
+      </grip:Input>
       <grip:Input step="0" socket="2">
-        <value>0.25</value>
+        <value>480</value>
       </grip:Input>
       <grip:Input step="0" socket="3">
-        <value>0.15</value>
-      </grip:Input>
-      <grip:Input step="0" socket="4">
-        <value>INTER_LINEAR</value>
+        <value>CUBIC</value>
       </grip:Input>
       <grip:Output step="0" socket="0" previewed="false"/>
     </grip:Step>
@@ -97,13 +96,13 @@
         <value>0.0</value>
       </grip:Input>
       <grip:Input step="5" socket="3">
-        <value>100.0</value>
+        <value>80.0</value>
       </grip:Input>
       <grip:Input step="5" socket="4">
         <value>1000.0</value>
       </grip:Input>
       <grip:Input step="5" socket="5">
-        <value>100.0</value>
+        <value>80.0</value>
       </grip:Input>
       <grip:Input step="5" socket="6">
         <value>1000.0</value>
@@ -155,8 +154,20 @@
   </steps>
   <connections>
     <grip:Connection>
+      <grip:Output step="5" socket="0" previewed="true"/>
+      <grip:Input step="6" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
       <grip:Output step="1" socket="0" previewed="false"/>
       <grip:Input step="2" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="0" socket="0" previewed="false"/>
+      <grip:Input step="1" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="2" socket="0" previewed="false"/>
+      <grip:Input step="3" socket="0"/>
     </grip:Connection>
     <grip:Connection>
       <grip:Output step="3" socket="0" previewed="false"/>
@@ -167,20 +178,8 @@
       <grip:Input step="5" socket="0"/>
     </grip:Connection>
     <grip:Connection>
-      <grip:Output step="0" socket="0" previewed="false"/>
-      <grip:Input step="1" socket="0"/>
-    </grip:Connection>
-    <grip:Connection>
       <grip:Output source="0" socket="0" previewed="false"/>
       <grip:Input step="0" socket="0"/>
-    </grip:Connection>
-    <grip:Connection>
-      <grip:Output step="2" socket="0" previewed="false"/>
-      <grip:Input step="3" socket="0"/>
-    </grip:Connection>
-    <grip:Connection>
-      <grip:Output step="5" socket="0" previewed="true"/>
-      <grip:Input step="6" socket="0"/>
     </grip:Connection>
   </connections>
   <settings>
